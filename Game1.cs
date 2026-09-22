@@ -28,7 +28,11 @@ namespace _3902sprint0
         private Chest chest;
         private Chest chest2;
 
-        
+        private Texture2D enemyBasicRunningTexture;
+
+        private Texture2D enemyBasicIdleTexture;
+        private List<Enemy> enemies;
+
 
 
         /// <summary>
@@ -65,6 +69,7 @@ namespace _3902sprint0
            
 
             IsMouseVisible = true;
+            enemies = new List<Enemy>();
             base.Initialize();
             
 
@@ -111,6 +116,29 @@ namespace _3902sprint0
                inventory,
                database
             );
+            enemyBasicIdleTexture = Content.Load<Texture2D>("enemyBasicIdle");
+
+            enemyBasicRunningTexture = Content.Load<Texture2D>("enemyBasicRunning");
+
+            Rectangle movementBounds =
+                new Rectangle(
+                    0,
+                    0,
+                    DeviceManager3902.PreferredBackBufferWidth,
+                    DeviceManager3902.PreferredBackBufferHeight
+                );
+            for (int i = 0; i < 4; i++)
+            {
+                enemies.Add(EnemyCreator.CreateEnemy(
+                    EnemyType.Basic,
+                    enemyBasicRunningTexture,
+                    enemyBasicIdleTexture,
+                    movementBounds,
+                    1,
+                    1,
+                    150,
+                    48));
+            }
             chest.InitializeSprite(chestTexture);
             chest2.InitializeSprite(chestTexture);
             base.LoadContent();
@@ -128,6 +156,10 @@ namespace _3902sprint0
             chest2.Update(gameTime);
             player.Update(gameTime);
             fireball.Update(gameTime);
+            foreach (Enemy enemy in enemies)
+            {
+                enemy.Update(gameTime);
+            }
 
             base.Update(gameTime);
         }
@@ -148,7 +180,12 @@ namespace _3902sprint0
             chest2.Draw(spriteBatch);
             fireball.Draw(spriteBatch);
 
+            foreach (Enemy enemy in enemies)
+            {
+                enemy.Draw(spriteBatch);
+            }
             spriteBatch.End();
+            
 
             base.Draw(gameTime);
          }
