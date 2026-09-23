@@ -3,14 +3,20 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Diagnostics;
+using _3902sprint0.Environment;
 
 namespace _3902sprint0
 {
     /// <summary>
     /// Represents the player character in the game, handling movement, aiming, and actions based on keyboard and mouse input. The Player class manages the player's location, velocity, speed, and acceleration, as well as the associated sprite for rendering. It utilizes keyboardController and mousecontroller classes to process input and update the player's state accordingly.
     /// </summary>
-    public class Player
+    public class Player : IDamageable
     {
+        // Assumed from the existing screen-clamp values (1820-128, 1280-128): Location is
+        // the player's top-left corner, and the player occupies a 128x128 box.
+        public const int Width = 128;
+        public const int Height = 128;
+
         // The player's current location in the game world.
         public Vector2 Location;
         public terrain Terrain;
@@ -22,13 +28,20 @@ namespace _3902sprint0
         // The player's acceleration, which affects how quickly the player can change their velocity. This value may be adjusted in the future to accommodate different terrains or gameplay mechanics.
         public float Acceleration = 500f;
 
+        // New: basic health so hazard tiles (fire) have something to affect. Wire this
+        // up to a HUD/health-bar whenever that exists.
+        public int Health { get; private set; } = 6;
+
         private KeyboardController Keyboard;
         private Inventory inventory;
         private Mousecontroller Mouse;
+        private Room currentRoom;
         public Vector2 AimDirection;
 
         // The player's sprite, which is responsible for rendering the player character on the screen and managing animations.
         private PlayerSprite PlayerSprite1;
+
+        public Rectangle Bounds => new Rectangle((int)Location.X, (int)Location.Y, Width, Height);
 
         /// <summary>
         /// Initializes a new instance of the Player class with the specified starting location. The constructor sets up the player's initial position, creates a new PlayerSprite for rendering, and initializes the keyboard and mouse controllers for handling input.
@@ -45,6 +58,31 @@ namespace _3902sprint0
             Terrain = new terrain();
             Terrain.currentState = terrain.terrainState.Stone;
 
+        }
+
+        /// <summary>
+        /// Assigns the room the player is currently in, so movement can be resolved
+        /// against that room's tiles (walls, blocks, doors, hazards, stairs).
+        /// </summary>
+        public void SetRoom(Room room)
+        {
+            currentRoom = room;
+        }
+
+        /// <summary>
+        /// Applies damage from a hazard tile (e.g. Fire). Ignored while already dying.
+        /// </summary>
+        public void TakeDamage(int amount)
+        {
+            if (PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death))
+                return;
+
+            Health -= amount;
+            if (Health <= 0)
+            {
+                Health = 0;
+                Die();
+            }
         }
 
         /// <summary>
@@ -174,7 +212,7 @@ namespace _3902sprint0
             return Terrain.Acceleration;
         }
         /// <summary>
-        /// Moves the player based on the provided movement direction and updates the player's location and velocity accordingly. This method calculates the change in position based on the elapsed time since the last frame, the player's acceleration, and the current movement direction. It also ensures that the player's velocity does not exceed the maximum speed and applies deceleration when no movement input is detected.
+        /// Moves the player based on the provided movement direction and updates the player's location and velocity accordingly. This method calculates the change in position based on the elapsed time since the last frame, the player's acceleration, and the current movement direction. It also ensures that the player's velocity does not exceed the maximum speed and applies deceleration when no movement input is detected. Movement is resolved one axis at a time against the current Room so the player can slide along walls, gets stopped by solid tiles, pushes PushableBlockTile out of the way, and auto-unlocks locked doors when carrying the right key.
         /// </summary>
         /// <param name="gameTime"></param>
         /// <param name="movementDirection"></param>
@@ -211,8 +249,42 @@ namespace _3902sprint0
                         Velocity = Vector2.Zero;
                     }
                 }
-            Location += Velocity * deltaTime;
 
+            Vector2 delta = Velocity * deltaTime;
+            MoveAxis(new Vector2(delta.X, 0));
+            MoveAxis(new Vector2(0, delta.Y));
+
+            if (currentRoom != null)
+            {
+                currentRoom.ApplyHazards(Bounds, this);
+                currentRoom.CheckStairs(Bounds);
+            }
+        }
+
+        /// <summary>
+        /// Attempts to move along a single axis (delta has only X or only Y set).
+        /// Checked against the current Room so walls/blocks/locked doors can stop it;
+        /// zeroes velocity on that axis when blocked instead of leaving it to keep
+        /// pushing into the obstacle every frame.
+        /// </summary>
+        /// <param name="delta"></param>
+        private void MoveAxis(Vector2 delta)
+        {
+            if (delta == Vector2.Zero)
+                return;
+
+            Vector2 attemptedLocation = Location + delta;
+            Rectangle attemptedBounds = new Rectangle((int)attemptedLocation.X, (int)attemptedLocation.Y, Width, Height);
+
+            if (currentRoom == null || currentRoom.CanEnter(attemptedBounds, Vector2.Normalize(delta), inventory))
+            {
+                Location = attemptedLocation;
+            }
+            else
+            {
+                if (delta.X != 0) Velocity.X = 0;
+                if (delta.Y != 0) Velocity.Y = 0;
+            }
         }
         /// <summary>
         /// Checks if the player has requested to quit the game by pressing the escape key. This method delegates the check to the keyboard controller, which handles input processing and determines whether the quit action has been triggered.

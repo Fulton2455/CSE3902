@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using static System.Net.Mime.MediaTypeNames;
+using _3902sprint0.Environment;
+using _3902sprint0.Environment.Tiles;
+using _3902sprint0.Environment.Doors;
 
 namespace _3902sprint0
 {
@@ -33,7 +36,7 @@ namespace _3902sprint0
         private Texture2D enemyBasicIdleTexture;
         private List<Enemy> enemies;
 
-
+        private Room room;
 
         /// <summary>
         /// Indicates if the game is running on a desktop platform. it came from a previous template and i dont really have a reason to get rid of it.
@@ -141,8 +144,13 @@ namespace _3902sprint0
             }
             chest.InitializeSprite(chestTexture);
             chest2.InitializeSprite(chestTexture);
+
+            LoadRoom();
+            player.SetRoom(room);
+
             base.LoadContent();
         }
+
 
         /// <summary>
         /// updates the game state, including player input and game logic. This method is called once per frame.
@@ -152,6 +160,7 @@ namespace _3902sprint0
         {
             if (player.IsQuit())
                 Exit();
+            room.Update(gameTime);
             chest.Update(gameTime);
             chest2.Update(gameTime);
             player.Update(gameTime);
@@ -175,6 +184,7 @@ namespace _3902sprint0
             spriteBatch.Begin(
                  samplerState: SamplerState.PointClamp);
 
+            room.Draw(spriteBatch);
             player.Draw(spriteBatch);
             chest.Draw(spriteBatch);
             chest2.Draw(spriteBatch);
@@ -189,5 +199,45 @@ namespace _3902sprint0
 
             base.Draw(gameTime);
          }
+    
+        private Texture2D CreatePlaceholderTexture(Color color)
+        {
+            Texture2D texture = new Texture2D(GraphicsDevice, 1, 1);
+            texture.SetData(new[] { color });
+            return texture;
+        }
+
+        private Texture2D environmentSpriteSheet;
+
+        private void LoadRoom()
+        {
+            room = new Room(tileSize: 64f);
+            environmentSpriteSheet = Content.Load<Texture2D>("environment/environment_spritesheet");
+
+            int screenWidth = DeviceManager3902.PreferredBackBufferWidth;
+            int screenHeight = DeviceManager3902.PreferredBackBufferHeight;
+            for (int x = 0; x < screenWidth; x += 64)
+            {
+                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(x + 32, 32)));
+                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(x + 32, screenHeight - 32)));
+            }
+           for (int y = 0; y < screenHeight; y += 64)
+            {
+                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(32, y + 32)));
+                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(screenWidth - 32, y + 32)));
+            }
+
+            room.AddTile(TileFactory.CreateTile(TileType.Statue, environmentSpriteSheet, new Vector2(500, 500)));
+            room.AddTile(TileFactory.CreateTile(TileType.SquareBlock, environmentSpriteSheet, new Vector2(700, 500)));
+            room.AddTile(TileFactory.CreateTile(TileType.PushableBlock, environmentSpriteSheet, new Vector2(900, 500)));
+            room.AddTile(TileFactory.CreateTile(TileType.Fire, environmentSpriteSheet, new Vector2(1100, 500)));
+            room.AddTile(TileFactory.CreateTile(TileType.BlueGap, environmentSpriteSheet, new Vector2(1300, 500)));
+            room.AddTile(TileFactory.CreateTile(TileType.Stairs, environmentSpriteSheet, new Vector2(1500, 500)));
+            room.AddTile(TileFactory.CreateTile(TileType.OpenDoor, environmentSpriteSheet, new Vector2(960, 96)));
+
+            room.AddTile(new BombedWallOpeningTile(environmentSpriteSheet, new Vector2(700, 700)));
+            room.AddTile(new KeyholeLockedDoorTile(environmentSpriteSheet, new Vector2(900, 700)));
+            room.AddTile(new DiamondLockedDoorTile(environmentSpriteSheet, new Vector2(1100, 700)));
+        }
     }
 }
