@@ -37,6 +37,7 @@ namespace _3902sprint0
         private Mousecontroller Mouse;
         private Room currentRoom;
         public Vector2 AimDirection;
+        private InventoryHUD inventoryHUD;
 
         // The player's sprite, which is responsible for rendering the player character on the screen and managing animations.
         private PlayerSprite PlayerSprite1;
@@ -47,13 +48,15 @@ namespace _3902sprint0
         /// Initializes a new instance of the Player class with the specified starting location. The constructor sets up the player's initial position, creates a new PlayerSprite for rendering, and initializes the keyboard and mouse controllers for handling input.
         /// </summary>
         /// <param name="startingLocation"></param>
-        public Player(Vector2 startingLocation, Inventory inventory)
+        public Player(Vector2 startingLocation, Inventory inventory, InventoryHUD inventoryHUD)
         {
             Location = startingLocation;
             PlayerSprite1 = new PlayerSprite();
             Keyboard = new KeyboardController();
             Mouse = new Mousecontroller();
             this.inventory = inventory;
+            this.inventoryHUD = inventoryHUD;
+
 
             Terrain = new terrain();
             Terrain.currentState = terrain.terrainState.Stone;
@@ -313,6 +316,7 @@ namespace _3902sprint0
                 Iitem item = inventory.items[itemNumber];
 
                 item.Use(this, gameTime);
+                inventoryHUD.FlashSlot(itemNumber);
             }
 
         }
