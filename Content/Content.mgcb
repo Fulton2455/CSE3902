@@ -52,6 +52,19 @@
 /processorParam:Version=3.8.5.1
 /build:enemyBasicRunning.png
 
+#begin environment/environment_spritesheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:environment/environment_spritesheet.png
+
 #begin Explosion.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -117,15 +130,16 @@
 /processorParam:Version=3.8.5.1
 /build:Knight.png
 
-#begin environment/environment_spritesheet.png
+#begin Pixel Heart Sprite Sheet 32x32.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
+/processorParam:ColorKeyEnabled=True
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
-/build:environment/environment_spritesheet.png
+/build:Pixel Heart Sprite Sheet 32x32.png
+
