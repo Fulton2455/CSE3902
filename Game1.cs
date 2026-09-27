@@ -39,6 +39,8 @@ namespace _3902sprint0
         private Room room;
 
         private InventoryHUD inventoryHUD;
+        private HealthHUD healthHUD;
+        private Texture2D heartTexture;
 
         /// <summary>
         /// Indicates if the game is running on a desktop platform. it came from a previous template and i dont really have a reason to get rid of it.
@@ -94,8 +96,13 @@ namespace _3902sprint0
             Texture2D chestTexture = Content.Load<Texture2D>("Chest");
             Texture2D fireballTexture = Content.Load<Texture2D>("Fireball");
             Texture2D detonateTexture = Content.Load<Texture2D>("Explosion");
+
+            heartTexture = Content.Load<Texture2D>("Pixel Heart Sprite Sheet 32x32");
+
             inventory = new Inventory();
             inventoryHUD = new InventoryHUD(GraphicsDevice);
+            healthHUD = new HealthHUD(heartTexture);
+
             player = new Player(new Vector2(300, 300), inventory, inventoryHUD);
             player.InitializeSprite(knightTexture);
 
@@ -201,9 +208,9 @@ namespace _3902sprint0
                 enemy.Draw(spriteBatch);
             }
             inventoryHUD.Draw(spriteBatch, GraphicsDevice, inventory, gameTime);
-            spriteBatch.End();
-            
+            healthHUD.Draw(spriteBatch, player);
 
+            spriteBatch.End();
             base.Draw(gameTime);
          }
     
