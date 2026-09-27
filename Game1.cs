@@ -46,6 +46,8 @@ namespace _3902sprint0
         private LevelHUD levelHUD;
         private int currentLevel = 1;
 
+        private CurrentSwordHUD currentSwordHUD;
+
         private float stairsCooldown = 0f;
         private const float stairsCooldownTime = 1.0f;
 
@@ -104,6 +106,8 @@ namespace _3902sprint0
             Texture2D fireballTexture = Content.Load<Texture2D>("Fireball");
             Texture2D detonateTexture = Content.Load<Texture2D>("Explosion");
             gameFont = Content.Load<SpriteFont>("GameFont");
+
+            currentSwordHUD = new CurrentSwordHUD(GraphicsDevice, gameFont);
             heartTexture = Content.Load<Texture2D>("Pixel Heart Sprite Sheet 32x32");
 
             inventory = new Inventory();
@@ -226,6 +230,8 @@ namespace _3902sprint0
 
             healthHUD.Draw(spriteBatch, player);
             levelHUD.Draw(spriteBatch, currentLevel);
+
+            currentSwordHUD.Draw(spriteBatch, inventory);
 
             spriteBatch.End();
             base.Draw(gameTime);
