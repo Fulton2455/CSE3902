@@ -36,6 +36,16 @@ namespace _3902sprint0
         private Texture2D enemyBasicIdleTexture;
         private List<Enemy> enemies;
 
+        private EnemyManager enemyManager;
+        private Texture2D enemyRunningTexture;
+        private Texture2D enemyIdleTexture;
+        public static Player currentPlayer
+        {
+            get;
+            private set;
+        }
+
+
         private Room room;
 
         private InventoryHUD inventoryHUD;
@@ -102,10 +112,11 @@ namespace _3902sprint0
             inventory = new Inventory();
             inventoryHUD = new InventoryHUD(GraphicsDevice);
             healthHUD = new HealthHUD(heartTexture);
-
+            
             player = new Player(new Vector2(300, 300), inventory, inventoryHUD);
             player.InitializeSprite(knightTexture);
-
+            
+            currentPlayer = player;
             FireballSprite fireballSprite = new FireballSprite();
             detonateSprite detonateSprite = new detonateSprite();
 
@@ -132,6 +143,8 @@ namespace _3902sprint0
             enemyBasicIdleTexture = Content.Load<Texture2D>("enemyBasicIdle");
 
             enemyBasicRunningTexture = Content.Load<Texture2D>("enemyBasicRunning");
+            enemyManager = new EnemyManager(player, enemyBasicRunningTexture, enemyBasicIdleTexture);
+            player.SetEnemyManager(enemyManager);
 
             Rectangle movementBounds =
                 new Rectangle(
@@ -140,18 +153,13 @@ namespace _3902sprint0
                     DeviceManager3902.PreferredBackBufferWidth,
                     DeviceManager3902.PreferredBackBufferHeight
                 );
-            for (int i = 0; i < 4; i++)
-            {
-                enemies.Add(EnemyCreator.CreateEnemy(
-                    EnemyType.Basic,
-                    enemyBasicRunningTexture,
-                    enemyBasicIdleTexture,
-                    movementBounds,
-                    1,
-                    1,
-                    150,
-                    48));
-            }
+            enemyManager.SetMovementBounds(movementBounds);
+            enemyManager.RespawnEnemies(
+                EnemyType.Basic,
+                EnemyType.Basic,
+                EnemyType.Chaser,
+                EnemyType.Fleeing,
+                EnemyType.Erratic);
             chest.InitializeSprite(chestTexture);
             chest2.InitializeSprite(chestTexture);
 
@@ -178,10 +186,7 @@ namespace _3902sprint0
             chest2.Update(gameTime);
             player.Update(gameTime);
             fireball.Update(gameTime);
-            foreach (Enemy enemy in enemies)
-            {
-                enemy.Update(gameTime);
-            }
+            enemyManager.update(gameTime);
 
             base.Update(gameTime);
         }
@@ -203,10 +208,7 @@ namespace _3902sprint0
             chest2.Draw(spriteBatch);
             fireball.Draw(spriteBatch);
 
-            foreach (Enemy enemy in enemies)
-            {
-                enemy.Draw(spriteBatch);
-            }
+            enemyManager.draw(spriteBatch);
             inventoryHUD.Draw(spriteBatch, GraphicsDevice, inventory, gameTime);
             healthHUD.Draw(spriteBatch, player);
 

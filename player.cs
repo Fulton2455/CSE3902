@@ -20,6 +20,7 @@ namespace _3902sprint0
         // The player's current location in the game world.
         public Vector2 Location;
         public terrain Terrain;
+        private EnemyManager enemyManager;
         // The player's current velocity, which is updated based on input and acceleration.
         public Vector2 Velocity;
         // The player's maximum movement speed, which determines how fast the player can move.
@@ -57,10 +58,15 @@ namespace _3902sprint0
             this.inventory = inventory;
             this.inventoryHUD = inventoryHUD;
 
-
+            
             Terrain = new terrain();
             Terrain.currentState = terrain.terrainState.Stone;
 
+        }
+        public void SetEnemyManager(EnemyManager enemyManager)
+        {
+            this.enemyManager = enemyManager;
+            Terrain.SetEnemyManager(enemyManager);
         }
 
         /// <summary>
@@ -335,7 +341,7 @@ namespace _3902sprint0
         {
             
 
-
+            
             string terrainInput = Keyboard.terrain();
 
                 if (terrainInput == "Ice")
@@ -346,7 +352,13 @@ namespace _3902sprint0
                         Terrain.newTerrainAccessed(this);
                         Terrain.getTerainEffect(this);
                         inventory.ResetItems();
-                    
+                        enemyManager.RespawnEnemies(
+                            EnemyType.Basic,
+                            EnemyType.Basic,
+                            EnemyType.Chaser,
+                            EnemyType.Fleeing,
+                            EnemyType.Erratic);
+
 
                 }
                 }
@@ -358,8 +370,13 @@ namespace _3902sprint0
                         Terrain.newTerrainAccessed(this);
                         Terrain.getTerainEffect(this);
                         inventory.ResetItems();
-                        
-                   
+                        enemyManager.RespawnEnemies(
+                            EnemyType.Basic,
+                            EnemyType.Basic,
+                            EnemyType.Chaser,
+                            EnemyType.Fleeing,
+                            EnemyType.Erratic);
+
                 }
                 }
                 else if (terrainInput == "Stone")
@@ -370,7 +387,13 @@ namespace _3902sprint0
                         Terrain.newTerrainAccessed(this);
                         Terrain.getTerainEffect(this);
                         inventory.ResetItems();
-                   
+                        enemyManager.RespawnEnemies(
+                            EnemyType.Basic,
+                            EnemyType.Basic,
+                            EnemyType.Chaser,
+                            EnemyType.Fleeing,
+                            EnemyType.Erratic);
+
                 }
                 }
             

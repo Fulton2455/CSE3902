@@ -28,7 +28,7 @@ namespace _3902sprint0
 			return (float)(1.0 + random.NextDouble() * 3.0);
 		}
 
-		public void Update(Enemy enemy, GameTime gameTime)
+		public void Update(Enemy enemy, Player player, GameTime gameTime)
 		{
 			float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -60,8 +60,8 @@ namespace _3902sprint0
 		}
 		private Direction GetRandomDirection()
 		{
-			int directionNimber = random.Next(0, 8);
-			return (Direction)directionNimber;
+			int directionNumber = random.Next(0, 8);
+			return (Direction)directionNumber;
 		}
 		private float GetRandomPauseTime()
 		{

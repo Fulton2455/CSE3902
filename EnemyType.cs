@@ -3,6 +3,11 @@
 	public enum EnemyType
 
 	{
-		Basic
+		Basic,
+		Chaser,
+		Fleeing,
+		Erratic
+
+
 	}
 }

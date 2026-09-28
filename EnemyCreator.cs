@@ -9,14 +9,14 @@ namespace _3902sprint0
 			EnemyType enemyType,
 			Texture2D basicRunningTexture,
 			Texture2D basicIdleTexture,
-			Rectangle movementBounds,
-			int health,
-			int damage,
-			float movementSpeed,
-			int size)
+			Rectangle movementBounds
+			)
 		{
 			IEnemyAI enemyAI;
-
+			int health;
+			int damage;
+			int size;
+			float movementSpeed;
 			Texture2D runningTexture;
 			Texture2D idleTexture;
 
@@ -24,15 +24,52 @@ namespace _3902sprint0
 			{
 				case EnemyType.Basic:
 					enemyAI = new BasicEnemyAI();
-
-					runningTexture = basicRunningTexture;
+					health = 2;
+					damage = 1;
+					movementSpeed = 100f;
+					size = 64;
+                    runningTexture = basicRunningTexture;
 
 					idleTexture = basicIdleTexture;
 
 					break;
-				default:
+				case EnemyType.Chaser:
+					enemyAI = new ChaserEnemyAI();
+					health = 1;
+					damage = 2;
+					movementSpeed = 150f;
+					size = 48;
+                    runningTexture = basicRunningTexture;
+
+                    idleTexture = basicIdleTexture;
+					break;
+				case EnemyType.Fleeing:
+					enemyAI = new FleeingEnemyAI();
+                    health = 1;
+                    damage = 3;
+                    movementSpeed = 190f;
+                    size = 80;
+                    runningTexture = basicRunningTexture;
+
+                    idleTexture = basicIdleTexture;
+					break;
+				case EnemyType.Erratic:
+					enemyAI= new ErraticEnemyAI();
+                    health = 3;
+                    damage = 3;
+                    movementSpeed = 125f;
+                    size = 32;
+                    runningTexture = basicRunningTexture;
+
+                    idleTexture = basicIdleTexture;
+					break;
+                default:
 					enemyAI = new BasicEnemyAI();
-					runningTexture = basicRunningTexture;
+                    health = 1;
+                    damage = 1;
+                    movementSpeed = 100f;
+                    size = 64;
+                    runningTexture = basicRunningTexture;
 
 					idleTexture = basicIdleTexture;
 					break;
@@ -40,6 +77,7 @@ namespace _3902sprint0
 			Vector2 spawnPosition = GetSpawnBehavior(enemyType, movementBounds);
 
 			return new Enemy(
+				enemyType,
 				enemyAI,
 				runningTexture,
 				idleTexture,
@@ -61,6 +99,12 @@ namespace _3902sprint0
 			switch (enemyType)
 			{
 				case EnemyType.Basic:
+					return GetRandomSpawnPosition(movementBounds);
+				case EnemyType.Chaser:
+					return GetRandomSpawnPosition(movementBounds); //will change this to spawn at walls and important objects eventually
+				case EnemyType.Fleeing:
+					return GetRandomSpawnPosition(movementBounds);
+				case EnemyType.Erratic:
 					return GetRandomSpawnPosition(movementBounds);
 				default:
 					return GetRandomSpawnPosition(movementBounds);

@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace _3902sprint0
 {
-	public class Enemy : Sprite, IEnemy
+	public class Enemy : IEnemy
 		{
 
 
@@ -16,17 +16,27 @@ namespace _3902sprint0
 		private float movementSpeed;
 		private int health;
 		private int damage;
+        private int size;
+
 
 		private Direction currentDirection;
 
         private int currentFrame;
 
         private float animationTimer;
+        private Rectangle destinationRectangle;
+        private const int FrameWidth = 32;
+        private const int FrameHeight = 32;
+        private const int FrameCount = 8;
 
 
-		private const float AnimationSpeed = 0.1f;
+
+        private const float AnimationSpeed = 0.1f;
 
         private IEnemyAI enemyAI;
+        private EnemyType enemyType;
+        private Vector2 position;
+
         public bool IsPaused
         {
             get
@@ -35,8 +45,52 @@ namespace _3902sprint0
             }
         }
 
+        public EnemyType Type
+        {
+            get
+            {
+                return enemyType;
+            }
+        }
+        public Vector2 Position
+        {
+            get
+            {
+                return position;
+            }
+        }
+        public int Health
+        {
+            get
+            {
+                return health;
+            }
+        }
+        public int Damage
+        {
+            get
+            {
+                return damage;
+            }
+        }
+        public float MovementSpeed
+        {
+            get
+            {
+                return movementSpeed;
+            }
+        }
+        public Direction CurrentDirection
+        {
+            get
+            {
+                return currentDirection;
+            }
+        }
+
 
 		public Enemy(
+            EnemyType enemyType,
             IEnemyAI enemyAI,
 			Texture2D runningTexture,
 			Texture2D idleTexture,
@@ -46,16 +100,18 @@ namespace _3902sprint0
 			int damage,
 			float movementSpeed,
 			Rectangle movementBounds)
-            : base(runningTexture,
-				  position,
-				  size,
-				  size)
 		{ 
+            this.enemyType = enemyType;
+            
+            this.position = position;
+
             this.enemyAI = enemyAI;
 
 			this.runningTexture = runningTexture;
 
 			this.idleTexture = idleTexture;
+
+            this.size = size;
 
 			this.health = health;
 
@@ -69,31 +125,49 @@ namespace _3902sprint0
 
 			currentFrame = 0;
 			animationTimer = 0f;
+
+            UpdateDestinationRectangle();
 		}
+        
         public void Update(GameTime gameTime)
         {
-            enemyAI.Update(this, gameTime);
+            Player player = Game1.currentPlayer;
+            if (player != null) 
+            {
+                enemyAI.Update(this, player, gameTime);
+            }
+            
 
             UpdateAnimation(gameTime);
 
             KeepInsideBounds();
 
-            base.UpdateSprite(gameTime);
+            UpdateDestinationRectangle();
+
         }
 
 		public void Move(GameTime gameTime)
 		{
-            float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Vector2 direction = GetDirection(currentDirection);
+            MoveInDirection(direction, gameTime);
+        }
+        public void MoveInDirection(Vector2 direction, GameTime gametime)
+        {
+            if (direction == Vector2.Zero)
+            {
+                return;
+            }
+            direction.Normalize();
 
-            Vector2 movementDirection = GetDirection(currentDirection);
-
-            Position += movementDirection * movementSpeed * elapsedSeconds;
+            float elapsedSeconds = (float)gametime.ElapsedGameTime.TotalSeconds;
+            position += direction * movementSpeed * elapsedSeconds;
+            SetDirectionFromVector(direction);
         }
         public void SetDirection(Direction direction)
         {
             currentDirection = direction;
         }
-
+        
         private void UpdateAnimation(GameTime gameTime)
         {
 
@@ -111,6 +185,14 @@ namespace _3902sprint0
             }
 
 
+        }
+        private void UpdateDestinationRectangle()
+        {
+            destinationRectangle = new Rectangle(
+                (int)(position.X - size / 2f),
+                (int)(position.Y - size / 2f),
+                size,
+                size);
         }
 		private Vector2 GetDirection(Direction direction)
 		{
@@ -160,15 +242,57 @@ namespace _3902sprint0
             }
             return vector;
         }
+        private void SetDirectionFromVector(Vector2 direction)
+        {
+            float angle = MathHelper.ToDegrees((float)System.Math.Atan2(direction.Y, direction.X));
+            if (angle < 0)
+            {
+                angle += 360;
+            }
+            if (angle >= 337.5f ||
+                angle < 22.5f)
+            {
+                currentDirection = Direction.Right;
+            }
+            else if (angle < 67.5f)
+            {
+                currentDirection = Direction.DownRight;
+            }
+            else if (angle < 112.5f)
+            {
+                currentDirection = Direction.Down;
+            }
+            else if (angle < 157.5f)
+            {
+                currentDirection = Direction.DownLeft;
+            }
+            else if (angle < 202.5f)
+            {
+                currentDirection = Direction.Left;
+            }
+            else if (angle < 247.5f)
+            {
+                currentDirection = Direction.UpLeft;
+            }
+            else if (angle < 292.5f)
+            {
+                currentDirection = Direction.Up;
+            }
+            else
+            {
+                currentDirection = Direction.UpRight;
+            }
+        }
+        
         private void KeepInsideBounds()
         {
-            float minimumX = movementBounds.Left + width / 2f;
-            float maximumX = movementBounds.Right - width / 2f;
-            float minimumY = movementBounds.Top + height / 2f;
-            float maximumY = movementBounds.Bottom - height / 2f;
+            float minimumX = movementBounds.Left + size / 2f;
+            float maximumX = movementBounds.Right - size / 2f;
+            float minimumY = movementBounds.Top + size / 2f;
+            float maximumY = movementBounds.Bottom - size / 2f;
 
 
-            Position = new Vector2(
+            position = new Vector2(
                 MathHelper.Clamp(Position.X,
                     minimumX,
                     maximumX
@@ -227,7 +351,7 @@ namespace _3902sprint0
             }
             return directionRow;
         }
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
             int directionRow = GetDirectionRow(currentDirection);
 

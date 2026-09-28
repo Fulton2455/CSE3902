@@ -13,13 +13,18 @@ namespace _3902sprint0
         public Color terrainColor;
         private bool terrainChecked=false;
 
+        private EnemyManager enemyManager;
+
         public enum terrainState
         {
             Stone,
             Ice,
             Swamp
         }
-
+        public void SetEnemyManager(EnemyManager enemyManager)
+        {
+            this.enemyManager = enemyManager;
+        }
         public void newTerrainAccessed(Player player)
         {
             terrainChecked = false;
@@ -43,6 +48,7 @@ namespace _3902sprint0
                     player.Speed =player.Speed;
                     terrainColor = new Color(75, 75, 70);
                     terrainChecked= true;
+
                     break;
 
                 case terrainState.Ice:
