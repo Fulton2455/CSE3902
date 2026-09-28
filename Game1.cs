@@ -52,7 +52,6 @@ namespace _3902sprint0
         private HealthHUD healthHUD;
         private Texture2D heartTexture;
 
-
         private SpriteFont gameFont;
         private LevelHUD levelHUD;
         private int currentLevel = 1;
@@ -120,6 +119,7 @@ namespace _3902sprint0
 
             currentSwordHUD = new CurrentSwordHUD(GraphicsDevice, gameFont);
             heartTexture = Content.Load<Texture2D>("Pixel Heart Sprite Sheet 32x32");
+            levelHUD = new LevelHUD(gameFont);
 
             inventory = new Inventory();
             inventoryHUD = new InventoryHUD(GraphicsDevice);
@@ -231,8 +231,8 @@ namespace _3902sprint0
 
             healthHUD.Draw(spriteBatch, player);
             levelHUD.Draw(spriteBatch, currentLevel);
-
             currentSwordHUD.Draw(spriteBatch, inventory);
+
 
             spriteBatch.End();
             base.Draw(gameTime);
