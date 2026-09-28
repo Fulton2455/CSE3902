@@ -10,6 +10,7 @@ namespace _3902sprint0
     public class Inventory : IKeyHolder
     {
         public List<Iitem> items = new List<Iitem>();
+        public Iitem CurrentSword { get; private set; }
         private readonly Dictionary<LockType, int> keys = new Dictionary<LockType, int>();
 
         public void AddItem(Iitem item)
@@ -17,6 +18,10 @@ namespace _3902sprint0
             if ((items.Count < 8))
             {
                 items.Add(item);
+            }
+            if (item is MagicSword)
+            {
+                CurrentSword = item;
             }
         }
 
