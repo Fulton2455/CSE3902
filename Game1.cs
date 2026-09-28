@@ -52,6 +52,16 @@ namespace _3902sprint0
         private HealthHUD healthHUD;
         private Texture2D heartTexture;
 
+
+        private SpriteFont gameFont;
+        private LevelHUD levelHUD;
+        private int currentLevel = 1;
+
+        private CurrentSwordHUD currentSwordHUD;
+
+        private float stairsCooldown = 0f;
+        private const float stairsCooldownTime = 1.0f;
+
         /// <summary>
         /// Indicates if the game is running on a desktop platform. it came from a previous template and i dont really have a reason to get rid of it.
         /// </summary>
@@ -106,13 +116,15 @@ namespace _3902sprint0
             Texture2D chestTexture = Content.Load<Texture2D>("Chest");
             Texture2D fireballTexture = Content.Load<Texture2D>("Fireball");
             Texture2D detonateTexture = Content.Load<Texture2D>("Explosion");
+            gameFont = Content.Load<SpriteFont>("GameFont");
 
+            currentSwordHUD = new CurrentSwordHUD(GraphicsDevice, gameFont);
             heartTexture = Content.Load<Texture2D>("Pixel Heart Sprite Sheet 32x32");
 
             inventory = new Inventory();
             inventoryHUD = new InventoryHUD(GraphicsDevice);
             healthHUD = new HealthHUD(heartTexture);
-            
+
             player = new Player(new Vector2(300, 300), inventory, inventoryHUD);
             player.InitializeSprite(knightTexture);
             
@@ -179,6 +191,11 @@ namespace _3902sprint0
         /// <param name="gameTime"></param>
         protected override void Update(GameTime gameTime)
         {
+            if (stairsCooldown > 0)
+            {
+                stairsCooldown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+
             if (player.IsQuit())
                 Exit();
             room.Update(gameTime);
@@ -211,6 +228,11 @@ namespace _3902sprint0
             enemyManager.draw(spriteBatch);
             inventoryHUD.Draw(spriteBatch, GraphicsDevice, inventory, gameTime);
             healthHUD.Draw(spriteBatch, player);
+
+            healthHUD.Draw(spriteBatch, player);
+            levelHUD.Draw(spriteBatch, currentLevel);
+
+            currentSwordHUD.Draw(spriteBatch, inventory);
 
             spriteBatch.End();
             base.Draw(gameTime);
@@ -248,12 +270,24 @@ namespace _3902sprint0
             room.AddTile(TileFactory.CreateTile(TileType.PushableBlock, environmentSpriteSheet, new Vector2(900, 500)));
             room.AddTile(TileFactory.CreateTile(TileType.Fire, environmentSpriteSheet, new Vector2(1100, 500)));
             room.AddTile(TileFactory.CreateTile(TileType.BlueGap, environmentSpriteSheet, new Vector2(1300, 500)));
-            room.AddTile(TileFactory.CreateTile(TileType.Stairs, environmentSpriteSheet, new Vector2(1500, 500)));
+            StairsTile stairs = (StairsTile)TileFactory.CreateTile(TileType.Stairs,environmentSpriteSheet,new Vector2(1500, 500));
+            stairs.Traversed += OnStairsTraversed;
+
+            room.AddTile(stairs);
             room.AddTile(TileFactory.CreateTile(TileType.OpenDoor, environmentSpriteSheet, new Vector2(960, 96)));
 
             room.AddTile(new BombedWallOpeningTile(environmentSpriteSheet, new Vector2(700, 700)));
             room.AddTile(new KeyholeLockedDoorTile(environmentSpriteSheet, new Vector2(900, 700)));
             room.AddTile(new DiamondLockedDoorTile(environmentSpriteSheet, new Vector2(1100, 700)));
+        }
+
+        private void OnStairsTraversed(StairsTile stairs)
+        {
+            if (stairsCooldown <= 0)
+            {
+                currentLevel++;
+                stairsCooldown = stairsCooldownTime;
+            }
         }
     }
 }

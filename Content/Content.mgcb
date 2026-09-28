@@ -91,6 +91,14 @@
 /processorParam:Version=3.8.5.1
 /build:Fireball.png
 
+#begin GameFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/processorParam:Version=3.8.5.1
+/build:GameFont.spritefont
+
 #begin items/fireScroll.png
 /importer:TextureImporter
 /processor:TextureProcessor
