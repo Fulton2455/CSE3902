@@ -185,24 +185,27 @@ namespace _3902sprint0
 
             // Move the player based on the current movement direction and update the player's location, ensuring it stays within the game boundaries
             Move(gameTime, movementDirection);
-            Location.X = MathHelper.Clamp(Location.X, 0, 1820 - 128);
-            Location.Y = MathHelper.Clamp(Location.Y, 0, 1280 - 128);
-           
-            newTerrain(gameTime);
-        
+            if (!PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death))
+            {
+                Location.X = MathHelper.Clamp(Location.X, 0, 1820 - 128);
+                Location.Y = MathHelper.Clamp(Location.Y, 0, 1280 - 128);
+
+                newTerrain(gameTime);
+
                 // Update the sprite's location to match the player's current position
                 PlayerSprite1.SetLocation(Location);
-            // Set the sprite's animation state based on whether the player is moving or idle
-            if (movementDirection != Vector2.Zero)
-            {
-                PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Walk);
+                // Set the sprite's animation state based on whether the player is moving or idle
+                if (movementDirection != Vector2.Zero)
+                {
+                    PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Walk);
+                }
+                else
+                {
+                    PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Idle);
+                }
+                // Update the sprite for this frame, ensuring that the correct animation is displayed based on the player's current state and actions
+                PlayerSprite1.UpdateSprite(gameTime);
             }
-            else
-            {
-                PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Idle);
-            }
-            // Update the sprite for this frame, ensuring that the correct animation is displayed based on the player's current state and actions
-            PlayerSprite1.UpdateSprite(gameTime);
         }
         /// <summary>
         /// Calculates the terrain acceleration for the player, which affects how quickly the player can change their velocity. This method is designed to accommodate different terrains in the future, allowing for varied movement mechanics based on the environment. Currently, it returns a fixed acceleration value of 500f.
