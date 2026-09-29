@@ -32,6 +32,7 @@ namespace _3902sprint0
         private itemDatabase database;
         private Chest chest;
         private Chest chest2;
+        private Chest chest3;
 
         private Texture2D enemyBasicRunningTexture;
 
@@ -148,6 +149,12 @@ namespace _3902sprint0
                database,
                player
             );
+            chest3 = new Chest(
+               new Vector2(400, 300),
+               inventory,
+               database,
+               player
+            );
             enemyBasicIdleTexture = Content.Load<Texture2D>("enemyBasicIdle");
 
             enemyBasicRunningTexture = Content.Load<Texture2D>("enemyBasicRunning");
@@ -170,6 +177,8 @@ namespace _3902sprint0
                 EnemyType.Erratic);
             chest.InitializeSprite(chestTexture);
             chest2.InitializeSprite(chestTexture);
+            chest3.InitializeSprite(chestTexture);
+
 
             LoadRoom();
             player.SetRoom(room);
@@ -197,6 +206,8 @@ namespace _3902sprint0
             room.Update(gameTime);
             chest.Update(gameTime);
             chest2.Update(gameTime);
+
+            chest3.Update(gameTime);
             player.Update(gameTime);
             enemyManager.update(gameTime);
             FireballManager.Update(gameTime);
@@ -219,6 +230,8 @@ namespace _3902sprint0
             player.Draw(spriteBatch);
             chest.Draw(spriteBatch);
             chest2.Draw(spriteBatch);
+
+            chest3.Draw(spriteBatch);
             FireballManager.Draw(spriteBatch);
 
             enemyManager.draw(spriteBatch);
