@@ -38,6 +38,9 @@ namespace _3902sprint0
         private Mousecontroller Mouse;
         private Room currentRoom;
         public Vector2 AimDirection;
+        private bool invulnerable = false;
+        private double invulnerableTimer = 0;
+
         private InventoryHUD inventoryHUD;
 
         // The player's sprite, which is responsible for rendering the player character on the screen and managing animations.
@@ -85,7 +88,8 @@ namespace _3902sprint0
         {
             if (PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death))
                 return;
-
+            if (invulnerable)
+                return;
             Health -= amount;
             if (Health <= 0)
             {
@@ -123,7 +127,15 @@ namespace _3902sprint0
                 item.Update(gameTime);
             }
 
+            if (invulnerable)
+            {
+                invulnerableTimer -= gameTime.ElapsedGameTime.TotalSeconds;
 
+                if (invulnerableTimer <= 0)
+                {
+                    invulnerable = false;
+                }
+            }
 
             // Update the keyboard and mouse controllers to process input
             Keyboard.update();
@@ -228,6 +240,12 @@ namespace _3902sprint0
         public Vector2 getPosition()
         {
             return Location;
+        }
+
+        public void becomeInvulnerable()
+        {
+            invulnerable = true;
+            invulnerableTimer = 3.0;
         }
         /// <summary>
         /// Moves the player based on the provided movement direction and updates the player's location and velocity accordingly. This method calculates the change in position based on the elapsed time since the last frame, the player's acceleration, and the current movement direction. It also ensures that the player's velocity does not exceed the maximum speed and applies deceleration when no movement input is detected. Movement is resolved one axis at a time against the current Room so the player can slide along walls, gets stopped by solid tiles, pushes PushableBlockTile out of the way, and auto-unlocks locked doors when carrying the right key.

@@ -113,10 +113,11 @@ namespace _3902sprint0
             // Load the knight texture and initialize the player with it
             knightTexture = Content.Load<Texture2D>("Knight");
             Texture2D magicSwordTexture = Content.Load<Texture2D>("items/MagicSword");
-            Texture2D fireScrollTexture = Content.Load<Texture2D>("items/FireScroll");
+            Texture2D fireScrollTexture = Content.Load<Texture2D>("items/fireScroll");
             Texture2D chestTexture = Content.Load<Texture2D>("Chest");
             Texture2D fireballTexture = Content.Load<Texture2D>("Fireball");
             Texture2D detonateTexture = Content.Load<Texture2D>("Explosion");
+            Texture2D shieldOfInvulnerabilityTexture = Content.Load<Texture2D>("items/shieldOfInvulnerability");
             gameFont = Content.Load<SpriteFont>("GameFont");
 
             currentSwordHUD = new CurrentSwordHUD(GraphicsDevice, gameFont);
@@ -134,7 +135,7 @@ namespace _3902sprint0
 
 
             FireballManager = new fireballManager(fireballTexture, detonateTexture);
-            database = new itemDatabase(magicSwordTexture, fireScrollTexture, FireballManager);
+            database = new itemDatabase(magicSwordTexture, fireScrollTexture, FireballManager, shieldOfInvulnerabilityTexture);
             chest = new Chest(
                 new Vector2(600, 300),
                 inventory,

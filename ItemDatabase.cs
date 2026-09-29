@@ -12,10 +12,11 @@ namespace _3902sprint0
 
         public List<Iitem> items = new List<Iitem>();
 
-        public itemDatabase(Texture2D magicSwordTexture, Texture2D fireScrollTexture, fireballManager fireballManager)
+        public itemDatabase(Texture2D magicSwordTexture, Texture2D fireScrollTexture, fireballManager fireballManager, Texture2D shieldOfInvulnerabilityTexture)
         {
             items.Add(new MagicSword(magicSwordTexture));
-            items.Add(new FireScroll(fireScrollTexture, fireballManager));
+            items.Add(new fireScroll(fireScrollTexture, fireballManager));
+            items.Add(new shieldOfInvulnerability(shieldOfInvulnerabilityTexture));
         }
         public Iitem RandomItem()
         {
