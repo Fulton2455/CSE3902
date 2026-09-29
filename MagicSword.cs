@@ -43,14 +43,14 @@ namespace _3902sprint0
            
             if (toggleOn)
             {
-                player.Speed += 500;
-                player.Acceleration += 3500;
+                player.Speed += 300;
+                player.Acceleration += 2500;
                 toggleOn = false;
             }
             else if (!toggleOn)
             {
-                player.Speed -= 500;
-                player.Acceleration -= 3500;
+                player.Speed -= 300;
+                player.Acceleration -= 2500;
                 toggleOn = true;
             }
             

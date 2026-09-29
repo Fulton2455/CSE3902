@@ -128,7 +128,6 @@ namespace _3902sprint0
             // Update the keyboard and mouse controllers to process input
             Keyboard.update();
             Vector2 movementDirection = Keyboard.direction;
-            useItem(gameTime);
             // Update the mouse controller to determine the aim direction based on the player's current location
             Mouse.update(Location);
             AimDirection = Mouse.AimDirection;
@@ -142,6 +141,8 @@ namespace _3902sprint0
                 PlayerSprite1.UpdateSprite(gameTime);
                 return;
             }
+            useItem(gameTime);
+
             // If the player presses the die key, stop movement and set the sprite to the death animation (helped made by Chatgpt free)
             if (Keyboard.die())
             {
@@ -222,6 +223,11 @@ namespace _3902sprint0
             //}
             Terrain.getTerainEffect(this);
             return Terrain.Acceleration;
+        }
+
+        public Vector2 getPosition()
+        {
+            return Location;
         }
         /// <summary>
         /// Moves the player based on the provided movement direction and updates the player's location and velocity accordingly. This method calculates the change in position based on the elapsed time since the last frame, the player's acceleration, and the current movement direction. It also ensures that the player's velocity does not exceed the maximum speed and applies deceleration when no movement input is detected. Movement is resolved one axis at a time against the current Room so the player can slide along walls, gets stopped by solid tiles, pushes PushableBlockTile out of the way, and auto-unlocks locked doors when carrying the right key.

@@ -138,12 +138,14 @@ namespace _3902sprint0
             chest = new Chest(
                 new Vector2(600, 300),
                 inventory,
-                database
+                database,
+                player
              );
             chest2 = new Chest(
                new Vector2(800, 300),
                inventory,
-               database
+               database,
+               player
             );
             enemyBasicIdleTexture = Content.Load<Texture2D>("enemyBasicIdle");
 
