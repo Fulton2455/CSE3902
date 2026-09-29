@@ -12,7 +12,7 @@ namespace _3902sprint0
         void Update(GameTime gameTime);
         void ApplyEffect(Vector2 position);
 
-        void generateEntity(Vector2 position, Vector2 direction);
+        void generateEntity(Vector2 position, Vector2 direction, bool isHostile);
 
         void Reset();
         void Draw(SpriteBatch spriteBatch);

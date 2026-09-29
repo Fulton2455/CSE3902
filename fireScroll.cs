@@ -7,43 +7,39 @@ using System.Threading.Tasks;
 
 namespace _3902sprint0
 {
-    internal class FireScroll :Iitem
+    internal class FireScroll : Iitem
     {
         private float useTime = 3f;
         private float useSpeed = 3f;
 
         bool fireEffect = false;
-        private Fireball fireball;
+        private fireballManager fireballManager;
 
         public string Name { get; set; }
 
         public bool firstUse = true;
         public Texture2D Texture { get; }
-    public FireScroll(Texture2D texture, Fireball fireball)
-    {
-        Name = "Fire Scroll";
-        Texture = texture;
-        this.fireball = fireball;
-
+        public FireScroll(Texture2D texture, fireballManager fireballManager)
+        {
+            Name = "Fire Scroll";
+            Texture = texture;
+            this.fireballManager = fireballManager;
         }
         public void cooldownReset()
         {
-          
+
             useTime = 3f;
         }
 
 
         public void ApplyEffect(Player player)
         {
-            
-            
-           
-            fireball.generateEntity(
-            player.Location,
-           player.AimDirection
-       );
+
+            fireballManager.createFireball(1, player.Location, player.AimDirection, false);
+
+
         }
-     
+
 
         public void Update(GameTime gameTime)
         {

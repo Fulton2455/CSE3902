@@ -6,27 +6,25 @@ using System.Threading.Tasks;
 
 namespace _3902sprint0
 {
-    public class Fireball : Ientity
+    public class Fireball2 : Ientity
     {
         public Texture2D Texture { get; private set; }
         private Vector2 position;
         private double detonationTimer = 0;
         private FireballSprite fireballSprite;
-        private detonateSprite detonateSprite;
 
         private Vector2 direction;
 
-
-        private float speed = 400f;
+       
+        private float speed = 800f;
         private bool isActive = false;
 
         private float detonationTime = 1.5f;
-        public Fireball(Texture2D texture, FireballSprite fireballSprite,
-        detonateSprite detonateSprite)
+        public Fireball2(Texture2D texture, FireballSprite fireballSprite
+        )
         {
             Texture = texture;
             this.fireballSprite = fireballSprite;
-            this.detonateSprite = detonateSprite;
         }
         public void generateEntity(Vector2 position, Vector2 direction, bool isHostile)
         {
@@ -51,27 +49,24 @@ namespace _3902sprint0
                 if (detonationTimer >= detonationTime)
                 {
                     fireballSprite.deactivate();
-                    ApplyEffect(position);
+               
                     isActive = false;
-
+                   
                 }
-
+          
 
 
             }
             fireballSprite.UpdateSprite(gameTime);
-            detonateSprite.UpdateSprite(gameTime);
         }
         public void ApplyEffect(Vector2 position)
         {
             this.position = position;
-            detonateSprite.SetLocation(position);
-            detonateSprite.activate();
+
         }
         public void Draw(SpriteBatch spriteBatch)
         {
             fireballSprite.Draw(spriteBatch);
-            detonateSprite.Draw(spriteBatch);
         }
         public void Reset()
         {
