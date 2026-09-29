@@ -12,7 +12,9 @@ namespace _3902sprint0
     {
         // stores the current direction of movement based on keyboard input.
         public Vector2 direction  { get; private set; }
-        
+        private KeyboardState currentState;
+        private KeyboardState previousState;
+
 
 
         // starts the proccess of exiting the game if the escape key is pressed
@@ -49,57 +51,63 @@ namespace _3902sprint0
             }
             return "null";
         }
-            
 
-        
+
+
         public int items()
         {
-            
-            KeyboardState state = Keyboard.GetState();
-            if (state.IsKeyDown(Keys.D1) )
+            if (currentState.IsKeyDown(Keys.D1) &&
+                previousState.IsKeyUp(Keys.D1))
                 return 0;
 
-            if (state.IsKeyDown(Keys.D2) )
+            if (currentState.IsKeyDown(Keys.D2) &&
+                previousState.IsKeyUp(Keys.D2))
                 return 1;
 
-            if (state.IsKeyDown(Keys.D3) )
+            if (currentState.IsKeyDown(Keys.D3) &&
+                previousState.IsKeyUp(Keys.D3))
                 return 2;
 
-            if (state.IsKeyDown(Keys.D4) )
+            if (currentState.IsKeyDown(Keys.D4) &&
+                previousState.IsKeyUp(Keys.D4))
                 return 3;
 
-            if (state.IsKeyDown(Keys.D5))
+            if (currentState.IsKeyDown(Keys.D5) &&
+                previousState.IsKeyUp(Keys.D5))
                 return 4;
 
-            if (state.IsKeyDown(Keys.D6) )
+            if (currentState.IsKeyDown(Keys.D6) &&
+                previousState.IsKeyUp(Keys.D6))
                 return 5;
 
-            if (state.IsKeyDown(Keys.D7) )
+            if (currentState.IsKeyDown(Keys.D7) &&
+                previousState.IsKeyUp(Keys.D7))
                 return 6;
 
-            if (state.IsKeyDown(Keys.D8))
+            if (currentState.IsKeyDown(Keys.D8) &&
+                previousState.IsKeyUp(Keys.D8))
                 return 7;
 
             return -1;
-        
         }
         /// <summary>
         /// Updates the controller's state based on keyboard input.
         /// </summary>
         public void update()
         {
-            KeyboardState state = Keyboard.GetState();
+            previousState = currentState;
+             currentState = Keyboard.GetState();
             direction = Vector2.Zero;
-            if (state.IsKeyDown(Keys.W))
+            if (currentState.IsKeyDown(Keys.W))
                 direction += new Vector2(0, -1);
 
-            if (state.IsKeyDown(Keys.S))
+            if (currentState.IsKeyDown(Keys.S))
                 direction += new Vector2(0, 1);
 
-            if (state.IsKeyDown(Keys.A))
+            if (currentState.IsKeyDown(Keys.A))
                 direction += new Vector2(-1, 0);
 
-            if (state.IsKeyDown(Keys.D))
+            if (currentState.IsKeyDown(Keys.D))
                 direction += new Vector2(1, 0);
             // Normalize the direction vector to ensure consistent movement speed in all directions.
             if (direction != Vector2.Zero)
