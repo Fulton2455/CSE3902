@@ -35,8 +35,10 @@ namespace _3902sprint0
 
         public void ApplyEffect(Player player)
         {
+            Vector2 playerCeneter = new Vector2(player.Location.X, player.Location.Y + 40);
+            
 
-            fireballManager.createFireball(1, player.Location, player.AimDirection, false);
+            fireballManager.createFireball(1, playerCeneter, player.AimDirection, false);
 
 
         }

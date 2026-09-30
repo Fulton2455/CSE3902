@@ -175,6 +175,7 @@ namespace _3902sprint0
 
             LoadRoom();
             player.SetRoom(room);
+            FireballManager.SetRoom(room);
             enemyManager.SetRoom(room);
             enemyManager.RespawnEnemies(
                 EnemyType.Basic,
