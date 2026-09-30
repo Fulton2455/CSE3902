@@ -163,8 +163,10 @@ namespace _3902sprint0
             if (Keyboard.die())
             {
                 Velocity = Vector2.Zero;
+                TakeDamage(6);
                 PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Death);
                 PlayerSprite1.UpdateSprite(gameTime);
+                
                 return;
             }
             // If the player is in the attack animation, continue moving and updating the sprite until the animation finishes, then return to the appropriate state (walk or idle) (helped made by Chatgpt free)
@@ -367,6 +369,7 @@ namespace _3902sprint0
             
                 PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Death);
                 Velocity = Vector2.Zero;
+               
 
 
         }
@@ -374,6 +377,7 @@ namespace _3902sprint0
         {
 
             PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Walk);
+            Health = 6;
             
 
 
