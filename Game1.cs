@@ -157,7 +157,7 @@ namespace _3902sprint0
             enemyBasicRunningTexture = Content.Load<Texture2D>("enemyBasicRunning");
             enemyManager = new EnemyManager(player, enemyBasicRunningTexture, enemyBasicIdleTexture);
             player.SetEnemyManager(enemyManager);
-
+            
             Rectangle movementBounds =
                 new Rectangle(
                     0,
@@ -166,20 +166,20 @@ namespace _3902sprint0
                     DeviceManager3902.PreferredBackBufferHeight
                 );
             enemyManager.SetMovementBounds(movementBounds);
+            
+            chest.InitializeSprite(chestTexture);
+            chest2.InitializeSprite(chestTexture);
+
+            LoadRoom();
+            player.SetRoom(room);
+            enemyManager.SetRoom(room);
             enemyManager.RespawnEnemies(
                 EnemyType.Basic,
                 EnemyType.Basic,
                 EnemyType.Chaser,
                 EnemyType.Fleeing,
                 EnemyType.Erratic);
-            chest.InitializeSprite(chestTexture);
-            chest2.InitializeSprite(chestTexture);
 
-            LoadRoom();
-            player.SetRoom(room);
-
-          
-           
 
             base.LoadContent();
         }
@@ -203,7 +203,7 @@ namespace _3902sprint0
             chest2.Update(gameTime);
             player.Update(gameTime);
             fireball.Update(gameTime);
-            enemyManager.update(gameTime);
+            enemyManager.update(gameTime, player.GetTerrainAcceleration());
 
             base.Update(gameTime);
         }

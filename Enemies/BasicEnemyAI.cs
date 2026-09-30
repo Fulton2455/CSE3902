@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Microsoft.Xna.Framework;
 
 namespace _3902sprint0
@@ -28,7 +29,7 @@ namespace _3902sprint0
 			return (float)(1.0 + random.NextDouble() * 3.0);
 		}
 
-		public void Update(Enemy enemy, Player player, GameTime gameTime)
+		public void Update(Enemy enemy, Player player, GameTime gameTime, float terrainAcceleration)
 		{
 			float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -39,7 +40,11 @@ namespace _3902sprint0
 			}
 			if (!isPaused)
 			{
-				enemy.Move(gameTime);
+				enemy.Move(gameTime, terrainAcceleration);
+			}
+			else
+			{
+				enemy.MoveInDirection(Vector2.Zero, gameTime, terrainAcceleration);
 			}
 		}
 		private void ChangeBehavior(Enemy enemy)

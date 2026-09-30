@@ -211,7 +211,7 @@ namespace _3902sprint0
         /// Calculates the terrain acceleration for the player, which affects how quickly the player can change their velocity. This method is designed to accommodate different terrains in the future, allowing for varied movement mechanics based on the environment. Currently, it returns a fixed acceleration value of 500f.
         /// </summary>
         /// <returns></returns>
-        private  float GetTerrainAcceleration()
+        public float GetTerrainAcceleration()
         {
 
             //will build in a way to have differnt terrains later
