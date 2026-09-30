@@ -34,6 +34,16 @@ namespace _3902sprint0
             return false;
             
         }
+        public bool revive()
+        {
+            KeyboardState state = Keyboard.GetState();
+            if (state.IsKeyDown(Keys.R))
+            {
+                return true;
+            }
+            return false;
+
+        }
         public string terrain()
         {
             KeyboardState state = Keyboard.GetState();

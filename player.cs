@@ -149,9 +149,13 @@ namespace _3902sprint0
             // If the player is in the death animation, stop movement and update the sprite without changing its state (helped made by Chatgpt free)
             if (PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death))
             {
-                Velocity = Vector2.Zero;
-                PlayerSprite1.UpdateSprite(gameTime);
-                return;
+                if (!Keyboard.revive())
+                {
+                    Velocity = Vector2.Zero;
+                    PlayerSprite1.UpdateSprite(gameTime);
+                    return;
+                }
+                Revive();
             }
             useItem(gameTime);
 
@@ -363,6 +367,14 @@ namespace _3902sprint0
             
                 PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Death);
                 Velocity = Vector2.Zero;
+
+
+        }
+        private void Revive()
+        {
+
+            PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Walk);
+            
 
 
         }
