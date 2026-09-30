@@ -1,4 +1,6 @@
-﻿readme
+﻿#
+## SPRINT_0
+
 My program opens up a window that allows a player to move around within it.
 The player has acceleration built in and is able to build velocity in 8 directions cardinals and their 45 degree angles until max speedos reached this should go from 0-100 in .2 seconds if my math is right.
 Holding the leftmousebutton starts an attack animation and hitting k kills the character.
@@ -13,3 +15,23 @@ item effects are reset when swapping terrains.
 Chatgpt was used heavily to help me debug things as well as helped  stop other animations from interrupting attack and death animations
 it also slightly helped me with the movement logic (deltatime) though it only wrote one line that i later modified and expanded upon. 
 I also used it to find useful monogame functions such as spriteeffects. 
+
+
+## SPRINT_2
+
+For Sprint 2, the group set out to implement a good portion of the functionality necessary for the project.
+Items that were planned to be tackled as well as the group members in charge of implementing them and their
+reviewer: 
+
+Environment Items: Implemented by Connor, Reviewed by X
+Inventory HUD Items: Implemented by Jackson, Reviewed by Y
+HUD Elements: Implemented by Xu, Reviewed by Z
+Enemies: Implemented by Benjamin, Reviewed by A 
+Sound Effects: Implemented by Erik, Reviewed by B 
+
+Program controls remain unchanged from Sprint 0.
+
+There is a known issue with the collision detection between the pushable block and the
+player as well as the wall and the pushable block. 
+
+
