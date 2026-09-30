@@ -160,7 +160,7 @@ namespace _3902sprint0
             enemyBasicRunningTexture = Content.Load<Texture2D>("enemyBasicRunning");
             enemyManager = new EnemyManager(player, enemyBasicRunningTexture, enemyBasicIdleTexture);
             player.SetEnemyManager(enemyManager);
-            
+
             Rectangle movementBounds =
                 new Rectangle(
                     0,
@@ -169,8 +169,8 @@ namespace _3902sprint0
                     DeviceManager3902.PreferredBackBufferHeight
                 );
             enemyManager.SetMovementBounds(movementBounds);
-            
 
+            
         
 
             LoadRoom();
