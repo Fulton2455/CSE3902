@@ -11,7 +11,7 @@ namespace _3902sprint0
     {
         private float useTime = 0f;
         private float useSpeed = 1.5f;
-
+        public bool IsOffCooldown => true;
         private float toggleTime = 0f;
         private float toggleSpeed = .05f;
 

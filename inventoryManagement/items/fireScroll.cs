@@ -11,7 +11,7 @@ namespace _3902sprint0
     {
         private float useTime = 3f;
         private float useSpeed = 3f;
-
+       
         bool fireEffect = false;
         private fireballManager fireballManager;
 
@@ -19,6 +19,7 @@ namespace _3902sprint0
 
         public bool firstUse = true;
         public Texture2D Texture { get; }
+        public bool IsOffCooldown => useTime >= useSpeed;
         public fireScroll(Texture2D texture, fireballManager fireballManager)
         {
             Name = "Fire Scroll";

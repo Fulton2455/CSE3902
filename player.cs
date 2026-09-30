@@ -347,9 +347,11 @@ namespace _3902sprint0
             if (itemNumber >= 0 && itemNumber < inventory.items.Count)
             {
                 Iitem item = inventory.items[itemNumber];
-
-                item.Use(this, gameTime);
-                inventoryHUD.FlashSlot(itemNumber);
+                if (item.IsOffCooldown)
+                {
+                    item.Use(this, gameTime);
+                    inventoryHUD.FlashSlot(itemNumber);
+                }
             }
 
         }
