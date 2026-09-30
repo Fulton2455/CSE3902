@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace _3902sprint0
 {
-    internal class Fireball : Ientity
+    public class Fireball : Ientity
     {
         public Texture2D Texture { get; private set; }
         private Vector2 position;
@@ -16,7 +16,7 @@ namespace _3902sprint0
 
         private Vector2 direction;
 
-       
+
         private float speed = 400f;
         private bool isActive = false;
 
@@ -28,7 +28,7 @@ namespace _3902sprint0
             this.fireballSprite = fireballSprite;
             this.detonateSprite = detonateSprite;
         }
-        public void generateEntity(Vector2 position, Vector2 direction)
+        public void generateEntity(Vector2 position, Vector2 direction, bool isHostile)
         {
             this.position = position;
             this.direction = direction;
@@ -53,9 +53,9 @@ namespace _3902sprint0
                     fireballSprite.deactivate();
                     ApplyEffect(position);
                     isActive = false;
-                   
+
                 }
-          
+
 
 
             }

@@ -18,6 +18,7 @@ namespace _3902sprint0
     {
 
         // Resources for drawing.
+        private fireballManager FireballManager;
         private GraphicsDeviceManager DeviceManager3902;
         private Texture2D knightTexture;
         private SpriteBatch spriteBatch;
@@ -25,11 +26,13 @@ namespace _3902sprint0
         private Mousecontroller Mouse;
         private KeyboardController Keyboard;
         private Fireball fireball;
+        private Fireball2 fireball2;
 
         private Inventory inventory;
         private itemDatabase database;
         private Chest chest;
         private Chest chest2;
+        private Chest chest3;
 
         private Texture2D enemyBasicRunningTexture;
 
@@ -88,16 +91,16 @@ namespace _3902sprint0
         protected override void Initialize()
         {
 
-            
+
             Mouse = new Mousecontroller();
             Keyboard = new KeyboardController();
 
-           
+
 
             IsMouseVisible = true;
             enemies = new List<Enemy>();
             base.Initialize();
-            
+
 
         }
 
@@ -111,10 +114,11 @@ namespace _3902sprint0
             // Load the knight texture and initialize the player with it
             knightTexture = Content.Load<Texture2D>("Knight");
             Texture2D magicSwordTexture = Content.Load<Texture2D>("items/MagicSword");
-            Texture2D fireScrollTexture = Content.Load<Texture2D>("items/FireScroll");
+            Texture2D fireScrollTexture = Content.Load<Texture2D>("items/fireScroll");
             Texture2D chestTexture = Content.Load<Texture2D>("Chest");
             Texture2D fireballTexture = Content.Load<Texture2D>("Fireball");
             Texture2D detonateTexture = Content.Load<Texture2D>("Explosion");
+            Texture2D shieldOfInvulnerabilityTexture = Content.Load<Texture2D>("items/shieldOfInvulnerability");
             gameFont = Content.Load<SpriteFont>("GameFont");
 
             currentSwordHUD = new CurrentSwordHUD(GraphicsDevice, gameFont);
@@ -127,30 +131,29 @@ namespace _3902sprint0
 
             player = new Player(new Vector2(300, 300), inventory, inventoryHUD);
             player.InitializeSprite(knightTexture);
-            
+
             currentPlayer = player;
-            FireballSprite fireballSprite = new FireballSprite();
-            detonateSprite detonateSprite = new detonateSprite();
 
-            fireballSprite.Initialize(fireballTexture);
-            detonateSprite.Initialize(detonateTexture);
 
-            fireball = new Fireball(
-             fireballTexture,
-             fireballSprite,
-             detonateSprite
-            );
-
-            database = new itemDatabase(magicSwordTexture, fireScrollTexture, fireball);
+            FireballManager = new fireballManager(fireballTexture, detonateTexture);
+            database = new itemDatabase(magicSwordTexture, fireScrollTexture, FireballManager, shieldOfInvulnerabilityTexture);
             chest = new Chest(
                 new Vector2(600, 300),
                 inventory,
-                database
+                database,
+                player
              );
             chest2 = new Chest(
                new Vector2(800, 300),
                inventory,
-               database
+               database,
+               player
+            );
+            chest3 = new Chest(
+               new Vector2(400, 300),
+               inventory,
+               database,
+               player
             );
             enemyBasicIdleTexture = Content.Load<Texture2D>("enemyBasicIdle");
 
@@ -179,6 +182,15 @@ namespace _3902sprint0
                 EnemyType.Chaser,
                 EnemyType.Fleeing,
                 EnemyType.Erratic);
+            chest.InitializeSprite(chestTexture);
+            chest2.InitializeSprite(chestTexture);
+            chest3.InitializeSprite(chestTexture);
+
+
+            LoadRoom();
+            player.SetRoom(room);
+
+
 
 
             base.LoadContent();
@@ -201,9 +213,11 @@ namespace _3902sprint0
             room.Update(gameTime);
             chest.Update(gameTime);
             chest2.Update(gameTime);
+
+            chest3.Update(gameTime);
             player.Update(gameTime);
             fireball.Update(gameTime);
-            enemyManager.update(gameTime, player.GetTerrainAcceleration());
+            enemyManager.update(gameTime);
 
             base.Update(gameTime);
         }
@@ -223,7 +237,9 @@ namespace _3902sprint0
             player.Draw(spriteBatch);
             chest.Draw(spriteBatch);
             chest2.Draw(spriteBatch);
-            fireball.Draw(spriteBatch);
+
+            chest3.Draw(spriteBatch);
+            FireballManager.Draw(spriteBatch);
 
             enemyManager.draw(spriteBatch);
             inventoryHUD.Draw(spriteBatch, GraphicsDevice, inventory, gameTime);
@@ -236,8 +252,8 @@ namespace _3902sprint0
 
             spriteBatch.End();
             base.Draw(gameTime);
-         }
-    
+        }
+
         private Texture2D CreatePlaceholderTexture(Color color)
         {
             Texture2D texture = new Texture2D(GraphicsDevice, 1, 1);
@@ -259,7 +275,7 @@ namespace _3902sprint0
                 room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(x + 32, 32)));
                 room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(x + 32, screenHeight - 32)));
             }
-           for (int y = 0; y < screenHeight; y += 64)
+            for (int y = 0; y < screenHeight; y += 64)
             {
                 room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(32, y + 32)));
                 room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(screenWidth - 32, y + 32)));
@@ -270,7 +286,7 @@ namespace _3902sprint0
             room.AddTile(TileFactory.CreateTile(TileType.PushableBlock, environmentSpriteSheet, new Vector2(900, 500)));
             room.AddTile(TileFactory.CreateTile(TileType.Fire, environmentSpriteSheet, new Vector2(1100, 500)));
             room.AddTile(TileFactory.CreateTile(TileType.BlueGap, environmentSpriteSheet, new Vector2(1300, 500)));
-            StairsTile stairs = (StairsTile)TileFactory.CreateTile(TileType.Stairs,environmentSpriteSheet,new Vector2(1500, 500));
+            StairsTile stairs = (StairsTile)TileFactory.CreateTile(TileType.Stairs, environmentSpriteSheet, new Vector2(1500, 500));
             stairs.Traversed += OnStairsTraversed;
 
             room.AddTile(stairs);

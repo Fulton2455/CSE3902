@@ -16,6 +16,7 @@ namespace _3902sprint0
 
         void cooldownReset();
         void Update(GameTime gameTime);
+        bool IsOffCooldown { get; }
 
     }
 }

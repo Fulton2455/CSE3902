@@ -11,10 +11,13 @@ namespace _3902sprint0
     {
         private float useTime = 0f;
         private float useSpeed = 1.5f;
+        public bool IsOffCooldown => true;
+        private float toggleTime = 0f;
+        private float toggleSpeed = .05f;
 
         public string Name { get; set; }
 
-        public bool firstUse = true;
+        public bool toggleOn = true;
         public Texture2D Texture { get; }
     public MagicSword(Texture2D texture)
     {
@@ -23,7 +26,7 @@ namespace _3902sprint0
     }
         public void cooldownReset()
         {
-            firstUse = true;
+            toggleOn = true;
         }
         public void Update(GameTime gameTime)
         {
@@ -37,29 +40,30 @@ namespace _3902sprint0
 
         public void ApplyEffect(Player player)
         {
-            player.Speed += 500;
-            player.Acceleration += 3500;
-            firstUse = false;
+           
+            if (toggleOn)
+            {
+                player.Speed += 300;
+                player.Acceleration += 2500;
+                toggleOn = false;
+            }
+            else if (!toggleOn)
+            {
+                player.Speed -= 300;
+                player.Acceleration -= 2500;
+                toggleOn = true;
+            }
+            
         }
     
     public void Use(Player player, GameTime gameTime)
         {
-            useTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (useTime >= useSpeed)
-            {
-                useTime = 0f;
-                //affect code todo
-
-            }
-            Debug.WriteLine("4");
-            if (firstUse)
-            {
-                ApplyEffect(player);
-            }
+           
+                ApplyEffect(player);}
             // Implement the active ability of the magic sword
             // For example, perform a special attack or cast a spell
-        }
+    }
 
 
 }
-}
+

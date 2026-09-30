@@ -9,7 +9,8 @@ namespace _3902sprint0
     public class InventoryHUD
     {
         private Texture2D pixel;
-
+        private bool[] previousCooldownStates = new bool[8];
+        private bool cooldownFlash = false;
         private int boxWidth = 100;
         private int boxHeight = 100;
         private int spacing = 10;
@@ -22,6 +23,14 @@ namespace _3902sprint0
         {
             flashSlot = slot;
             flashTimer = 0.2f;
+            cooldownFlash = false;
+        }
+
+        public void FlashSlotCooldown(int slot)
+        {
+            flashSlot = slot;
+            flashTimer = 0.2f;
+            cooldownFlash = true;
         }
 
         public InventoryHUD(GraphicsDevice graphicsDevice)
@@ -47,7 +56,10 @@ namespace _3902sprint0
                 Color boxColor = Color.Black * 0.5f;
                 if (i == flashSlot && flashTimer > 0)
                 {
-                    boxColor = Color.White;
+                    if (cooldownFlash)
+                        boxColor = Color.Blue;
+                    else
+                        boxColor = Color.White;
                 }
 
                 spriteBatch.Draw(
@@ -67,6 +79,15 @@ namespace _3902sprint0
             itemNum = 0;
             foreach (Iitem item in inventory.items)
             {
+                bool currentlyOffCooldown = item.IsOffCooldown;
+
+                if (currentlyOffCooldown && !previousCooldownStates[itemNum])
+                {
+                    FlashSlotCooldown(itemNum);
+                }
+
+                previousCooldownStates[itemNum] = currentlyOffCooldown;
+
                 int x = 20 + itemNum * (boxWidth + spacing);
                 int y = graphicsDevice.Viewport.Height - boxHeight - 20;
                 Rectangle itemBox = new Rectangle(

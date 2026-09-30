@@ -12,18 +12,19 @@ namespace _3902sprint0
     {
         public Vector2 Location;
         public bool isOpen = false;
-       
 
+        private Player player;
         private Mousecontroller Mouse;
         private ChestSprite ChestSprite1;
         private Inventory inventory;
         private itemDatabase database;
 
-        public Chest(Vector2 startingLocation, Inventory inventory, itemDatabase database)
+        public Chest(Vector2 startingLocation, Inventory inventory, itemDatabase database, Player player)
         {
             Location = startingLocation;
             ChestSprite1 = new ChestSprite();
             Mouse = new Mousecontroller();
+            this.player = player;
 
             this.inventory = inventory;
             this.database = database;
@@ -51,29 +52,31 @@ namespace _3902sprint0
         public void generateItem()
         {
             Vector2 mousePosition = Mouse.RightClickPressed();
-
+           
             if (mousePosition != Vector2.Zero && !isOpen)
             {
-                Debug.WriteLine("2");
-
-                if (mousePosition.X >= Location.X &&
+                float distance = Vector2.Distance(player.getPosition(), Location);
+                if (distance <= 200)
+                {
+                    if (mousePosition.X >= Location.X &&
                     mousePosition.X <= Location.X + 48 &&
                     mousePosition.Y >= Location.Y &&
                     mousePosition.Y <= Location.Y + 32)
-                {
-                    Debug.WriteLine("3");
+                    {
+                        Debug.WriteLine("3");
 
-                    Iitem item = database.RandomItem();
-                    inventory.AddItem(item);
-                    database.items.Remove(item);
-                    //must add to deleted list in future
+                        Iitem item = database.RandomItem();
+                        inventory.AddItem(item);
+                        database.items.Remove(item);
+                        //must add to deleted list in future
 
-                    Debug.WriteLine("Item generated at chest location: " + Location);
+                        Debug.WriteLine("Item generated at chest location: " + Location);
 
-                    isOpen = true;
+                        isOpen = true;
 
-                    // Tell the sprite to play the opening animation
-                    ChestSprite1.Open();
+                        // Tell the sprite to play the opening animation
+                        ChestSprite1.Open();
+                    }
                 }
             }
         }
