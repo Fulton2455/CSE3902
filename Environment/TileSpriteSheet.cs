@@ -5,9 +5,9 @@ using Microsoft.Xna.Framework;
 
 namespace _3902sprint0.Environment
 {
-    //
-    /// Maps each TileType to its cell in environment sprite sheet.
-    //
+    
+    // Maps each TileType to its cell in environment sprite sheet.
+   
     public static class TileSpriteSheet
     {
         public const int CellSize = 64;
@@ -22,7 +22,7 @@ namespace _3902sprint0.Environment
             { TileType.BlueGap, new Point(1, 1) },
             { TileType.Stairs, new Point(2, 1) },
             { TileType.OpenDoor, new Point(3, 1) },
-            { TileType.BombedWallOpening, new Point(0, 2) }, // closed state
+            { TileType.BombedWallOpening, new Point(0, 2) },
             { TileType.KeyholeLockedDoor, new Point(2, 2) },
             { TileType.DiamondLockedDoor, new Point(3, 2) },
         };
