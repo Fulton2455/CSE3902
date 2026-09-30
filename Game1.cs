@@ -170,8 +170,6 @@ namespace _3902sprint0
                 );
             enemyManager.SetMovementBounds(movementBounds);
             
-            chest.InitializeSprite(chestTexture);
-            chest2.InitializeSprite(chestTexture);
 
             LoadRoom();
             player.SetRoom(room);
@@ -187,8 +185,6 @@ namespace _3902sprint0
             chest3.InitializeSprite(chestTexture);
 
 
-            LoadRoom();
-            player.SetRoom(room);
 
 
 
@@ -216,8 +212,10 @@ namespace _3902sprint0
 
             chest3.Update(gameTime);
             player.Update(gameTime);
-            fireball.Update(gameTime);
-            enemyManager.update(gameTime);
+;
+            FireballManager.Update(gameTime);
+
+            enemyManager.update(gameTime, player.GetTerrainAcceleration());
 
             base.Update(gameTime);
         }
