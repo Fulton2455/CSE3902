@@ -37,7 +37,7 @@ namespace _3902sprint0
         public bool revive()
         {
             KeyboardState state = Keyboard.GetState();
-            if (state.IsKeyDown(Keys.R))
+            if (state.IsKeyDown(Keys.Q))
             {
                 return true;
             }

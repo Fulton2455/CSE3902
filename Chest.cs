@@ -56,7 +56,7 @@ namespace _3902sprint0
             if (mousePosition != Vector2.Zero && !isOpen)
             {
                 float distance = Vector2.Distance(player.getPosition(), Location);
-                if (distance <= 200)
+                if (distance <= 300)
                 {
                     if (mousePosition.X >= Location.X &&
                     mousePosition.X <= Location.X + 48 &&

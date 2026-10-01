@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using System;
 
 namespace _3902sprint0
 {
@@ -7,6 +7,7 @@ namespace _3902sprint0
     {
         private static readonly Random random = new Random();
         private fireballManager fireballManager;
+
 
         private bool isPaused;
         private float stateTimer;
@@ -36,10 +37,11 @@ namespace _3902sprint0
         private void shootFireball(fireballManager fireballManager, Player player, Enemy enemy)
         {
             Vector2 direction = player.getPosition() - enemy.Position;
+            Vector2 enemyCenter = new Vector2(enemy.Position.X -40, enemy.Position.Y);
             if (direction != Vector2.Zero)
             {
                 direction.Normalize();
-                fireballManager.createFireball(2,enemy.Position, direction,true);
+                fireballManager.createFireball(2, enemyCenter, direction,true);
             }
         }
 
@@ -52,8 +54,8 @@ namespace _3902sprint0
             stateTimer -= elapsedSeconds;
             if (stateTimer <= 0)
             {
-                ChangeBehavior(enemy);
-                shootFireball(fireballManager, player, enemy);
+                ChangeBehavior(enemy, player);
+                
             }
             if (!isPaused)
             {
@@ -69,12 +71,15 @@ namespace _3902sprint0
 
             }
         }
-        private void ChangeBehavior(Enemy enemy)
+        private void ChangeBehavior(Enemy enemy, Player player)
         {
             if (isPaused)
             {
                 isPaused = false;
                 enemy.SetDirection(GetRandomDirection());
+                float distance = Vector2.Distance(player.getPosition(), enemy.Position);
+                if (distance <= 950)
+                    shootFireball(fireballManager, player, enemy);
 
                 stateTimer = GetRandomMoveTime();
             }
@@ -82,6 +87,7 @@ namespace _3902sprint0
             {
                 isPaused = true;
                 stateTimer = GetRandomPauseTime();
+                
             }
 
         }

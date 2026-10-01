@@ -44,6 +44,8 @@ namespace _3902sprint0
         private Vector2 velocity;
         private Room room;
 
+
+
         public bool IsPaused
         {
             get
