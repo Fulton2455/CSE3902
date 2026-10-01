@@ -16,7 +16,7 @@ namespace _3902sprint0
         private Vector2 direction;
 
        
-        private float speed = 800f;
+        private float speed = 600f;
         private bool isActive = false;
 
         private float detonationTime = 1.5f;

@@ -5,13 +5,14 @@ namespace _3902sprint0
 {
 	public static class EnemyCreator
 	{
-		public static Enemy CreateEnemy(
+        public static Enemy CreateEnemy(
 
 			EnemyType enemyType,
 			Texture2D basicRunningTexture,
 			Texture2D basicIdleTexture,
 			Rectangle movementBounds,
-			Room room)
+			Room room,
+            fireballManager fireballManager)
 		{
 			IEnemyAI enemyAI;
 			IEnemyTileInteraction tileInteraction;
@@ -51,7 +52,7 @@ namespace _3902sprint0
                     idleTexture = basicIdleTexture;
 					break;
 				case EnemyType.Fleeing:
-					enemyAI = new FleeingEnemyAI();
+					enemyAI = new FleeingEnemyAI(fireballManager);
                     tileInteraction = new GroundEnemyTileInteraction();
                     health = 1;
                     damage = 3;

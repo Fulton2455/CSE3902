@@ -245,7 +245,8 @@ namespace _3902sprint0
 
         public Vector2 getPosition()
         {
-            return Location;
+            Vector2 position = new Vector2(Location.X + Width / 2, Location.Y + Height / 2);
+            return position;
         }
 
         public void becomeInvulnerable()

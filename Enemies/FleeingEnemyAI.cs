@@ -6,6 +6,7 @@ namespace _3902sprint0
     public class FleeingEnemyAI : IEnemyAI
     {
         private static readonly Random random = new Random();
+        private fireballManager fireballManager;
 
         private bool isPaused;
         private float stateTimer;
@@ -17,15 +18,29 @@ namespace _3902sprint0
                 return isPaused;
             }
         }
-        public FleeingEnemyAI()
+        public FleeingEnemyAI(fireballManager fireballManager)
         {
+            this.fireballManager = fireballManager;
+
             isPaused = true;
             stateTimer = GetRandomMoveTime();
         }
 
+        
+
         private float GetRandomMoveTime()
         {
             return (float)(1.0 + random.NextDouble() * 2.0);
+        }
+
+        private void shootFireball(fireballManager fireballManager, Player player, Enemy enemy)
+        {
+            Vector2 direction = player.getPosition() - enemy.Position;
+            if (direction != Vector2.Zero)
+            {
+                direction.Normalize();
+                fireballManager.createFireball(2,enemy.Position, direction,true);
+            }
         }
 
         public void Update(Enemy enemy, Player player, GameTime gameTime, float terrainAcceleration)
@@ -38,6 +53,7 @@ namespace _3902sprint0
             if (stateTimer <= 0)
             {
                 ChangeBehavior(enemy);
+                shootFireball(fireballManager, player, enemy);
             }
             if (!isPaused)
             {
@@ -50,6 +66,7 @@ namespace _3902sprint0
             else
             {
                 enemy.MoveInDirection(Vector2.Zero, gameTime, terrainAcceleration);
+
             }
         }
         private void ChangeBehavior(Enemy enemy)

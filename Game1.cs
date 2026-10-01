@@ -158,7 +158,7 @@ namespace _3902sprint0
             enemyBasicIdleTexture = Content.Load<Texture2D>("enemyBasicIdle");
 
             enemyBasicRunningTexture = Content.Load<Texture2D>("enemyBasicRunning");
-            enemyManager = new EnemyManager(player, enemyBasicRunningTexture, enemyBasicIdleTexture);
+            enemyManager = new EnemyManager(player, enemyBasicRunningTexture, enemyBasicIdleTexture, FireballManager);
             player.SetEnemyManager(enemyManager);
 
             Rectangle movementBounds =

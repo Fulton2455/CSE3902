@@ -9,7 +9,9 @@ namespace _3902sprint0
 	{
 		private readonly List<Enemy> enemies;
 
-		private readonly Texture2D runningTexture;
+        private  fireballManager fireballManager;
+
+        private readonly Texture2D runningTexture;
         private readonly Texture2D idleTexture;
 
 		private readonly Player player;
@@ -23,11 +25,13 @@ namespace _3902sprint0
 		public EnemyManager(
 			Player player,
 			Texture2D runningTexture,
-			Texture2D idleTexture)
+			Texture2D idleTexture,
+			fireballManager fireballManager)
 		{
 			this.player = player;
 			this.runningTexture = runningTexture;
 			this.idleTexture = idleTexture;
+			this.fireballManager = fireballManager;
 
 			enemies = new List<Enemy>();
 		}
@@ -51,7 +55,8 @@ namespace _3902sprint0
 					runningTexture, 
 					idleTexture, 
 					movementBounds,
-					room);
+					room,
+					fireballManager);
                 enemies.Add(enemy);
             }
 		}
