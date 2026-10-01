@@ -1,4 +1,5 @@
-﻿using System;
+﻿using _3902sprint0.Environment;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,17 +15,21 @@ namespace _3902sprint0
         private FireballSprite fireballSprite;
 
         private Vector2 direction;
-
+        private Room room;
        
         private float speed = 600f;
         private bool isActive = false;
 
+        private IEnemyTileInteraction tileInteraction;
+
         private float detonationTime = 1.5f;
-        public Fireball2(Texture2D texture, FireballSprite fireballSprite
+        public Fireball2(Texture2D texture, FireballSprite fireballSprite, Room room
         )
         {
             Texture = texture;
             this.fireballSprite = fireballSprite;
+            this.room = room;
+            this.tileInteraction = new FlyingEnemyTileInteraction();
         }
         public void generateEntity(Vector2 position, Vector2 direction, bool isHostile)
         {
@@ -36,12 +41,14 @@ namespace _3902sprint0
             fireballSprite.SetLocation(position);
             fireballSprite.SetDirection(this.direction);
             fireballSprite.activate();
+            
         }
         public void Update(GameTime gameTime)
         {
             if (isActive)
             {
-                position += direction * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                move(gameTime);
+                
                 detonationTimer += gameTime.ElapsedGameTime.TotalSeconds;
                 fireballSprite.SetLocation(position);
 
@@ -72,6 +79,26 @@ namespace _3902sprint0
         {
             isActive = false;
             fireballSprite.deactivate();
+        }
+        private void move(GameTime gameTime)
+        {
+            float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Vector2 attemptedPosition = position + direction * elapsedTime * speed;
+            Rectangle bounds = new Rectangle((int)(attemptedPosition.X + 64),
+                (int)(attemptedPosition.Y + 16),
+                3,
+                3
+                );
+            if (room.CanEnter(bounds, direction, null, tileInteraction))
+            {
+                position = attemptedPosition;
+
+            }
+            else
+            {
+                detonationTimer = 1.5f;
+                speed = 0;
+            }
         }
     }
 

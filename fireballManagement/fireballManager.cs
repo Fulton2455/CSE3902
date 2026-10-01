@@ -1,4 +1,5 @@
-﻿using System;
+﻿using _3902sprint0.Environment;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ namespace _3902sprint0
         private List<Fireball2> fireballs2;
         private Texture2D fireballTexture;
         private Texture2D detonateTexture;
+        private Room room;
 
         public fireballManager(Texture2D fireballTexture, Texture2D detonateTexture)
         {
@@ -23,6 +25,11 @@ namespace _3902sprint0
           
 
         }
+        public void SetRoom(Room room)
+        {
+            this.room = room;
+        }
+
 
         public void createFireball(int fireballtype, Vector2 position, Vector2 direction, bool isHostile)
         {
@@ -35,7 +42,7 @@ namespace _3902sprint0
 
                 fireballSprite.Initialize(fireballTexture);
                 detonateSprite.Initialize(detonateTexture);
-                Fireball newFireball = new Fireball(fireballTexture, fireballSprite, detonateSprite);
+                Fireball newFireball = new Fireball(fireballTexture, fireballSprite, detonateSprite, room);
                 newFireball.generateEntity(position, direction, isHostile);
                 fireballs.Add(newFireball);
             }
@@ -43,7 +50,7 @@ namespace _3902sprint0
             {
                 FireballSprite fireballSprite = new FireballSprite();
                 fireballSprite.Initialize(fireballTexture);
-                Fireball2 newFireball2 = new Fireball2(fireballTexture, fireballSprite);
+                Fireball2 newFireball2 = new Fireball2(fireballTexture, fireballSprite, room);
                 newFireball2.generateEntity(position, direction, isHostile);
                 fireballs2.Add(newFireball2);
             }
