@@ -92,6 +92,11 @@ namespace _3902sprint0
                 Health = 0;
                 Die();
             }
+            else
+            {
+                // Play hurt sound when taking non-lethal damage
+                SoundManager.PlayPlayerHurt();
+            }
         }
 
         /// <summary>
@@ -334,7 +339,7 @@ namespace _3902sprint0
         /// </summary>
         private void Die()
         {
-            
+                SoundManager.PlayPlayerDeath();
                 PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Death);
                 Velocity = Vector2.Zero;
 

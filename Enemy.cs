@@ -378,5 +378,11 @@ namespace _3902sprint0
                 Color.White
             );
         }
+
+        public void TakeDamage(int damageAmount)
+        {
+            health -= damageAmount;
+            SoundManager.PlayEnemyHit();
+        }
     }
 }

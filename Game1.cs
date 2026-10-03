@@ -108,6 +108,9 @@ namespace _3902sprint0
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            // Initialize the SoundManager to load all audio files into memory
+            SoundManager.LoadContent(Content);
+
             // Load the knight texture and initialize the player with it
             knightTexture = Content.Load<Texture2D>("Knight");
             Texture2D magicSwordTexture = Content.Load<Texture2D>("items/MagicSword");

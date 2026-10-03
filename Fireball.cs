@@ -30,6 +30,8 @@ namespace _3902sprint0
         }
         public void generateEntity(Vector2 position, Vector2 direction)
         {
+            SoundManager.PlayFireballShoot();
+
             this.position = position;
             this.direction = direction;
             this.direction.Normalize();
@@ -64,6 +66,8 @@ namespace _3902sprint0
         }
         public void ApplyEffect(Vector2 position)
         {
+            SoundManager.PlayExplosion();
+
             this.position = position;
             detonateSprite.SetLocation(position);
             detonateSprite.activate();

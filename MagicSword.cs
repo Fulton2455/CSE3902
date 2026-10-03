@@ -44,6 +44,8 @@ namespace _3902sprint0
     
     public void Use(Player player, GameTime gameTime)
         {
+            SoundManager.PlaySwordSwing();
+
             useTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (useTime >= useSpeed)
             {
