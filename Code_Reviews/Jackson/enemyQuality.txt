@@ -1,0 +1,16 @@
+﻿Review author Jackson wisecup
+date 10/3/2026
+Sprint 2
+files enemyManager, enemyCreator
+by benjamin wisecup
+took 20 minutes to review
+
+quality comments
+bothe enemy manager and enemy creator work well and are seperated neatly. creator handles the creation of enemies and all their attributes and manager handles the updating and drawing.
+while the manager has no issues in my opinion the creator suffers from a bloated switch statement that could cause problems when adding new enemies. this includes a lot of repeated code, i know he has plans to 
+change this though so its not the largest issue. i know the current textures that are duplicated for instance wll all be changed to others.
+a hypothetical change would be to  give each enemy its own spawning behavior. this should be easy to acomplish as there is a method that already has a switch prepared for this without needing to modify enemy manager.
+this would further bloat the switches and make them harder to maintain.
+
+
+another issue is that respawning enemies is only called by game1 and player instead of a class like room. the player is the big issue as that has become bloated with many things that should not be there.

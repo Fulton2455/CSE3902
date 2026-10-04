@@ -1,0 +1,10 @@
+﻿Review author Jackson Wisecup
+10/3/2026
+Sprint 2
+Files: EnemyManager EnemyCreator
+by Benjamin Wisecup
+10 minutes to review
+
+enemy manger is very readable and well organized. the enemy creator is well organized and can be easily understood but the bloated switch makes it less readable than it could be.
+the switch does make the differnces in enmyies very clear though and is easy to follow. All methods and variables in both files are well named and clear in thir purpose.
+some of the formatting is a little off in indentation and spacing and some of the methods are not capitalized where they could be but theres nothing egregous.
