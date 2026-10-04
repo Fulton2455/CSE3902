@@ -17,7 +17,7 @@ namespace _3902sprint0
 
         public string Name { get; set; }
 
-        public bool toggleOn = true;
+        public bool toggleOff = true;
         public Texture2D Texture { get; }
     public MagicSword(Texture2D texture)
     {
@@ -26,7 +26,7 @@ namespace _3902sprint0
     }
         public void cooldownReset()
         {
-            toggleOn = true;
+            toggleOff = true;
         }
         public void Update(GameTime gameTime)
         {
@@ -41,27 +41,32 @@ namespace _3902sprint0
         public void ApplyEffect(Player player)
         {
            
-            if (toggleOn)
+            if (toggleOff)
             {
                 player.Speed += 300;
                 player.Acceleration += 2500;
-                toggleOn = false;
+                toggleOff = false;
+                SoundManager.PlaySwordSwing();
+
             }
-            else if (!toggleOn)
+            else if (!toggleOff)
             {
                 player.Speed -= 300;
                 player.Acceleration -= 2500;
-                toggleOn = true;
+                toggleOff = true;
+
             }
-            
+
         }
     
     public void Use(Player player, GameTime gameTime)
         {
-           
-                ApplyEffect(player);}
-            // Implement the active ability of the magic sword
-            // For example, perform a special attack or cast a spell
+
+
+            ApplyEffect(player);
+        }
+        // Implement the active ability of the magic sword
+        // For example, perform a special attack or cast a spell
     }
 
 
