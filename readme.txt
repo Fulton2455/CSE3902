@@ -23,15 +23,19 @@ For Sprint 2, the group set out to implement a good portion of the functionality
 Items that were planned to be tackled as well as the group members in charge of implementing them and their
 reviewer: 
 
-Environment Items: Implemented by Connor, Reviewed by X
-Inventory HUD Items: Implemented by Jackson, Reviewed by Y
-HUD Elements: Implemented by Xu, Reviewed by Z
-Enemies: Implemented by Benjamin, Reviewed by A 
-Sound Effects: Implemented by Erik, Reviewed by B 
+Environment Items: Implemented by Connor, Reviewed by Benjamin
+Inventory HUD Items: Implemented by Jackson, Reviewed by Connor
+HUD Elements: Implemented by Xu, Reviewed by Erik
+Enemies: Implemented by Benjamin, Reviewed by Jackson 
+Sound Effects: Implemented by Erik, Reviewed by Xu 
 
 Program controls remain unchanged from Sprint 0.
 
 There is a known issue with the collision detection between the pushable block and the
 player as well as the wall and the pushable block. 
+
+Chests can be opened using the right mouse button if you are within a certain range. Items 
+such as the magic sword, fireballs, and shield of invulnerability are contained in the chests.
+
 
 

@@ -1,0 +1,48 @@
+Author: Connor Fulton
+October 4, 2026
+Sprint 2
+ itemDatabase.cs
+Author of .cs File: Jackson Wisecup
+Number of Minutes Spent on Review: 20
+
+Code Quality Comments:
+
+- The itemDatabase class has good cohesion because its primary responsibility is managing the 
+ collection of items available in the game. The items list, item creation in the constructor, and
+ RandomItem() method are all directly related to this responsibility.
+
+- The class has fairly high coupling to the specific item classes in the game. The constructor 
+ directly creates MagicSword, fireScroll, and shieldOfInvulnerability objects. This means that if 
+ the implementation or constructor requirements of any of these item classes change, itemDatabase 
+ must also be changed.
+
+- The class also has coupling to the fireballManager class because it passes a fireballManager into
+ the fireScroll constructor. This is understandable because the fire scroll needs access to the
+ fireball manager, but it means the database is aware of a specific dependency of one of its
+ items.
+
+- The use of the Iitem interface for the items list is a good design choice. It allows different
+ item types to be stored in the same collection and reduces the amount of coupling between the
+ database and code that uses the collection. However, the database still directly depends on the
+ concrete item classes when creating the objects.
+
+- RandomItem() has a simple and focused responsibility, which contributes to the class's cohesion.
+ It selects an item from the database without needing to know how the item will be used by the rest
+ of the game.
+
+- Creating a new Random object every time RandomItem() is called could be improved. A shared Random
+ instance could be used instead, which would avoid repeatedly creating random number generators.
+
+A possible change to the game would be adding five new item types that can appear as random items.
+The current implementation could support this change, but each new item would require modifying the
+itemDatabase constructor and adding another hard-coded items.Add() statement. This creates
+additional coupling between the database and every concrete item class. A more flexible
+implementation could allow items to be registered with the database from outside the class or use a
+separate item factory. This would allow new item types to be added without requiring the
+itemDatabase class itself to know about eSvery specific item.
+
+Overall, the class has good cohesion because its functionality is centered around managing game
+items. Its main quality concern is coupling because the database directly creates specific item
+types. Using the Iitem interface is a good step toward reducing coupling, but the class could be
+made more flexible by separating item creation from the database itself.
+

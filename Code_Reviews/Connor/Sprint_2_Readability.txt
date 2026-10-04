@@ -1,0 +1,37 @@
+AuthorConnor Fulton
+October 4, 2026
+Sprint 2
+InventoryHUD.cs
+Author of .cs File: Jackson Wisecup
+Number of Minutes: 25
+
+Readability Comments:
+- The class and method names, such as InventoryHUD, FlashSlot, FlashSlotCooldown,
+ Draw, and Update, clearly describe their purposes and make the code relatively 
+ easy to follow.
+
+-The use of variables such as boxWidth, boxHeight, spacing, flashTimer, and
+ flashSlot makes the purpose of most of the HUD-related values easy to 
+ understand.
+
+- The repeated values 8 and 20 make some parts of the code less readable. For 
+ example, the loop uses i < 8, and the array previousCooldownStates has a size of 
+ 8. Defining a named constant for the number of inventory slots would make the 
+ purpose of these values clearer.
+
+- The positioning calculations for the inventory boxes are repeated in both Draw 
+ and Update. The expression graphicsDevice.Viewport.Height - boxHeight - 20 and the 
+ calculation for the x-coordinate appear multiple times. Moving this calculation into 
+ a helper method or using named constants could make the code easier to understand 
+ and maintain.
+
+- The formatting is inconsistent in a few places. For example, private int itemNum=0; 
+ does not have spaces around the equals sign, while the other declarations use spaces. 
+ The indentation of the arguments in the second Rectangle constructor is also inconsistent 
+ with the formatting used elsewhere. Both are a little nit-picky, but it would serve to make
+ the code appear more polished.
+
+Overall, the code is fairly readable because the class and method names clearly communicate 
+their purposes and the overall structure is straightforward. The main readability improvements 
+would be using more descriptive variable names, replacing repeated magic numbers with named 
+constants, and reducing repeated calculations.
