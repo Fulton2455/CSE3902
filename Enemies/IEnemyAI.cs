@@ -6,6 +6,6 @@ namespace _3902sprint0
     {
         bool IsPaused { get; }
 
-        void Update(Enemy enemy, Player player, GameTime gameTime);
+        void Update(Enemy enemy, Player player, GameTime gameTime, float terrainAccelleration);
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using _3902sprint0.Environment;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
@@ -8,10 +9,14 @@ namespace _3902sprint0
 	{
 		private readonly List<Enemy> enemies;
 
-		private readonly Texture2D runningTexture;
+        private  fireballManager fireballManager;
+
+        private readonly Texture2D runningTexture;
         private readonly Texture2D idleTexture;
 
 		private readonly Player player;
+
+		private Room room;
 
 		private Rectangle movementBounds;
 
@@ -20,17 +25,23 @@ namespace _3902sprint0
 		public EnemyManager(
 			Player player,
 			Texture2D runningTexture,
-			Texture2D idleTexture)
+			Texture2D idleTexture,
+			fireballManager fireballManager)
 		{
 			this.player = player;
 			this.runningTexture = runningTexture;
 			this.idleTexture = idleTexture;
+			this.fireballManager = fireballManager;
 
 			enemies = new List<Enemy>();
 		}
 		public void SetMovementBounds(Rectangle movementBounds)
 		{
 			this.movementBounds = movementBounds;
+		}
+		public void SetRoom(Room room)
+		{
+			this.room = room;
 		}
 		
 
@@ -43,15 +54,22 @@ namespace _3902sprint0
                 Enemy enemy = EnemyCreator.CreateEnemy(enemyType, 
 					runningTexture, 
 					idleTexture, 
-					movementBounds);
+					movementBounds,
+					room,
+					fireballManager);
                 enemies.Add(enemy);
             }
 		}
-		public void update(GameTime gameTime)
+		public void update(GameTime gameTime, float terrainAcceleration)
 		{
 			foreach (Enemy enemy in enemies)
 			{
-				enemy.Update(gameTime);
+				enemy.Update(gameTime, terrainAcceleration);
+				if (enemy.bounds.Intersects(player.Bounds) && enemy.CanDamagePlayer)
+				{
+					player.TakeDamage(enemy.Damage);
+					enemy.StartDamageCoolDown();
+				}
 			}
 		}
 		public void draw(SpriteBatch spriteBatch)

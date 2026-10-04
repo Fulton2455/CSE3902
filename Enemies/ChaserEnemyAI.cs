@@ -28,10 +28,12 @@ namespace _3902sprint0
             return (float)(1.0 + random.NextDouble() * 4.0);
         }
 
-        public void Update(Enemy enemy, Player player, GameTime gameTime)
+        public void Update(Enemy enemy, Player player, GameTime gameTime, float terrainAcceleration)
         {
+            if (player == null)
+                return;
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
+            
             stateTimer -= elapsedSeconds;
             if (stateTimer <= 0)
             {
@@ -42,8 +44,12 @@ namespace _3902sprint0
                 Vector2 direction = player.Location - enemy.Position;
                 if (direction != Vector2.Zero)
                 {
-                    enemy.MoveInDirection(direction, gameTime);
+                    enemy.MoveInDirection(direction, gameTime, terrainAcceleration);
                 }
+            }
+            else
+            {
+                enemy.MoveInDirection(Vector2.Zero, gameTime, terrainAcceleration);
             }
         }
         private void ChangeBehavior(Enemy enemy)

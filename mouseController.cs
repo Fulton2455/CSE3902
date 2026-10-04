@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 
 
+
 namespace _3902sprint0 {
     /// <summary>
     /// Controller class that handles mouse input for aiming and actions. It implements the IController interface and provides methods to update the player's aim direction based on mouse position and check for left click actions.
@@ -46,7 +47,8 @@ namespace _3902sprint0 {
             MouseState state = Mouse.GetState();
 
             Vector2 mousePosition = new Vector2(state.X, state.Y);
-            AimDirection = mousePosition - playerPosition;
+            Vector2 playerCeneter = new Vector2(playerPosition.X + 64, playerPosition.Y + 64);
+            AimDirection = mousePosition - playerCeneter;
 
             //gives a unit vector for the direction of the mouse from the player
             if (AimDirection != Vector2.Zero)

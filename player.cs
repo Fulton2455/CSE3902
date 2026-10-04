@@ -38,6 +38,9 @@ namespace _3902sprint0
         private Mousecontroller Mouse;
         private Room currentRoom;
         public Vector2 AimDirection;
+        private bool invulnerable = false;
+        private double invulnerableTimer = 0;
+
         private InventoryHUD inventoryHUD;
 
         // The player's sprite, which is responsible for rendering the player character on the screen and managing animations.
@@ -85,7 +88,8 @@ namespace _3902sprint0
         {
             if (PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death))
                 return;
-
+            if (invulnerable)
+                return;
             Health -= amount;
             if (Health <= 0)
             {
@@ -128,12 +132,19 @@ namespace _3902sprint0
                 item.Update(gameTime);
             }
 
+            if (invulnerable)
+            {
+                invulnerableTimer -= gameTime.ElapsedGameTime.TotalSeconds;
 
+                if (invulnerableTimer <= 0)
+                {
+                    invulnerable = false;
+                }
+            }
 
             // Update the keyboard and mouse controllers to process input
             Keyboard.update();
             Vector2 movementDirection = Keyboard.direction;
-            useItem(gameTime);
             // Update the mouse controller to determine the aim direction based on the player's current location
             Mouse.update(Location);
             AimDirection = Mouse.AimDirection;
@@ -143,16 +154,24 @@ namespace _3902sprint0
             // If the player is in the death animation, stop movement and update the sprite without changing its state (helped made by Chatgpt free)
             if (PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death))
             {
-                Velocity = Vector2.Zero;
-                PlayerSprite1.UpdateSprite(gameTime);
-                return;
+                if (!Keyboard.revive())
+                {
+                    Velocity = Vector2.Zero;
+                    PlayerSprite1.UpdateSprite(gameTime);
+                    return;
+                }
+                Revive();
             }
+            useItem(gameTime);
+
             // If the player presses the die key, stop movement and set the sprite to the death animation (helped made by Chatgpt free)
             if (Keyboard.die())
             {
                 Velocity = Vector2.Zero;
+                TakeDamage(6);
                 PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Death);
                 PlayerSprite1.UpdateSprite(gameTime);
+                
                 return;
             }
             // If the player is in the attack animation, continue moving and updating the sprite until the animation finishes, then return to the appropriate state (walk or idle) (helped made by Chatgpt free)
@@ -216,7 +235,7 @@ namespace _3902sprint0
         /// Calculates the terrain acceleration for the player, which affects how quickly the player can change their velocity. This method is designed to accommodate different terrains in the future, allowing for varied movement mechanics based on the environment. Currently, it returns a fixed acceleration value of 500f.
         /// </summary>
         /// <returns></returns>
-        private  float GetTerrainAcceleration()
+        public float GetTerrainAcceleration()
         {
 
             //will build in a way to have differnt terrains later
@@ -227,6 +246,18 @@ namespace _3902sprint0
             //}
             Terrain.getTerainEffect(this);
             return Terrain.Acceleration;
+        }
+
+        public Vector2 getPosition()
+        {
+            Vector2 position = new Vector2(Location.X + Width / 2, Location.Y + Height / 2);
+            return position;
+        }
+
+        public void becomeInvulnerable()
+        {
+            invulnerable = true;
+            invulnerableTimer = 3.0;
         }
         /// <summary>
         /// Moves the player based on the provided movement direction and updates the player's location and velocity accordingly. This method calculates the change in position based on the elapsed time since the last frame, the player's acceleration, and the current movement direction. It also ensures that the player's velocity does not exceed the maximum speed and applies deceleration when no movement input is detected. Movement is resolved one axis at a time against the current Room so the player can slide along walls, gets stopped by solid tiles, pushes PushableBlockTile out of the way, and auto-unlocks locked doors when carrying the right key.
@@ -328,9 +359,11 @@ namespace _3902sprint0
             if (itemNumber >= 0 && itemNumber < inventory.items.Count)
             {
                 Iitem item = inventory.items[itemNumber];
-
-                item.Use(this, gameTime);
-                inventoryHUD.FlashSlot(itemNumber);
+                if (item.IsOffCooldown)
+                {
+                    item.Use(this, gameTime);
+                    inventoryHUD.FlashSlot(itemNumber);
+                }
             }
 
         }
@@ -342,6 +375,16 @@ namespace _3902sprint0
                 SoundManager.PlayPlayerDeath();
                 PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Death);
                 Velocity = Vector2.Zero;
+               
+
+
+        }
+        private void Revive()
+        {
+
+            PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Walk);
+            Health = 6;
+            
 
 
         }

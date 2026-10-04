@@ -1,5 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using _3902sprint0.Environment;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 
 
 namespace _3902sprint0
@@ -7,13 +9,15 @@ namespace _3902sprint0
 	public class Enemy : IEnemy
 		{
 
-
+        private float damageCooldown;
+        private float coolDownTime = .8f;
 		private Texture2D runningTexture;
 		private Texture2D idleTexture;
 
 		private Rectangle movementBounds;
 
 		private float movementSpeed;
+        private float acceleration;
 		private int health;
 		private int damage;
         private int size;
@@ -35,7 +39,12 @@ namespace _3902sprint0
 
         private IEnemyAI enemyAI;
         private EnemyType enemyType;
+        private IEnemyTileInteraction tileInteraction;
         private Vector2 position;
+        private Vector2 velocity;
+        private Room room;
+
+
 
         public bool IsPaused
         {
@@ -59,6 +68,13 @@ namespace _3902sprint0
                 return position;
             }
         }
+        public Vector2 Velocity
+        {
+            get
+            {
+                return velocity;
+            }
+        }
         public int Health
         {
             get
@@ -80,6 +96,13 @@ namespace _3902sprint0
                 return movementSpeed;
             }
         }
+        public float Acceleration
+        {
+            get
+            {
+                return acceleration;
+            }
+        }
         public Direction CurrentDirection
         {
             get
@@ -87,11 +110,34 @@ namespace _3902sprint0
                 return currentDirection;
             }
         }
+        public Rectangle bounds
+        {
+            get
+            {
+                return destinationRectangle;
+            }
+        }
+        public IEnemyTileInteraction TileInteraction
+        {
+            get
+            {
+                return tileInteraction;
+            }
+
+        }
+        public bool CanDamagePlayer
+        {
+            get
+            {
+                return damageCooldown <= 0f;
+            }
+        }
 
 
 		public Enemy(
             EnemyType enemyType,
             IEnemyAI enemyAI,
+            IEnemyTileInteraction tileInteraction,
 			Texture2D runningTexture,
 			Texture2D idleTexture,
 			Vector2 position,
@@ -99,13 +145,21 @@ namespace _3902sprint0
 			int health,
 			int damage,
 			float movementSpeed,
-			Rectangle movementBounds)
+            float acceleration,
+			Rectangle movementBounds,
+            Room room)
 		{ 
             this.enemyType = enemyType;
+
+            this.acceleration = acceleration;
+
+            this.velocity = Vector2.Zero;
             
             this.position = position;
 
             this.enemyAI = enemyAI;
+
+            this.tileInteraction = tileInteraction;
 
 			this.runningTexture = runningTexture;
 
@@ -121,24 +175,25 @@ namespace _3902sprint0
 
 			this.movementBounds = movementBounds;
 
+            this.room = room;
+
 			currentDirection = Direction.Down;
 
 			currentFrame = 0;
 			animationTimer = 0f;
-
+            damageCooldown = 0f;
             UpdateDestinationRectangle();
 		}
         
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, float terrainAcceleration)
         {
             Player player = Game1.currentPlayer;
-            if (player != null) 
-            {
-                enemyAI.Update(this, player, gameTime);
-            }
+            enemyAI.Update(this, player, gameTime, terrainAcceleration);
             
 
             UpdateAnimation(gameTime);
+
+            UpdateDamageCooldown(gameTime);
 
             KeepInsideBounds();
 
@@ -146,22 +201,101 @@ namespace _3902sprint0
 
         }
 
-		public void Move(GameTime gameTime)
+		public void Move(GameTime gameTime, float terrainAcceleration)
 		{
             Vector2 direction = GetDirection(currentDirection);
-            MoveInDirection(direction, gameTime);
+            MoveInDirection(direction, gameTime, terrainAcceleration);
         }
-        public void MoveInDirection(Vector2 direction, GameTime gametime)
+        
+        public void StartDamageCoolDown()
         {
-            if (direction == Vector2.Zero)
+            damageCooldown = coolDownTime;
+        }
+        private void UpdateDamageCooldown(GameTime gameTime)
+        {
+            if (damageCooldown > 0f)
+            {
+                damageCooldown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (damageCooldown < 0f)
+                    damageCooldown = 0f;
+            }
+        }
+        public void MoveInDirection(Vector2 direction, GameTime gametime, float terrainAcceleration)
+        {
+            float elapsedSeconds = (float)gametime.ElapsedGameTime.TotalSeconds;
+            if (direction != Vector2.Zero)
+            {
+                
+
+                direction.Normalize();
+                velocity += direction * terrainAcceleration * elapsedSeconds;
+                if (velocity.Length() > movementSpeed)
+                {
+                    velocity.Normalize();
+                    velocity *= movementSpeed;
+                }
+                
+                
+                SetDirectionFromVector(direction);
+            }
+            else
+            {
+                SlowDown(terrainAcceleration, elapsedSeconds);
+            }
+            Vector2 delta = velocity * elapsedSeconds;
+            MoveAxis(new Vector2(delta.X, 0));
+            MoveAxis(new Vector2(0, delta.Y));
+        }
+        private void SlowDown(float terrainAcceleration, float elapsedSeconds)
+        {
+            if (velocity.Length() <= 0f)
+            {
+                velocity = Vector2.Zero;
+                return;
+            }
+
+            float slowdown = terrainAcceleration * elapsedSeconds;
+
+            if (velocity.Length() <= slowdown)
+            {
+                velocity = Vector2.Zero;
+                return;
+            }
+            velocity -= Vector2.Normalize(Velocity) * slowdown;
+            
+            
+            
+        }
+        private void MoveAxis(Vector2 delta)
+        {
+            if (delta == Vector2.Zero)
             {
                 return;
             }
-            direction.Normalize();
+            Vector2 attemptedLocation = position + delta;
+            Rectangle attemptedBounds = new Rectangle((int)(attemptedLocation.X - size /2f), (int)(attemptedLocation.Y - size / 2f ), size, size);
+            Vector2 direction = Vector2.Normalize(delta);
+            bool canEnter = EnemyCollision.CanEnter(
+                room, 
+                attemptedBounds, 
+                direction, 
+                tileInteraction);
+            if (canEnter)
+            {
+                position = attemptedLocation;
+            }
+            else
+            {
+                if (delta.X != 0)
+                {
+                    velocity.X = 0;
+                }
+                if (delta.Y != 0)
+                {
+                    velocity.Y = 0;
+                }
+            }
 
-            float elapsedSeconds = (float)gametime.ElapsedGameTime.TotalSeconds;
-            position += direction * movementSpeed * elapsedSeconds;
-            SetDirectionFromVector(direction);
         }
         public void SetDirection(Direction direction)
         {

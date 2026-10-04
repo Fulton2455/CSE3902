@@ -1,12 +1,14 @@
-﻿using System;
+﻿using _3902sprint0.Environment;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace _3902sprint0
 {
-    internal class Fireball : Ientity
+    public class Fireball : Ientity
     {
         public Texture2D Texture { get; private set; }
         private Vector2 position;
@@ -16,19 +18,24 @@ namespace _3902sprint0
 
         private Vector2 direction;
 
-       
+        private Room room;
+
+        private IEnemyTileInteraction tileInteraction;
+
         private float speed = 400f;
         private bool isActive = false;
 
         private float detonationTime = 1.5f;
         public Fireball(Texture2D texture, FireballSprite fireballSprite,
-        detonateSprite detonateSprite)
+        detonateSprite detonateSprite, Room room)
         {
             Texture = texture;
             this.fireballSprite = fireballSprite;
             this.detonateSprite = detonateSprite;
+            this.room = room;
+            this.tileInteraction = new FlyingEnemyTileInteraction();
         }
-        public void generateEntity(Vector2 position, Vector2 direction)
+        public void generateEntity(Vector2 position, Vector2 direction, bool isHostile)
         {
             SoundManager.PlayFireballShoot();
 
@@ -45,7 +52,7 @@ namespace _3902sprint0
         {
             if (isActive)
             {
-                position += direction * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                move(gameTime);
                 detonationTimer += gameTime.ElapsedGameTime.TotalSeconds;
                 fireballSprite.SetLocation(position);
 
@@ -55,9 +62,9 @@ namespace _3902sprint0
                     fireballSprite.deactivate();
                     ApplyEffect(position);
                     isActive = false;
-                   
+
                 }
-          
+
 
 
             }
@@ -81,6 +88,26 @@ namespace _3902sprint0
         {
             isActive = false;
             fireballSprite.deactivate();
+        }
+        private void move(GameTime gameTime)
+        {
+            float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Vector2 attemptedPosition = position + direction * elapsedTime * speed;
+            Rectangle bounds = new Rectangle((int)(attemptedPosition.X +64),
+                (int)(attemptedPosition.Y + 16),
+                3,
+                3
+                );
+            if (room.CanEnter(bounds, direction, null, tileInteraction))
+            {
+                position = attemptedPosition;
+
+            }
+            else
+            {
+                detonationTimer = 1.5f;
+                speed = 0;
+            }
         }
     }
 

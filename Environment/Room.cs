@@ -58,13 +58,16 @@ namespace _3902sprint0.Environment
 
         //NEEDS TO BE REFACTORED FOR FEWER LINES. BROKEN INTO MULTIPLE FUNCTIONS
         
-        public bool CanEnter(Rectangle bounds, Vector2 direction, IKeyHolder keyHolder = null)
+        public bool CanEnter(Rectangle bounds, Vector2 direction, IKeyHolder keyHolder = null, IEnemyTileInteraction enemyInteraction = null)
         {
             foreach (var tile in tiles)
             {
                 if (!tile.Bounds.Intersects(bounds))
                     continue;
 
+                if (enemyInteraction != null && !enemyInteraction.InteractWith(tile))
+                    continue;
+                
                 if (tile is LockedDoorTile door && !door.IsUnlocked)
                 {
                     if (keyHolder != null && door.TryUnlock(keyHolder))
@@ -74,6 +77,10 @@ namespace _3902sprint0.Environment
 
                 if (tile is PushableBlockTile pushable)
                 {
+                    if (enemyInteraction != null && !enemyInteraction.CanPush(pushable))
+                    {
+                        return false;
+                    }
                     bool moved = pushable.TryPush(direction, tileSize, target =>
                     {
                         Rectangle targetBounds = new Rectangle(

@@ -1,22 +1,26 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using _3902sprint0.Environment;
 namespace _3902sprint0
 {
 	public static class EnemyCreator
 	{
-		public static Enemy CreateEnemy(
+        public static Enemy CreateEnemy(
 
 			EnemyType enemyType,
 			Texture2D basicRunningTexture,
 			Texture2D basicIdleTexture,
-			Rectangle movementBounds
-			)
+			Rectangle movementBounds,
+			Room room,
+            fireballManager fireballManager)
 		{
 			IEnemyAI enemyAI;
+			IEnemyTileInteraction tileInteraction;
 			int health;
 			int damage;
 			int size;
 			float movementSpeed;
+			float acceleration;
 			Texture2D runningTexture;
 			Texture2D idleTexture;
 
@@ -24,9 +28,11 @@ namespace _3902sprint0
 			{
 				case EnemyType.Basic:
 					enemyAI = new BasicEnemyAI();
+					tileInteraction = new GroundEnemyTileInteraction();
 					health = 2;
 					damage = 1;
 					movementSpeed = 100f;
+					acceleration = 500f;
 					size = 64;
                     runningTexture = basicRunningTexture;
 
@@ -35,19 +41,23 @@ namespace _3902sprint0
 					break;
 				case EnemyType.Chaser:
 					enemyAI = new ChaserEnemyAI();
-					health = 1;
+                    tileInteraction = new GroundEnemyTileInteraction();
+                    health = 1;
 					damage = 2;
 					movementSpeed = 150f;
+					acceleration = 600f;
 					size = 48;
                     runningTexture = basicRunningTexture;
 
                     idleTexture = basicIdleTexture;
 					break;
 				case EnemyType.Fleeing:
-					enemyAI = new FleeingEnemyAI();
+					enemyAI = new FleeingEnemyAI(fireballManager);
+                    tileInteraction = new GroundEnemyTileInteraction();
                     health = 1;
                     damage = 3;
                     movementSpeed = 190f;
+					acceleration = 700f;
                     size = 80;
                     runningTexture = basicRunningTexture;
 
@@ -55,9 +65,11 @@ namespace _3902sprint0
 					break;
 				case EnemyType.Erratic:
 					enemyAI= new ErraticEnemyAI();
+                    tileInteraction = new FlyingEnemyTileInteraction();
                     health = 3;
                     damage = 3;
                     movementSpeed = 125f;
+					acceleration = 600f;
                     size = 32;
                     runningTexture = basicRunningTexture;
 
@@ -65,9 +77,11 @@ namespace _3902sprint0
 					break;
                 default:
 					enemyAI = new BasicEnemyAI();
+                    tileInteraction = new GroundEnemyTileInteraction();
                     health = 1;
                     damage = 1;
                     movementSpeed = 100f;
+					acceleration = 500f;
                     size = 64;
                     runningTexture = basicRunningTexture;
 
@@ -79,6 +93,7 @@ namespace _3902sprint0
 			return new Enemy(
 				enemyType,
 				enemyAI,
+				tileInteraction,
 				runningTexture,
 				idleTexture,
 				spawnPosition,
@@ -86,7 +101,9 @@ namespace _3902sprint0
 				health,
 				damage,
 				movementSpeed,
-				movementBounds
+				acceleration,
+				movementBounds,
+				room
 			);
 
 

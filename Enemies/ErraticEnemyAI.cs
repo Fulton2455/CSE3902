@@ -30,7 +30,7 @@ namespace _3902sprint0
             return (float)(.25 + random.NextDouble() * .75);
         }
 
-        public void Update(Enemy enemy, Player player, GameTime gameTime)
+        public void Update(Enemy enemy, Player player, GameTime gameTime, float terrainAcceleration)
         {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -41,7 +41,7 @@ namespace _3902sprint0
                 stateTimer = GetRandomMoveTime();
             }
             enemy.SetDirection(direction);
-            enemy.Move(gameTime);
+            enemy.Move(gameTime, terrainAcceleration);
         }
         
         private Direction GetRandomDirection()
