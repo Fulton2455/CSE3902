@@ -1,16 +1,32 @@
-﻿Review author Jackson wisecup
+﻿Review author Jackson Wisecup
 date 10/3/2026
 Sprint 2
 files enemyManager, enemyCreator
 by benjamin wisecup
-took 20 minutes to review
 
 quality comments
-bothe enemy manager and enemy creator work well and are seperated neatly. creator handles the creation of enemies and all their attributes and manager handles the updating and drawing.
-while the manager has no issues in my opinion the creator suffers from a bloated switch statement that could cause problems when adding new enemies. this includes a lot of repeated code, i know he has plans to 
-change this though so its not the largest issue. i know the current textures that are duplicated for instance wll all be changed to others.
-a hypothetical change would be to  give each enemy its own spawning behavior. this should be easy to acomplish as there is a method that already has a switch prepared for this without needing to modify enemy manager.
-this would further bloat the switches and make them harder to maintain.
 
+* Both enemy manager and enemy creator work well and are separated neatly.
+  Creator handles the creation of enemies and all their attributes, while
+  manager handles updating, drawing, and respawning them.
 
-another issue is that respawning enemies is only called by game1 and player instead of a class like room. the player is the big issue as that has become bloated with many things that should not be there.
+* While the manager has no major issues in my opinion, the creator suffers
+  from a somewhat bloated switch statement that could cause problems when
+  adding new enemies. This includes a lot of repeated code. I know there are
+  plans to change this though, so it is not the biggest issue. For example,
+  the currently duplicated textures will eventually be changed to different
+  ones for each enemy.
+
+* The GetSpawnBehavior method is set up well for future changes. If each
+  enemy were given its own spawning behavior, it could be added to the switch
+  without needing to modify enemy manager.
+
+A hypothetical change would be to give each enemy its own spawning behavior.
+This should be easy to accomplish because the method already has a switch
+prepared for this without needing to modify enemy manager. This would further
+bloat the switches though and make them harder to maintain if more enemy
+types are added.
+
+I think both files have good separation and work well together. The
+main issue is the switch statement in enemy creator, but I don't think it is
+a major problem.
