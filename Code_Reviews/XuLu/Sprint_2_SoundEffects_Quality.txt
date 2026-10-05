@@ -1,0 +1,38 @@
+﻿Author: Xu Lu
+October 5, 2026
+Sprint 2
+SoundManager.cs
+Author of .cs file: Erik
+Number of minutes spent on review: 18
+
+    - The class has good cohesion because it has one clear
+    responsibility, which is loading and playing the sound
+    effects used by the game.
+
+    - Keeping the sound effects in SoundManager separates the
+    audio handling from other game classes. Other classes can
+    play a sound without needing to know how the sound effect
+    was loaded.
+
+    - The class has some repetition because every sound effect
+    has its own variable and Play method. This is simple for the
+    current number of sounds, but the class could become larger
+    if many more sound effects are added.
+
+    - Using ?.Play() is useful because it prevents an error if
+    one of the sound effects has not been loaded before the Play
+    method is called.
+
+A hypothetical change that could be made to the game would be
+adding different sound effects for several new enemies. The
+current implementation could support this by adding new
+SoundEffect variables, loading them in LoadContent(), and adding
+new Play methods. This would be easy with a small number of new
+sounds, but adding many sounds could make SoundManager repetitive
+and harder to maintain.
+
+Overall, SoundManager has good cohesion and keeps the sound
+effect logic separate from the rest of the game. The current
+implementation is simple and easy to maintain. The main possible
+issue is that adding a large number of new sounds could create
+many repeated variables and methods.

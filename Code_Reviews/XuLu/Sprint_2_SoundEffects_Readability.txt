@@ -1,0 +1,28 @@
+﻿Author: Xu Lu
+October 5, 2026
+Sprint 2
+SoundManager.cs
+Author of .cs file: Erik
+Number of minutes spent on review: 15
+
+    - The class is very easy to understand because the method
+    names clearly describe which sound effect they play. Names
+    like PlaySwordSwing, PlayExplosion, and PlayPlayerHurt make
+    their purposes obvious.
+
+    - The variable names are also clear and match the sounds
+    that they store. This makes it easy to connect each sound
+    effect variable with its play method.
+
+    - LoadContent() is organized well. All of the sound effects
+    are loaded together in one place and the asset names are
+    easy to understand.
+
+    - The Play methods are very similar and repetitive. This
+    makes the class easy to read right now, but it could become
+    longer if many more sound effects are added.
+
+Overall, SoundManager is very readable because the class is
+small and uses clear method and variable names. The main possible
+issue is the repeated Play methods, but this is not a major
+problem with the current number of sound effects.
