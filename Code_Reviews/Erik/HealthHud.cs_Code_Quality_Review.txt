@@ -1,0 +1,28 @@
+Erik Zhang
+10-05-2026
+Sprint number: 2
+Name of the .cs file being reviewed: HealthHUD.cs
+Author of the .cs file being reviewed: Xu Lu
+Number of minutes taken to complete the review: 15 minutes
+
+Specific comments on code quality:
+    - The constructor efficiently initializes the source `Rectangle`s for the different heart states. 
+      Storing these at the class level instead of recreating them every frame in the `Draw` method is a good practice for performance.
+
+    - The `totalHearts = 3;` variable is hardcoded directly into the drawing method. This creates a rigidity issue. 
+      The HUD should calculate the number of hearts dynamically based on a property from the player (e.g., `player.MaxHealth / 2`).
+
+    - The `Draw` method is tightly coupled to the concrete `Player` class. 
+      If we wanted to reuse this class to display a boss's health bar in the future, we wouldn't be able to. 
+      It would be better to pass in an `IDamageable` or `IHealthProvider` interface that requires a `Health` property.
+
+Hypothetical Change Analysis:
+    - Hypothetical Change: 
+      The player finds a "Heart Container" item in a dungeon, 
+      which increases their maximum health from 6 (3 hearts)to 8 (4 hearts).
+
+    - How current implementation supports/fails it: 
+      The current implementation completely fails to support this change. Because `int totalHearts = 3;` is hardcoded 
+      into the `Draw` loop, the HUD will only ever draw 3 hearts, even if the `Player.Health` increases to 8. 
+      To fix this, the implementation must be refactored to read the player's maximum capacity dynamically 
+      so the `for` loop automatically scales to draw the correct number of heart sprites.

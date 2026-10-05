@@ -1,0 +1,31 @@
+Erik Zhang
+10-05-2026
+Sprint number: 2
+fireballManager.cs
+Author of the .cs file being reviewed: Jackson Wisecup
+Number of minutes taken to complete the review: 20 minutes
+
+Specific comments on what is readable:
+    - The internal field names (`fireballTexture`, `detonateTexture`, `room`) and lists (`fireballs`, `fireballs2`) 
+      are named clearly and shows what data they hold.
+
+    - The `Update` and `Draw` methods are clean and straightforward, properly looping through the lists of active entities.
+
+Specific comments on what is not readable (areas for improvement):
+    - Capitalization Conventions: 
+      The class name `fireballManager` starts with a lowercase letter, 
+      but C# conventions dictate classes should be PascalCase (`FireballManager`). 
+      This also applies to the referenced `detonateSprite` class, which should be `DetonateSprite`.
+
+    - Magic Numbers: 
+      The `createFireball` method uses `1` and `2` to check the `fireballtype`. 
+      It is difficult to know what `1` and `2` represent without reading the inside of the if-statements. 
+      This should be replaced with a descriptive Enum (e.g., `FireballType.Explosive` and `FireballType.Standard`).
+    
+    - Descriptive Naming: 
+      The class name `Fireball2` is not descriptive. It does not communicate how it differs 
+      in behavior from the standard `Fireball`. It should be renamed to something 
+      that describes its unique behavior (e.g., `SimpleFireball` or `PiercingFireball`).
+
+    - Variable Naming: 
+      The parameter `fireballtype` should be formatted using camelCase as `fireballType`.
