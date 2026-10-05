@@ -1,0 +1,33 @@
+﻿Author: Benjamin Wisecup
+October 4, 2026
+Sprint 2
+Room.cs
+Author of .cs file: Connor Fulton
+Number of minutes spent on review: 22
+
+	- The class is generally easy to understand because
+	the methods are pretty clear on what they are for.
+	Names like IsBlocked, CanEnter, ApplyHazards, 
+	CheckStairs, and Detonate make their functions
+	obvious.
+
+	- Like the method names, the variable names are
+	also easily understandable. Variables such as tiles,
+	tileSize, bounds, direction, etc. make their uses
+	readily apparent.
+
+	- There are frequent comments throughout the class
+	that are very helpfull. Especially when it comes
+	to explaining things like collision.
+
+	- CanEnter() is the least readable part of the 
+	class, which is partly my fault for adding the
+	enemy interaction code into it, though that is my
+	only contribution to the class. The method could be
+	improved by seperating the logic into helper methods,
+	for example the pushable block logic.
+
+Overall the class is very readable because of its excellent
+naming and comments. The main issue is CanEnter() because it
+contains too many different types of interaction logic in one 
+method.

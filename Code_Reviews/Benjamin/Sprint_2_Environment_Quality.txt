@@ -1,0 +1,33 @@
+﻿Author: Benjamin Wisecup
+October 4, 2026
+Sprint 2
+TileFactory.cs
+Author of .cs file: Connor Fulton
+Number of minutes spent on review: 26
+
+	- The class has good cohesion, it has one clear responsibility which
+	is creating tiles and the CreateTile() method only does that.
+
+	- The switch statement makes the different tile types easily
+	differentiable and understandable. Grouping Statue, SquareBlock,
+	Wall, and BlueGap together makes sense as they are all static tiles
+
+	- The class does have some coupling as it depends on specific tile
+	classes such as StaticTile or PushableBlockTile. This is a factory
+	class so this is reasonble, but if any new types are added the class
+	has to be modified. This is not really a concern though.
+
+	- Default is good and prevents tiles with extra necessary info
+	from being created incorrectly.
+
+A hypothetical change that can be made to the game would  be the addition
+of several new types of tiles, such as ice, or water. The current 
+implementation would support this easily by adding new cases to the switch.
+This would involve modifying TileFactory and would add more dependancies with
+the new tile classes. However it is unlikely we will ever have enough tiles
+for this to become an issue.
+
+Overall, TileFactory has good cohesion and is easy to understand. It does not
+have any real issues, the only potential problems being the coupling to specific
+tile classes and the potential for switch bloat, neither of which are really
+concerns.

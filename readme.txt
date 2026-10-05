@@ -29,13 +29,20 @@ HUD Elements: Implemented by Xu, Reviewed by Erik
 Enemies: Implemented by Benjamin, Reviewed by Jackson 
 Sound Effects: Implemented by Erik, Reviewed by Xu 
 
-Program controls remain unchanged from Sprint 0.
+Program controls.
+Press q to revive
+When item is in inventory press coressponding num key to activate it, most items have cooldowns, the item flashes blue when off cooldown
+Player movement now also can be controlled by Arrow keys.
+
 
 There is a known issue with the collision detection between the pushable block and the
-player as well as the wall and the pushable block. 
+player as well as the wall and the pushable block. There is another know bug where enemies
+can be spawned in environment tiles and be trapped.
 
-Chests can be opened using the right mouse button if you are within a certain range. Items 
+Chests can be opened using the right mouse button if you are within a certain range(300). Items 
 such as the magic sword, fireballs, and shield of invulnerability are contained in the chests.
 
+There are 4 enemy types, basic, chaser, fleeing, and erratic. currently all have the same sprite but different AIs.
+Fleeing enemies can launch fireballs at player when within 950 units.
 
 

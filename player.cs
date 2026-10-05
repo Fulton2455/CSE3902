@@ -350,7 +350,8 @@ namespace _3902sprint0
         {
             
                 PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Attack);
-            
+            SoundManager.PlaySwordSwing();
+
 
         }
         private void useItem(GameTime gameTime)

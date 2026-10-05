@@ -108,16 +108,16 @@ namespace _3902sprint0
             previousState = currentState;
              currentState = Keyboard.GetState();
             direction = Vector2.Zero;
-            if (currentState.IsKeyDown(Keys.W))
+            if (currentState.IsKeyDown(Keys.W) || currentState.IsKeyDown(Keys.Up))
                 direction += new Vector2(0, -1);
 
-            if (currentState.IsKeyDown(Keys.S))
+            if (currentState.IsKeyDown(Keys.S) || currentState.IsKeyDown(Keys.Down))
                 direction += new Vector2(0, 1);
 
-            if (currentState.IsKeyDown(Keys.A))
+            if (currentState.IsKeyDown(Keys.A) || currentState.IsKeyDown(Keys.Left))
                 direction += new Vector2(-1, 0);
 
-            if (currentState.IsKeyDown(Keys.D))
+            if (currentState.IsKeyDown(Keys.D) || currentState.IsKeyDown(Keys.Right))
                 direction += new Vector2(1, 0);
             // Normalize the direction vector to ensure consistent movement speed in all directions.
             if (direction != Vector2.Zero)
