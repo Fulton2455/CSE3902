@@ -27,11 +27,12 @@ namespace _3902sprint0
         {
             return (float)(1.0 + random.NextDouble() * 4.0);
         }
-
+       
         public void Update(Enemy enemy, Player player, GameTime gameTime, float terrainAcceleration)
         {
             if (player == null)
                 return;
+            
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
             
             stateTimer -= elapsedSeconds;

@@ -52,6 +52,58 @@
 /processorParam:Version=3.8.5.1
 /build:enemyBasicRunning.png
 
+#begin enemyBat.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:enemyBat.png
+
+#begin enemyMage.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:enemyMage.png
+
+#begin enemySlime.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:enemySlime.png
+
+#begin enemyZombie.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:enemyZombie.png
+
 #begin environment/environment_spritesheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -164,38 +216,45 @@
 /processorParam:Version=3.8.5.1
 /build:Pixel Heart Sprite Sheet 32x32.png
 
-#begin sounds/SwordSwing.wav
+#begin sounds/EnemyHit.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/SwordSwing.wav
-
-#begin sounds/FireballShoot.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:sounds/FireballShoot.wav
+/processorParam:Version=3.8.5.1
+/build:sounds/EnemyHit.wav
 
 #begin sounds/Explosion.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:sounds/Explosion.wav
 
-#begin sounds/PlayerHurt.wav
+#begin sounds/FireballShoot.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/PlayerHurt.wav
+/processorParam:Version=3.8.5.1
+/build:sounds/FireballShoot.wav
 
 #begin sounds/PlayerDeath.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:sounds/PlayerDeath.wav
 
-#begin sounds/EnemyHit.wav
+#begin sounds/PlayerHurt.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/EnemyHit.wav
+/processorParam:Version=3.8.5.1
+/build:sounds/PlayerHurt.wav
+
+#begin sounds/SwordSwing.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:sounds/SwordSwing.wav
+

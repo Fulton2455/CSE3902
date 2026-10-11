@@ -9,40 +9,50 @@ namespace _3902sprint0
 	public class Enemy : IEnemy
 		{
 
-        private float damageCooldown;
-        private float coolDownTime = .8f;
-		private Texture2D runningTexture;
-		private Texture2D idleTexture;
+        private enum AnimationState
+        {
+            Walk,
+            Attack,
+            Death,
+            Idle
+        }
 
-		private Rectangle movementBounds;
-
-		private float movementSpeed;
-        private float acceleration;
-		private int health;
-		private int damage;
-        private int size;
-
-
-		private Direction currentDirection;
-
-        private int currentFrame;
-
-        private float animationTimer;
-        private Rectangle destinationRectangle;
-        private const int FrameWidth = 32;
-        private const int FrameHeight = 32;
-        private const int FrameCount = 8;
-
-
-
+        private const int FrameWidth = 64;
+        private const int FrameHeight = 64;
+        private const int MovementFrameCount = 8;
+        private const int AttackFrameCount = 3;
+        private const int DeathFrameCount = 8;
+        private const int IdleFrameCount = 8;
+        private const int AttackStartColumn = 8;
+        private const int DeathRow = 8;
+        private const int IdleRow = 9;
         private const float AnimationSpeed = 0.1f;
 
-        private IEnemyAI enemyAI;
-        private EnemyType enemyType;
-        private IEnemyTileInteraction tileInteraction;
+        private float damageCooldown;
+        private const float CoolDownTime = 0.8f;
+
+        
+        private readonly Texture2D spriteSheet;
+        private readonly Rectangle movementBounds;
+        private readonly float movementSpeed;
+        private readonly float acceleration;
+        private readonly int size;
+        private readonly IEnemyAI enemyAI;
+        private readonly EnemyType enemyType;
+        private readonly IEnemyTileInteraction tileInteraction;
+        private readonly Room room;
+
+        private int health;
+        private int damage;
+        private Direction currentDirection;
+        private int currentFrame;
+        private float animationTimer;
+        private AnimationState animationState;
+        private bool animationFinished;
+        private Rectangle destinationRectangle;
         private Vector2 position;
         private Vector2 velocity;
-        private Room room;
+
 
 
 
@@ -129,17 +139,39 @@ namespace _3902sprint0
         {
             get
             {
-                return damageCooldown <= 0f;
+                return damageCooldown <= 0f && !IsDying && !IsDead;
+
+            }
+        }
+        public bool IsDying 
+        {
+            get
+            {
+               return animationState == AnimationState.Death;
+            }
+        }
+        public bool IsDead 
+        {
+            get
+            {
+                return IsDying && animationFinished;
+            }
+        } 
+        public bool IsAttacking
+        {
+            get
+            {
+                return animationState == AnimationState.Attack;
             }
         }
 
 
-		public Enemy(
+
+        public Enemy(
             EnemyType enemyType,
             IEnemyAI enemyAI,
             IEnemyTileInteraction tileInteraction,
-			Texture2D runningTexture,
-			Texture2D idleTexture,
+			Texture2D spriteSheet,
 			Vector2 position,
 			int size,
 			int health,
@@ -161,9 +193,7 @@ namespace _3902sprint0
 
             this.tileInteraction = tileInteraction;
 
-			this.runningTexture = runningTexture;
-
-			this.idleTexture = idleTexture;
+			this.spriteSheet = spriteSheet;
 
             this.size = size;
 
@@ -182,23 +212,42 @@ namespace _3902sprint0
 			currentFrame = 0;
 			animationTimer = 0f;
             damageCooldown = 0f;
+            animationState = AnimationState.Idle;
+            animationFinished = false;
             UpdateDestinationRectangle();
 		}
         
         public void Update(GameTime gameTime, float terrainAcceleration)
         {
             Player player = Game1.currentPlayer;
-            enemyAI.Update(this, player, gameTime, terrainAcceleration);
+            if (player == null || player.IsDead)
+            {
+                velocity = Vector2.Zero;
+                if (!IsDying && !IsDead)
+                {
+                    animationState = AnimationState.Idle;
+                }
+                UpdateAnimation(gameTime);
+                UpdateDestinationRectangle();
+                return;
+            }
+                if (!IsDying && !IsDead)
+                {
+
+                    enemyAI.Update(this, player, gameTime, terrainAcceleration);
+                }
+
+
+                UpdateAnimation(gameTime);
+
+                UpdateDamageCooldown(gameTime);
+                if (!IsDying && !IsDead)
+                {
+                    KeepInsideBounds();
+                }
+
+                UpdateDestinationRectangle();
             
-
-            UpdateAnimation(gameTime);
-
-            UpdateDamageCooldown(gameTime);
-
-            KeepInsideBounds();
-
-            UpdateDestinationRectangle();
-
         }
 
 		public void Move(GameTime gameTime, float terrainAcceleration)
@@ -209,8 +258,48 @@ namespace _3902sprint0
         
         public void StartDamageCoolDown()
         {
-            damageCooldown = coolDownTime;
+            damageCooldown = CoolDownTime;
         }
+        public void StartAttack()
+        {
+            if (IsDying || IsDead)
+                return;
+            Player player = Game1.currentPlayer;
+            if (player != null)
+            {
+                Vector2 playerDirection = player.Bounds.Center.ToVector2() - position;
+
+                if (playerDirection != Vector2.Zero)
+                {
+                    playerDirection.Normalize();
+                    SetDirectionFromVector(playerDirection);
+                }
+            }
+            animationState = AnimationState.Attack;
+            currentFrame = 0;
+            animationTimer = 0f;
+            animationFinished = false;
+        }
+
+        public void TakeDamage(int damageAmount)
+        {
+            if (IsDying || IsDead)
+                return;
+
+            health -= damageAmount;
+            SoundManager.PlayEnemyHit();
+
+            if (health <= 0)
+            {
+                health = 0;
+                velocity = Vector2.Zero;
+                animationState = AnimationState.Death;
+                currentFrame = 0;
+                animationTimer = 0f;
+                animationFinished = false;
+            }
+        }
+
         private void UpdateDamageCooldown(GameTime gameTime)
         {
             if (damageCooldown > 0f)
@@ -222,6 +311,9 @@ namespace _3902sprint0
         }
         public void MoveInDirection(Vector2 direction, GameTime gametime, float terrainAcceleration)
         {
+            if (IsDying || IsDead || IsAttacking)
+                return;
+
             float elapsedSeconds = (float)gametime.ElapsedGameTime.TotalSeconds;
             if (direction != Vector2.Zero)
             {
@@ -237,10 +329,12 @@ namespace _3902sprint0
                 
                 
                 SetDirectionFromVector(direction);
+                animationState = AnimationState.Walk;
             }
             else
             {
                 SlowDown(terrainAcceleration, elapsedSeconds);
+                animationState = AnimationState.Idle;
             }
             Vector2 delta = velocity * elapsedSeconds;
             MoveAxis(new Vector2(delta.X, 0));
@@ -294,6 +388,7 @@ namespace _3902sprint0
                 {
                     velocity.Y = 0;
                 }
+                animationState = AnimationState.Idle;
             }
 
         }
@@ -306,27 +401,53 @@ namespace _3902sprint0
         {
 
             animationTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (animationTimer >= AnimationSpeed)
+            if (animationTimer < AnimationSpeed)
+                return;
+
+            animationTimer -= AnimationSpeed;
+
+            switch (animationState)
             {
-                animationTimer -= AnimationSpeed;
+                case AnimationState.Walk:
+                    currentFrame++;
+                    if (currentFrame >= MovementFrameCount)
+                        currentFrame = 0;
+                    break;
 
-                currentFrame++;
+                case AnimationState.Idle:
+                    currentFrame++;
+                    if (currentFrame >= IdleFrameCount)
+                        currentFrame = 0;
+                    break;
 
-                if (currentFrame >= 8)
-                {
-                    currentFrame = 0;
-                }
+                case AnimationState.Attack:
+                    currentFrame++;
+                    if (currentFrame >= AttackFrameCount)
+                    {
+                        currentFrame = AttackFrameCount - 1;
+                        animationFinished = true;
+                        animationState = AnimationState.Idle;
+                    }
+                    break;
+
+                case AnimationState.Death:
+                    currentFrame++;
+                    if (currentFrame >= DeathFrameCount)
+                    {
+                        currentFrame = DeathFrameCount - 1;
+                        animationFinished = true;
+                    }
+                    break;
             }
-
 
         }
         private void UpdateDestinationRectangle()
         {
             destinationRectangle = new Rectangle(
-                (int)(position.X - size / 2f),
-                (int)(position.Y - size / 2f),
-                size,
-                size);
+                (int)(position.X - size),
+                (int)(position.Y - size),
+                size * 2,
+                size * 2);
         }
 		private Vector2 GetDirection(Direction direction)
 		{
@@ -446,11 +567,11 @@ namespace _3902sprint0
             switch (currentDirection)
             {
                 case Direction.Up:
-                    directionRow = 0;
+                    directionRow = 4;
                     break;
 
                 case Direction.UpRight:
-                    directionRow = 1;
+                    directionRow = 3;
                     break;
 
                 case Direction.Right:
@@ -458,15 +579,15 @@ namespace _3902sprint0
                     break;
 
                 case Direction.DownRight:
-                    directionRow = 3;
+                    directionRow = 1;
                     break;
 
                 case Direction.Down:
-                    directionRow = 4;
+                    directionRow = 0;
                     break;
 
                 case Direction.DownLeft:
-                    directionRow = 5;
+                    directionRow = 7;
 
                     break;
 
@@ -475,48 +596,59 @@ namespace _3902sprint0
                     break;
 
                 case Direction.UpLeft:
-                    directionRow = 7;
+                    directionRow = 5;
                     break;
                 default:
-                    directionRow = 4;
+                    directionRow = 0;
                     break;
 
                 
             }
             return directionRow;
         }
+        private Rectangle GetSourceRectangle()
+        {
+            int x = currentFrame * FrameWidth;
+            int y;
+
+            switch (animationState)
+            {
+                case AnimationState.Walk:
+                    y = GetDirectionRow(currentDirection) * FrameHeight;
+                    break;
+
+                case AnimationState.Attack:
+                    x = (AttackStartColumn + currentFrame) * FrameWidth;
+                    y = GetDirectionRow(currentDirection) * FrameHeight;
+                    break;
+
+                case AnimationState.Death:
+                    y = DeathRow * FrameHeight;
+                    break;
+
+                case AnimationState.Idle:
+                    y = IdleRow * FrameHeight;
+                    break;
+
+                default:
+                    y = IdleRow * FrameHeight;
+                    break;
+            }
+
+            return new Rectangle(x, y, FrameWidth, FrameHeight);
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
-            int directionRow = GetDirectionRow(currentDirection);
-
-            Rectangle sourceRectangle = new Rectangle(
-                    currentFrame * 32,
-                    directionRow * 32,
-                    32,
-                    32
-
-                );
-            Texture2D currentTexture;
-            if (IsPaused)
-            {
-                currentTexture = idleTexture;
-            }
-            else
-            {
-                currentTexture = runningTexture;
-            }
+           
             spriteBatch.Draw(
-                currentTexture,
+                spriteSheet,
                 destinationRectangle,
-                sourceRectangle,
+                GetSourceRectangle(),
                 Color.White
             );
         }
 
-        public void TakeDamage(int damageAmount)
-        {
-            health -= damageAmount;
-            SoundManager.PlayEnemyHit();
-        }
+        
     }
 }

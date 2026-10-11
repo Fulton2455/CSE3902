@@ -11,10 +11,12 @@ namespace _3902sprint0
 
         private  fireballManager fireballManager;
 
-        private readonly Texture2D runningTexture;
-        private readonly Texture2D idleTexture;
+        private readonly Texture2D slimeTexture;
+        private readonly Texture2D zombieTexture;
+        private readonly Texture2D mageTexture;
+        private readonly Texture2D batTexture;
 
-		private readonly Player player;
+        private readonly Player player;
 
 		private Room room;
 
@@ -24,13 +26,18 @@ namespace _3902sprint0
 
 		public EnemyManager(
 			Player player,
-			Texture2D runningTexture,
-			Texture2D idleTexture,
+
+            Texture2D slimeTexture,
+			Texture2D zombieTexture,
+			Texture2D mageTexture,
+			Texture2D batTexture,
 			fireballManager fireballManager)
 		{
 			this.player = player;
-			this.runningTexture = runningTexture;
-			this.idleTexture = idleTexture;
+			this.slimeTexture = slimeTexture;
+			this.zombieTexture = zombieTexture;
+			this.mageTexture = mageTexture;
+			this.batTexture = batTexture;
 			this.fireballManager = fireballManager;
 
 			enemies = new List<Enemy>();
@@ -51,28 +58,41 @@ namespace _3902sprint0
 			enemies.Clear();
 			foreach (EnemyType enemyType in enemyTypes)
 			{
-                Enemy enemy = EnemyCreator.CreateEnemy(enemyType, 
-					runningTexture, 
-					idleTexture, 
-					movementBounds,
+                Enemy enemy = EnemyCreator.CreateEnemy(enemyType,
+                    slimeTexture,
+					zombieTexture,
+					mageTexture,
+					batTexture,
+                    movementBounds,
 					room,
+					player,
 					fireballManager);
                 enemies.Add(enemy);
             }
 		}
 		public void update(GameTime gameTime, float terrainAcceleration)
 		{
-			foreach (Enemy enemy in enemies)
-			{
-				enemy.Update(gameTime, terrainAcceleration);
-				if (enemy.bounds.Intersects(player.Bounds) && enemy.CanDamagePlayer)
-				{
-					player.TakeDamage(enemy.Damage);
-					enemy.StartDamageCoolDown();
-				}
-			}
-		}
-		public void draw(SpriteBatch spriteBatch)
+            for (int i = enemies.Count - 1; i >= 0; i--)
+            {
+                Enemy enemy = enemies[i];
+                enemy.Update(gameTime, terrainAcceleration);
+
+                if (enemy.IsDead)
+                {
+                    enemies.RemoveAt(i);
+                    continue;
+                }
+
+                if (enemy.bounds.Intersects(player.Bounds) && enemy.CanDamagePlayer)
+                {
+                    enemy.StartAttack();
+                    player.TakeDamage(enemy.Damage);
+                    enemy.StartDamageCoolDown();
+                }
+            }
+
+        }
+        public void draw(SpriteBatch spriteBatch)
 		{
 			foreach(Enemy enemy in enemies)
 			{

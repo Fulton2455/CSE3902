@@ -79,6 +79,7 @@ namespace _3902sprint0
                 enemy.SetDirection(GetRandomDirection());
                 float distance = Vector2.Distance(player.getPosition(), enemy.Position);
                 if (distance <= 950)
+                    enemy.StartAttack();
                     shootFireball(fireballManager, player, enemy);
 
                 stateTimer = GetRandomMoveTime();

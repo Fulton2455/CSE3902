@@ -48,6 +48,8 @@ namespace _3902sprint0
 
         public Rectangle Bounds => new Rectangle((int)Location.X, (int)Location.Y, Width, Height);
 
+        public bool IsDead => Health <= 0;
+
         /// <summary>
         /// Initializes a new instance of the Player class with the specified starting location. The constructor sets up the player's initial position, creates a new PlayerSprite for rendering, and initializes the keyboard and mouse controllers for handling input.
         /// </summary>

@@ -34,14 +34,14 @@ namespace _3902sprint0
         private Chest chest2;
         private Chest chest3;
 
-        private Texture2D enemyBasicRunningTexture;
-
-        private Texture2D enemyBasicIdleTexture;
+        private Texture2D enemySlimeTexture;
+        private Texture2D enemyZombieTexture;
+        private Texture2D enemyMageTexture;
+        private Texture2D enemyBatTexture;
         private List<Enemy> enemies;
 
         private EnemyManager enemyManager;
-        private Texture2D enemyRunningTexture;
-        private Texture2D enemyIdleTexture;
+       
         public static Player currentPlayer
         {
             get;
@@ -158,10 +158,16 @@ namespace _3902sprint0
                database,
                player
             );
-            enemyBasicIdleTexture = Content.Load<Texture2D>("enemyBasicIdle");
-
-            enemyBasicRunningTexture = Content.Load<Texture2D>("enemyBasicRunning");
-            enemyManager = new EnemyManager(player, enemyBasicRunningTexture, enemyBasicIdleTexture, FireballManager);
+            enemySlimeTexture = Content.Load<Texture2D>("enemySlime");
+            enemyZombieTexture = Content.Load<Texture2D>("enemyZombie");
+            enemyMageTexture = Content.Load<Texture2D>("enemyMage");
+            enemyBatTexture = Content.Load<Texture2D>("enemyBat");
+            enemyManager = new EnemyManager(player,
+                enemySlimeTexture,
+                enemyZombieTexture,
+                enemyMageTexture,
+                enemyBatTexture,
+                FireballManager);
             player.SetEnemyManager(enemyManager);
 
             Rectangle movementBounds =
