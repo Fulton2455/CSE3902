@@ -272,40 +272,43 @@ namespace _3902sprint0
         }
 
         private Texture2D environmentSpriteSheet;
+private Vector2 GridPosition(int col, int row) => new Vector2(32 + col * 64, 32 + row * 64);
 
-        private void LoadRoom()
-        {
-            room = new Room(tileSize: 64f);
-            environmentSpriteSheet = Content.Load<Texture2D>("environment/environment_spritesheet");
+private void LoadRoom()
+{
+    int screenWidth = DeviceManager3902.PreferredBackBufferWidth;
+    int screenHeight = DeviceManager3902.PreferredBackBufferHeight;
 
-            int screenWidth = DeviceManager3902.PreferredBackBufferWidth;
-            int screenHeight = DeviceManager3902.PreferredBackBufferHeight;
-            for (int x = 0; x < screenWidth; x += 64)
-            {
-                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(x + 32, 32)));
-                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(x + 32, screenHeight - 32)));
-            }
-            for (int y = 0; y < screenHeight; y += 64)
-            {
-                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(32, y + 32)));
-                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(screenWidth - 32, y + 32)));
-            }
+    room = new Room(tileSize: 64f, worldBounds: new Rectangle(0, 0, screenWidth, screenHeight));
+    environmentSpriteSheet = Content.Load<Texture2D>("environment/environment_spritesheet");
 
-            room.AddTile(TileFactory.CreateTile(TileType.Statue, environmentSpriteSheet, new Vector2(500, 500)));
-            room.AddTile(TileFactory.CreateTile(TileType.SquareBlock, environmentSpriteSheet, new Vector2(700, 500)));
-            room.AddTile(TileFactory.CreateTile(TileType.PushableBlock, environmentSpriteSheet, new Vector2(900, 500)));
-            room.AddTile(TileFactory.CreateTile(TileType.Fire, environmentSpriteSheet, new Vector2(1100, 500)));
-            room.AddTile(TileFactory.CreateTile(TileType.BlueGap, environmentSpriteSheet, new Vector2(1300, 500)));
-            StairsTile stairs = (StairsTile)TileFactory.CreateTile(TileType.Stairs, environmentSpriteSheet, new Vector2(1500, 500));
-            stairs.Traversed += OnStairsTraversed;
+    for (int x = 0; x < screenWidth; x += 64)
+    {
+        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(x + 32, 32)));
+        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(x + 32, screenHeight - 32)));
+    }
+    for (int y = 0; y < screenHeight; y += 64)
+    {
+        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(32, y + 32)));
+        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(screenWidth - 32, y + 32)));
+    }
 
-            room.AddTile(stairs);
-            room.AddTile(TileFactory.CreateTile(TileType.OpenDoor, environmentSpriteSheet, new Vector2(960, 96)));
+    room.AddTile(TileFactory.CreateTile(TileType.Statue, environmentSpriteSheet, GridPosition(7, 7)));
+    room.AddTile(TileFactory.CreateTile(TileType.SquareBlock, environmentSpriteSheet, GridPosition(10, 7)));
+    room.AddTile(TileFactory.CreateTile(TileType.PushableBlock, environmentSpriteSheet, GridPosition(13, 7)));
+    room.AddTile(TileFactory.CreateTile(TileType.Fire, environmentSpriteSheet, GridPosition(16, 7)));
+    room.AddTile(TileFactory.CreateTile(TileType.BlueGap, environmentSpriteSheet, GridPosition(19, 7)));
 
-            room.AddTile(new BombedWallOpeningTile(environmentSpriteSheet, new Vector2(700, 700)));
-            room.AddTile(new KeyholeLockedDoorTile(environmentSpriteSheet, new Vector2(900, 700)));
-            room.AddTile(new DiamondLockedDoorTile(environmentSpriteSheet, new Vector2(1100, 700)));
-        }
+    StairsTile stairs = (StairsTile)TileFactory.CreateTile(TileType.Stairs, environmentSpriteSheet, GridPosition(22, 7));
+    stairs.Traversed += OnStairsTraversed;
+    room.AddTile(stairs);
+
+    room.AddTile(TileFactory.CreateTile(TileType.OpenDoor, environmentSpriteSheet, GridPosition(15, 1)));
+
+    room.AddTile(new BombedWallOpeningTile(environmentSpriteSheet, GridPosition(13, 10)));
+    room.AddTile(new KeyholeLockedDoorTile(environmentSpriteSheet, GridPosition(16, 10)));
+    room.AddTile(new DiamondLockedDoorTile(environmentSpriteSheet, GridPosition(19, 10)));
+}
 
         private void OnStairsTraversed(StairsTile stairs)
         {
