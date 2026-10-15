@@ -49,7 +49,7 @@ namespace _3902sprint0
         private const int InsetLeft = 32;
         private const int InsetRight = 32;
         private const int InsetTop = 16;
-        private const int InsetBottom = 4;
+        private const int InsetBottom = 0;
 
         public Rectangle Bounds => GetBoundsAt(Location);
 
