@@ -46,7 +46,12 @@ namespace _3902sprint0
         // The player's sprite, which is responsible for rendering the player character on the screen and managing animations.
         private PlayerSprite PlayerSprite1;
 
-        public Rectangle Bounds => new Rectangle((int)Location.X, (int)Location.Y, Width, Height);
+        private const int InsetLeft = 32;
+        private const int InsetRight = 32;
+        private const int InsetTop = 16;
+        private const int InsetBottom = 4;
+
+        public Rectangle Bounds => GetBoundsAt(Location);
 
         public bool IsDead => Health <= 0;
 
@@ -74,6 +79,14 @@ namespace _3902sprint0
             Terrain.SetEnemyManager(enemyManager);
         }
 
+        private Rectangle GetBoundsAt(Vector2 location)
+        {
+            return new Rectangle(
+                (int)location.X + InsetLeft,
+                (int)location.Y + InsetTop,
+                Width - InsetLeft - InsetRight,
+                Height - InsetTop - InsetBottom);
+        }
         /// <summary>
         /// Assigns the room the player is currently in, so movement can be resolved
         /// against that room's tiles (walls, blocks, doors, hazards, stairs).
@@ -324,8 +337,7 @@ namespace _3902sprint0
                 return;
 
             Vector2 attemptedLocation = Location + delta;
-            Rectangle attemptedBounds = new Rectangle((int)attemptedLocation.X, (int)attemptedLocation.Y, Width, Height);
-
+            Rectangle attemptedBounds = GetBoundsAt(attemptedLocation);
             if (currentRoom == null || currentRoom.CanEnter(attemptedBounds, Vector2.Normalize(delta), inventory))
             {
                 Location = attemptedLocation;

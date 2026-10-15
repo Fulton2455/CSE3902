@@ -46,3 +46,6 @@ There are 4 enemy types, basic, chaser, fleeing, and erratic. currently all have
 Fleeing enemies can launch fireballs at player when within 950 units.
 
 
+## SPRINT_3
+Hold F1 for collision detection debugging
+
