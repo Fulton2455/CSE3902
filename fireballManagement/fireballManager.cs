@@ -9,9 +9,11 @@ namespace _3902sprint0
 {
     public class fireballManager
 {
-        private List<Fireball> fireballs;
-        private List<Fireball2> fireballs2;
-        private Texture2D fireballTexture;
+        public List<Fireball> fireballs;
+        public List<Fireball2> fireballs2;
+
+        public IReadOnlyList<Fireball> Fireballs => fireballs;
+        public IReadOnlyList<Fireball2> Fireballs2 => fireballs2;        private Texture2D fireballTexture;
         private Texture2D detonateTexture;
         private Room room;
 

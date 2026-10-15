@@ -72,26 +72,55 @@ namespace _3902sprint0
 		}
 		public void update(GameTime gameTime, float terrainAcceleration)
 		{
-            for (int i = enemies.Count - 1; i >= 0; i--)
-            {
-                Enemy enemy = enemies[i];
-                enemy.Update(gameTime, terrainAcceleration);
+    		for (int i = enemies.Count - 1; i >= 0; i--)
+    		{
+        		Enemy enemy = enemies[i];
+        		enemy.Update(gameTime, terrainAcceleration);
 
-                if (enemy.IsDead)
-                {
-                    enemies.RemoveAt(i);
-                    continue;
-                }
+        		if (enemy.IsDead)
+        		{
+            		enemies.RemoveAt(i);
+            		continue;
+        		}
 
-                if (enemy.bounds.Intersects(player.Bounds) && enemy.CanDamagePlayer)
-                {
-                    enemy.StartAttack();
-                    player.TakeDamage(enemy.Damage);
-                    enemy.StartDamageCoolDown();
-                }
-            }
+        		if (enemy.bounds.Intersects(player.Bounds) && enemy.CanDamagePlayer)
+        		{
+           		 enemy.StartAttack();
+            		player.TakeDamage(enemy.Damage);
+            		enemy.StartDamageCoolDown();
+        		}
 
-        }
+        		CheckFireballHits(enemy);
+    		}
+		}
+
+		private void CheckFireballHits(Enemy enemy)
+		{
+    		if (enemy.IsDying || enemy.IsDead)
+        		return;
+
+    		foreach (Fireball fireball in fireballManager.Fireballs)
+    		{
+        		if (!fireball.IsActive || fireball.IsHostile)
+           		 continue;
+        		if (fireball.Bounds.Intersects(enemy.bounds))
+        		{
+            		enemy.TakeDamage(fireball.Damage);
+            		fireball.Hit();
+        		}
+    		}
+
+    		foreach (Fireball2 fireball2 in fireballManager.Fireballs2)
+    		{
+        		if (!fireball2.IsActive || fireball2.IsHostile)
+            		continue;
+        		if (fireball2.Bounds.Intersects(enemy.bounds))
+        		{
+            		enemy.TakeDamage(fireball2.Damage);
+            		fireball2.Hit();
+        		}
+    		}
+		}
         public void draw(SpriteBatch spriteBatch)
 		{
 			foreach(Enemy enemy in enemies)

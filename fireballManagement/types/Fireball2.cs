@@ -23,6 +23,17 @@ namespace _3902sprint0
         private IEnemyTileInteraction tileInteraction;
 
         private float detonationTime = 1.5f;
+
+        private bool isHostile = false;
+
+        public bool IsActive => isActive;
+        public bool IsHostile => isHostile;
+        public int Damage { get; set; } = 1;
+        public Rectangle Bounds => GetBoundsAt(position);
+
+        
+
+private Rectangle GetBoundsAt(Vector2 pos) => new Rectangle((int)(pos.X + 64), (int)(pos.Y + 16), 3, 3);
         public Fireball2(Texture2D texture, FireballSprite fireballSprite, Room room
         )
         {
@@ -41,8 +52,17 @@ namespace _3902sprint0
             fireballSprite.SetLocation(position);
             fireballSprite.SetDirection(this.direction);
             fireballSprite.activate();
+            this.isHostile = isHostile;
             
         }
+
+        public void Hit()
+        {
+        if (!isActive) return;
+        fireballSprite.deactivate();
+        isActive = false;
+        }
+        
         public void Update(GameTime gameTime)
         {
             if (isActive)
@@ -84,11 +104,7 @@ namespace _3902sprint0
         {
             float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Vector2 attemptedPosition = position + direction * elapsedTime * speed;
-            Rectangle bounds = new Rectangle((int)(attemptedPosition.X + 64),
-                (int)(attemptedPosition.Y + 16),
-                3,
-                3
-                );
+            Rectangle bounds = GetBoundsAt(attemptedPosition);
             if (room.CanEnter(bounds, direction, null, tileInteraction))
             {
                 position = attemptedPosition;

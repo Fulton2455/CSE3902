@@ -170,13 +170,8 @@ namespace _3902sprint0
                 FireballManager);
             player.SetEnemyManager(enemyManager);
 
-            Rectangle movementBounds =
-                new Rectangle(
-                    0,
-                    0,
-                    DeviceManager3902.PreferredBackBufferWidth,
-                    DeviceManager3902.PreferredBackBufferHeight
-                );
+            Rectangle movementBounds = GetRoomBounds();
+enemyManager.SetMovementBounds(movementBounds);
             enemyManager.SetMovementBounds(movementBounds);
 
             
@@ -271,26 +266,35 @@ namespace _3902sprint0
             return texture;
         }
 
-        private Texture2D environmentSpriteSheet;
+       private Rectangle GetRoomBounds()
+{
+    int cols = DeviceManager3902.PreferredBackBufferWidth / 64;
+    int rows = DeviceManager3902.PreferredBackBufferHeight / 64;
+    return new Rectangle(0, 0, cols * 64, rows * 64);
+}
+
 private Vector2 GridPosition(int col, int row) => new Vector2(32 + col * 64, 32 + row * 64);
+
+private Texture2D environmentSpriteSheet;
 
 private void LoadRoom()
 {
-    int screenWidth = DeviceManager3902.PreferredBackBufferWidth;
-    int screenHeight = DeviceManager3902.PreferredBackBufferHeight;
+    Rectangle roomBounds = GetRoomBounds();
+    int cols = roomBounds.Width / 64;
+    int rows = roomBounds.Height / 64;
 
-    room = new Room(tileSize: 64f, worldBounds: new Rectangle(0, 0, screenWidth, screenHeight));
+    room = new Room(tileSize: 64f, worldBounds: roomBounds);
     environmentSpriteSheet = Content.Load<Texture2D>("environment/environment_spritesheet");
 
-    for (int x = 0; x < screenWidth; x += 64)
+    for (int col = 0; col < cols; col++)
     {
-        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(x + 32, 32)));
-        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(x + 32, screenHeight - 32)));
+        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(col, 0)));
+        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(col, rows - 1)));
     }
-    for (int y = 0; y < screenHeight; y += 64)
+    for (int row = 0; row < rows; row++)
     {
-        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(32, y + 32)));
-        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, new Vector2(screenWidth - 32, y + 32)));
+        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(0, row)));
+        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(cols - 1, row)));
     }
 
     room.AddTile(TileFactory.CreateTile(TileType.Statue, environmentSpriteSheet, GridPosition(7, 7)));
