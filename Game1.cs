@@ -41,6 +41,8 @@ namespace _3902sprint0
         private List<Enemy> enemies;
 
         private EnemyManager enemyManager;
+
+        private Texture2D pixelTexture;
        
         public static Player currentPlayer
         {
@@ -110,6 +112,10 @@ namespace _3902sprint0
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            
+            // in LoadContent, anywhere after spriteBatch is created:
+            pixelTexture = new Texture2D(GraphicsDevice, 1, 1);
+            pixelTexture.SetData(new[] { Color.White });
 
             // Initialize the SoundManager to load all audio files into memory
             SoundManager.LoadContent(Content);
@@ -199,6 +205,23 @@ enemyManager.SetMovementBounds(movementBounds);
             base.LoadContent();
         }
 
+private void DrawDebugBounds(SpriteBatch spriteBatch)
+{
+    if (!Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.F1))
+        return;
+    DrawRectOutline(spriteBatch, player.Bounds, Color.Red);
+    foreach (var tile in room.Tiles)
+        DrawRectOutline(spriteBatch, tile.Bounds, tile.IsSolid ? Color.Cyan : Color.Yellow);
+}
+
+private void DrawRectOutline(SpriteBatch spriteBatch, Rectangle rect, Color color)
+{
+    const int t = 2;
+    spriteBatch.Draw(pixelTexture, new Rectangle(rect.Left, rect.Top, rect.Width, t), color);
+    spriteBatch.Draw(pixelTexture, new Rectangle(rect.Left, rect.Bottom - t, rect.Width, t), color);
+    spriteBatch.Draw(pixelTexture, new Rectangle(rect.Left, rect.Top, t, rect.Height), color);
+    spriteBatch.Draw(pixelTexture, new Rectangle(rect.Right - t, rect.Top, t, rect.Height), color);
+}
 
         /// <summary>
         /// updates the game state, including player input and game logic. This method is called once per frame.
@@ -254,7 +277,7 @@ enemyManager.SetMovementBounds(movementBounds);
             levelHUD.Draw(spriteBatch, currentLevel);
             currentSwordHUD.Draw(spriteBatch, inventory);
 
-
+            DrawDebugBounds(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }
