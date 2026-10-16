@@ -12,6 +12,7 @@ namespace _3902sprint0
         private bool shieldActive = false;
         private Player shieldPlayer;
 
+        private const int ManaCost = 15;
         public string Name { get; set; }
         public bool firstUse = true;
         public Texture2D Texture { get; }
@@ -42,7 +43,7 @@ namespace _3902sprint0
             shieldPlayer = player;
             shieldActive = true;
             useTime = 0f;
-            player.mana -= 20; 
+            player.mana -= 15; 
         }
 
         public void Update(GameTime gameTime)
@@ -69,6 +70,8 @@ namespace _3902sprint0
 
         public void Use(Player player, GameTime gameTime)
         {
+            if (!IsOffCooldown || player.mana < ManaCost)
+                return;
             if (IsOffCooldown)
             {
                 ApplyEffect(player);
