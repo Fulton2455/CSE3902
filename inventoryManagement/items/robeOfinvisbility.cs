@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace _3902sprint0
 {
-    internal class shieldOfInvulnerability22 : Iitem
+    internal class RobeOfInvisibility : Iitem
     {
         private float useTime = 10f;
         private float useSpeed = 10f;
@@ -19,9 +19,9 @@ namespace _3902sprint0
         public bool firstUse = true;
         public Texture2D Texture { get; }
         public bool IsOffCooldown => useTime >= useSpeed;
-        public shieldOfInvulnerability22(Texture2D texture)
+        public RobeOfInvisibility(Texture2D texture)
         {
-            Name = "shield Of Invulnerability";
+            Name = "Robe of Invisibility";
             Texture = texture;
 
         }
@@ -35,7 +35,8 @@ namespace _3902sprint0
         public void ApplyEffect(Player player)
         {
 
-            player.becomeInvulnerable();
+            player.becomeInvisible();
+            player.mana -= 10;
 
         }
 

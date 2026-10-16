@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace _3902sprint0
 {
-    internal class shieldOfInvulnerability2 : Iitem
+    internal class PanaceaBottle : Iitem
     {
-        private float useTime = 10f;
-        private float useSpeed = 10f;
+        private float useTime = 30f;
+        private float useSpeed = 30f;
 
 
         
@@ -19,23 +19,24 @@ namespace _3902sprint0
         public bool firstUse = true;
         public Texture2D Texture { get; }
         public bool IsOffCooldown => useTime >= useSpeed;
-        public shieldOfInvulnerability2(Texture2D texture)
+        public PanaceaBottle(Texture2D texture)
         {
-            Name = "shield Of Invulnerability";
+            Name = "Panacea Bottle";
             Texture = texture;
 
         }
         public void cooldownReset()
         {
 
-            useTime = 10f;
+            useTime = 30f;
         }
 
 
         public void ApplyEffect(Player player)
         {
 
-            player.becomeInvulnerable();
+            player.heal(6);
+            player.mana = 100;
 
         }
 

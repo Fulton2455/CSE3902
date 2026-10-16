@@ -33,12 +33,16 @@ namespace _3902sprint0
 
         public int damage = 1;
 
+        public int MaxShieldHealth = 6;
+        public int ShieldHealth { get; private set; } = 0;
+
         // The player's acceleration, which affects how quickly the player can change their velocity. This value may be adjusted in the future to accommodate different terrains or gameplay mechanics.
         public float Acceleration = 500f;
 
         // New: basic health so hazard tiles (fire) have something to affect. Wire this
         // up to a HUD/health-bar whenever that exists.
         public int Health { get; private set; } = 6;
+        
 
         private KeyboardController Keyboard;
         private Inventory inventory;
@@ -48,14 +52,10 @@ namespace _3902sprint0
         private bool invulnerable = false;
         private double invulnerableTimer = 0;
 
-        public bool IsInvisivble
-        {
-            get
-            {
-                //should be changed to check invisibility cloak item is active
-                return false;
-            }
-        }
+        private bool invisible = false;
+        private double invisibleTimer = 0;
+
+        public bool IsInvisivble => invisible;
 
         private InventoryHUD inventoryHUD;
 
@@ -117,6 +117,24 @@ namespace _3902sprint0
         {
             currentRoom = room;
         }
+        public void heal(int amount)
+        {
+            if (PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death))
+                return;
+            if (amount > 6)
+                amount = 6;
+            Health = Math.Min(Health + amount, 6);
+
+
+        }
+        public void ActivateShield()
+        {
+            ShieldHealth = MaxShieldHealth;
+        }
+        public void RemoveShield()
+        {
+            ShieldHealth = 0;
+        }
 
         /// <summary>
         /// Applies damage from a hazard tile (e.g. Fire). Ignored while already dying.
@@ -125,9 +143,28 @@ namespace _3902sprint0
         {
             if (PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death))
                 return;
-            if (invulnerable)
+
+            if (invulnerable || amount <= 0)
                 return;
+
+            if (ShieldHealth > 0)
+            {
+                ShieldHealth -= amount;
+
+                if (ShieldHealth < 0)
+                {
+                    amount = -ShieldHealth;
+                    ShieldHealth = 0;
+                }
+                else
+                {
+
+                    return;
+                }
+            }
+
             Health -= amount;
+
             if (Health <= 0)
             {
                 Health = 0;
@@ -135,7 +172,6 @@ namespace _3902sprint0
             }
             else
             {
-                // Play hurt sound when taking non-lethal damage
                 SoundManager.PlayPlayerHurt();
             }
         }
@@ -178,6 +214,7 @@ namespace _3902sprint0
                     invulnerable = false;
                 }
             }
+            UpdateInvisibility(gameTime);
             fireballHitCheck();
 
             // Update the keyboard and mouse controllers to process input
@@ -208,7 +245,7 @@ namespace _3902sprint0
             if (Keyboard.die())
             {
                 Velocity = Vector2.Zero;
-                TakeDamage(6);
+                TakeDamage(12);
                 PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Death);
                 PlayerSprite1.UpdateSprite(gameTime);
                 
@@ -346,6 +383,23 @@ namespace _3902sprint0
             invulnerable = true;
             invulnerableTimer = 3.0;
         }
+        public void becomeInvisible()
+        {
+            invisible = true;
+            invisibleTimer = 3.0;
+        }
+        private void UpdateInvisibility(GameTime gameTime)
+        {
+            if (invisible)
+            {
+                invisibleTimer -= gameTime.ElapsedGameTime.TotalSeconds;
+
+                if (invisibleTimer <= 0)
+                {
+                    invisible = false;
+                }
+            }
+        }
         /// <summary>
         /// Moves the player based on the provided movement direction and updates the player's location and velocity accordingly. This method calculates the change in position based on the elapsed time since the last frame, the player's acceleration, and the current movement direction. It also ensures that the player's velocity does not exceed the maximum speed and applies deceleration when no movement input is detected. Movement is resolved one axis at a time against the current Room so the player can slide along walls, gets stopped by solid tiles, pushes PushableBlockTile out of the way, and auto-unlocks locked doors when carrying the right key.
         /// </summary>
@@ -472,7 +526,9 @@ namespace _3902sprint0
 
             PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Walk);
             Health = 6;
-            
+            RemoveShield();
+
+
 
 
         }

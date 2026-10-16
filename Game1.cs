@@ -129,6 +129,10 @@ namespace _3902sprint0
             Texture2D fireballTexture = Content.Load<Texture2D>("Fireball");
             Texture2D detonateTexture = Content.Load<Texture2D>("Explosion");
             Texture2D shieldOfInvulnerabilityTexture = Content.Load<Texture2D>("items/shieldOfInvulnerability");
+            Texture2D robeOfInvisibilityTexture = Content.Load<Texture2D>("items/robeOfInvisibility");
+            Texture2D PanaceaTexture=Content.Load<Texture2D>("items/panacea");
+            Texture2D magicArmor = Content.Load<Texture2D>("items/healthShield");
+
             gameFont = Content.Load<SpriteFont>("GameFont");
 
             currentSwordHUD = new CurrentSwordHUD(GraphicsDevice, gameFont);
@@ -139,7 +143,7 @@ namespace _3902sprint0
             inventoryHUD = new InventoryHUD(GraphicsDevice);
             healthHUD = new HealthHUD(heartTexture);
             FireballManager = new fireballManager(fireballTexture, detonateTexture);
-            database = new itemDatabase(magicSwordTexture, fireScrollTexture, FireballManager, shieldOfInvulnerabilityTexture);
+            database = new itemDatabase(magicSwordTexture, fireScrollTexture, FireballManager, shieldOfInvulnerabilityTexture, robeOfInvisibilityTexture, PanaceaTexture, magicArmor);
             LoadRoom();
 
             Rectangle chestmovementBounds = GetRoomBounds();
@@ -262,7 +266,7 @@ private void DrawRectOutline(SpriteBatch spriteBatch, Rectangle rect, Color colo
             inventoryHUD.Draw(spriteBatch, GraphicsDevice, inventory, gameTime);
             healthHUD.Draw(spriteBatch, player);
 
-            healthHUD.Draw(spriteBatch, player);
+            
             levelHUD.Draw(spriteBatch, currentLevel);
             currentSwordHUD.Draw(spriteBatch, inventory);
 

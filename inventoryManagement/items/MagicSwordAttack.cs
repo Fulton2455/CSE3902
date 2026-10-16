@@ -1,73 +1,88 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace _3902sprint0
 {
-    internal class MagicSword2 :Iitem
+    internal class MagicSword2 : Iitem
     {
-        private float useTime = 0f;
-        private float useSpeed = 1.5f;
         public bool IsOffCooldown => true;
-        private float toggleTime = 0f;
-        private float toggleSpeed = .05f;
+
+        private Player swordPlayer;
+        private float manaDrainTimer = 0f;
+        private const float ManaDrainInterval = 1f;
+        private const int ManaDrainAmount = 2;
 
         public string Name { get; set; }
 
         public bool toggleOff = true;
         public Texture2D Texture { get; }
-    public MagicSword2(Texture2D texture)
-    {
-        Name = "Magic Sword 2";
-        Texture = texture;
-    }
+
+        public MagicSword2(Texture2D texture)
+        {
+            Name = "Magic Sword 2";
+            Texture = texture;
+        }
+
         public void cooldownReset()
         {
-            toggleOff = true;
+            Deactivate();
         }
+
         public void Update(GameTime gameTime)
         {
-            useTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (useTime > useSpeed)
+            if (!toggleOff && swordPlayer != null)
             {
-                useTime = useSpeed;
+                manaDrainTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                while (manaDrainTimer >= ManaDrainInterval)
+                {
+                    manaDrainTimer -= ManaDrainInterval;
+                    swordPlayer.mana -= ManaDrainAmount;
+                }
+
+                if (swordPlayer.mana <= 0)
+                {
+                    swordPlayer.mana = 0;
+                    Deactivate();
+                }
             }
         }
 
         public void ApplyEffect(Player player)
         {
-           
             if (toggleOff)
             {
+                if (player.mana < ManaDrainAmount)
+                    return;
+
                 player.damage += 1;
-               
                 toggleOff = false;
+                swordPlayer = player;
+                manaDrainTimer = 0f;
                 SoundManager.PlaySwordSwing();
-
             }
-            else if (!toggleOff)
+            else
             {
-                player.damage -= 1;
-                toggleOff = true;
+                Deactivate();
+            }
+        }
 
+        private void Deactivate()
+        {
+            if (!toggleOff && swordPlayer != null)
+            {
+                swordPlayer.damage -= 1;
             }
 
+            toggleOff = true;
+            swordPlayer = null;
+            manaDrainTimer = 0f;
         }
-    
-    public void Use(Player player, GameTime gameTime)
+
+        public void Use(Player player, GameTime gameTime)
         {
-
-
             ApplyEffect(player);
         }
-        // Implement the active ability of the magic sword
-        // For example, perform a special attack or cast a spell
     }
-
-
 }
-
