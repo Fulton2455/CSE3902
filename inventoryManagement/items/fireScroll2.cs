@@ -24,7 +24,7 @@ namespace _3902sprint0
         public bool IsOffCooldown => useTime >= useSpeed;
         public fireScroll2(Texture2D texture, fireballManager fireballManager)
         {
-            Name = "Fire Scroll";
+            Name = "Fire Scroll 2";
             Texture = texture;
             this.fireballManager = fireballManager;
         }
