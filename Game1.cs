@@ -177,7 +177,6 @@ namespace _3902sprint0
             player.SetEnemyManager(enemyManager);
 
             Rectangle movementBounds = GetRoomBounds();
-enemyManager.SetMovementBounds(movementBounds);
             enemyManager.SetMovementBounds(movementBounds);
 
             

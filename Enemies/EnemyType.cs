@@ -6,7 +6,9 @@
 		Basic,
 		Chaser,
 		Fleeing,
-		Erratic
+		Erratic,
+		ToadBoss,
+		ToadBossMinion
 
 
 	}

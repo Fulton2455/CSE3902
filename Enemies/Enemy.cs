@@ -43,6 +43,7 @@ namespace _3902sprint0
         private readonly Room room;
 
         private int health;
+        private int maxHealth;
         private int damage;
         private Direction currentDirection;
         private int currentFrame;
@@ -90,6 +91,13 @@ namespace _3902sprint0
             get
             {
                 return health;
+            }
+        }
+        public int MaxHealth
+        {
+            get
+            {
+                return maxHealth;
             }
         }
         public int Damage
@@ -199,6 +207,8 @@ namespace _3902sprint0
 
 			this.health = health;
 
+            this.maxHealth = health;
+
 			this.damage = damage;
 
 			this.movementSpeed = movementSpeed;
@@ -299,6 +309,10 @@ namespace _3902sprint0
                 animationFinished = false;
             }
         }
+        public void StopMovement()
+        {
+            velocity = Vector2.Zero;
+        }
 
         private void UpdateDamageCooldown(GameTime gameTime)
         {
@@ -388,7 +402,11 @@ namespace _3902sprint0
                 {
                     velocity.Y = 0;
                 }
-                animationState = AnimationState.Idle;
+                if (velocity.LengthSquared() < 0.001f)
+                {
+                    velocity = Vector2.Zero;
+                    animationState = AnimationState.Idle;
+                }
             }
 
         }
