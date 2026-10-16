@@ -137,6 +137,8 @@ namespace _3902sprint0
 
 
             gameFont = Content.Load<SpriteFont>("GameFont");
+            EffectMessage.Load(gameFont);
+            ChestMessage.Load(gameFont);
 
             currentSwordHUD = new CurrentSwordHUD(GraphicsDevice, gameFont);
             heartTexture = Content.Load<Texture2D>("Pixel Heart Sprite Sheet 32x32");
@@ -240,11 +242,14 @@ private void DrawRectOutline(SpriteBatch spriteBatch, Rectangle rect, Color colo
             {
                 stairsCooldown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
+            EffectMessage.Update(gameTime);
+            ChestMessage.Update(gameTime);
 
             if (player.IsQuit())
                 Exit();
             room.Update(gameTime);
             ChestManager.Update(gameTime);
+
 
             player.Update(gameTime);
 ;
@@ -280,6 +285,8 @@ private void DrawRectOutline(SpriteBatch spriteBatch, Rectangle rect, Color colo
             currentSwordHUD.Draw(spriteBatch, inventory);
 
             DrawDebugBounds(spriteBatch);
+            EffectMessage.Draw(spriteBatch, player.getPosition() - new Vector2(0, 90));
+            ChestMessage.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }

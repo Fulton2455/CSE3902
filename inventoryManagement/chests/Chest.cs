@@ -75,6 +75,7 @@ namespace _3902sprint0
                         Iitem item = database.RandomItem();
                         inventory.AddItem(item);
                         database.items.Remove(item);
+                        ChestMessage.Show(item.Name, Color.Gold, Location);
                         //must add to deleted list in future
 
                         Debug.WriteLine("Item generated at chest location: " + Location);
