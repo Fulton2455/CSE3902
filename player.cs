@@ -239,6 +239,8 @@ namespace _3902sprint0
             }
             
             useItem(gameTime);
+            if (Keyboard.forceItem())
+                ForceChestItem();
             RegenerateMana(gameTime);
 
             // If the player presses the die key, stop movement and set the sprite to the death animation (helped made by Chatgpt free)
@@ -531,6 +533,13 @@ namespace _3902sprint0
 
 
 
+        }
+        public void ForceChestItem()
+        {
+            if (chestManager.chests.Count == 0)
+                return;
+
+            chestManager.chests[0].ForceGenerateItem();
         }
         private void newTerrain(GameTime gameTime)
         {

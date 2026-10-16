@@ -34,6 +34,16 @@ namespace _3902sprint0
             return false;
             
         }
+        public bool forceItem()
+        {
+            KeyboardState state = Keyboard.GetState();
+            if (state.IsKeyDown(Keys.G))
+            {
+                return true;
+            }
+            return false;
+
+        }
         public bool revive()
         {
             KeyboardState state = Keyboard.GetState();

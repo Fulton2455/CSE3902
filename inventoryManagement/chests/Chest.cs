@@ -53,39 +53,47 @@ namespace _3902sprint0
         }
         public void generateItem()
         {
-            if(database.items.Count == 0)
+            if (database.items.Count == 0)
             {
                 chestManager.deleteChest(this);
                 return;
             }
             Vector2 mousePosition = Mouse.RightClickPressed();
-           
+
             if (mousePosition != Vector2.Zero && !isOpen)
             {
                 float distance = Vector2.Distance(player.getPosition(), Location);
-                if (distance <= 300)
-                {
-                    if (mousePosition.X >= Location.X &&
+                if (distance <= 300 &&
+                    mousePosition.X >= Location.X &&
                     mousePosition.X <= Location.X + 48 &&
                     mousePosition.Y >= Location.Y &&
                     mousePosition.Y <= Location.Y + 32)
-                    {
-                        Debug.WriteLine("3");
-
-                        Iitem item = database.RandomItem();
-                        inventory.AddItem(item);
-                        database.items.Remove(item);
-                        ChestMessage.Show(item.Name, Color.Gold, Location);
-                        //must add to deleted list in future
-
-                        Debug.WriteLine("Item generated at chest location: " + Location);
-
-                        isOpen = true;
-
-                        // Tell the sprite to play the opening animation
-                        ChestSprite1.Open();
-                    }
+                {
+                    GiveItem();
                 }
+            }
+        }
+        //test methods
+        public bool ForceGenerateItem()
+        {
+            if (database.items.Count == 0)
+                return false;
+
+            GiveItem();
+            return true;
+        }
+
+        private void GiveItem()
+        {
+            Iitem item = database.RandomItem();
+            inventory.AddItem(item);
+            database.items.Remove(item);
+            ChestMessage.Show(item.Name, Color.Gold, new Vector2(Location.X + 24, Location.Y - 10));
+
+            if (!isOpen)
+            {
+                isOpen = true;
+                ChestSprite1.Open();
             }
         }
     }
