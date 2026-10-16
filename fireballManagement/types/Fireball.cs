@@ -33,7 +33,9 @@ namespace _3902sprint0
 
         public bool IsActive => isActive;
         public bool IsHostile => isHostile;
-        public int Damage { get; set; } = 1;
+        public int Damage { get; set; } = 2;
+        public int ExplosionDamage { get; set; } = 2;
+
         public Rectangle Bounds => GetBoundsAt(position);
         public Fireball(Texture2D texture, FireballSprite fireballSprite,
         detonateSprite detonateSprite, Room room)

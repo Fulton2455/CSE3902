@@ -46,6 +46,9 @@ private Rectangle GetBoundsAt(Vector2 pos) => new Rectangle((int)(pos.X + 64), (
         }
         public void generateEntity(Vector2 position, Vector2 direction, bool isHostile)
         {
+            SoundManager.PlayFireballShoot();
+
+
             this.position = position;
             this.direction = direction;
             this.direction.Normalize();

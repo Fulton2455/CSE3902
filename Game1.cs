@@ -28,6 +28,7 @@ namespace _3902sprint0
         private Fireball fireball;
         private Fireball2 fireball2;
 
+        private chestManager ChestManager;
         private Inventory inventory;
         private itemDatabase database;
         private Chest chest;
@@ -146,24 +147,15 @@ namespace _3902sprint0
 
            
             database = new itemDatabase(magicSwordTexture, fireScrollTexture, FireballManager, shieldOfInvulnerabilityTexture);
-            chest = new Chest(
-                new Vector2(600, 300),
-                inventory,
-                database,
-                player
-             );
-            chest2 = new Chest(
-               new Vector2(800, 300),
-               inventory,
-               database,
-               player
-            );
-            chest3 = new Chest(
-               new Vector2(400, 300),
-               inventory,
-               database,
-               player
-            );
+            ChestManager = new chestManager(
+            chestTexture,
+            inventory,
+            database,
+            player);
+
+            ChestManager.CreateChest(new Vector2(600, 300));
+            ChestManager.CreateChest(new Vector2(800, 300));
+            ChestManager.CreateChest(new Vector2(400, 300));
             enemySlimeTexture = Content.Load<Texture2D>("enemySlime");
             enemyZombieTexture = Content.Load<Texture2D>("enemyZombie");
             enemyMageTexture = Content.Load<Texture2D>("enemyMage");
@@ -193,9 +185,7 @@ enemyManager.SetMovementBounds(movementBounds);
                 EnemyType.Chaser,
                 EnemyType.Fleeing,
                 EnemyType.Erratic);
-            chest.InitializeSprite(chestTexture);
-            chest2.InitializeSprite(chestTexture);
-            chest3.InitializeSprite(chestTexture);
+      
 
 
 
@@ -237,10 +227,8 @@ private void DrawRectOutline(SpriteBatch spriteBatch, Rectangle rect, Color colo
             if (player.IsQuit())
                 Exit();
             room.Update(gameTime);
-            chest.Update(gameTime);
-            chest2.Update(gameTime);
+            ChestManager.Update(gameTime);
 
-            chest3.Update(gameTime);
             player.Update(gameTime);
 ;
             FireballManager.Update(gameTime);
@@ -263,12 +251,9 @@ private void DrawRectOutline(SpriteBatch spriteBatch, Rectangle rect, Color colo
 
             room.Draw(spriteBatch);
             player.Draw(spriteBatch);
-            chest.Draw(spriteBatch);
-            chest2.Draw(spriteBatch);
 
-            chest3.Draw(spriteBatch);
             FireballManager.Draw(spriteBatch);
-
+            ChestManager.Draw(spriteBatch);
             enemyManager.draw(spriteBatch);
             inventoryHUD.Draw(spriteBatch, GraphicsDevice, inventory, gameTime);
             healthHUD.Draw(spriteBatch, player);

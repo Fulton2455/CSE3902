@@ -17,6 +17,7 @@ namespace _3902sprint0
             items.Add(new MagicSword(magicSwordTexture));
             items.Add(new fireScroll(fireScrollTexture, fireballManager));
             items.Add(new shieldOfInvulnerability(shieldOfInvulnerabilityTexture));
+            items.Add(new fireScroll2(fireScrollTexture, fireballManager));
         }
         public Iitem RandomItem()
         {
