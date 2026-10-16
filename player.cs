@@ -17,6 +17,11 @@ namespace _3902sprint0
         public const int Width = 128;
         public const int Height = 128;
 
+        public const int MaxMana = 100;
+        public const float ManaRegenerationRate = 4f;
+
+        public int mana = MaxMana;
+        private float manaRegenerationTimer = 0f;
         // The player's current location in the game world.
         public Vector2 Location;
         public terrain Terrain;
@@ -59,6 +64,8 @@ namespace _3902sprint0
         public Rectangle Bounds => GetBoundsAt(Location);
 
         public bool IsDead => Health <= 0;
+
+
 
         /// <summary>
         /// Initializes a new instance of the Player class with the specified starting location. The constructor sets up the player's initial position, creates a new PlayerSprite for rendering, and initializes the keyboard and mouse controllers for handling input.
@@ -184,7 +191,9 @@ namespace _3902sprint0
                 }
                 Revive();
             }
+            
             useItem(gameTime);
+            RegenerateMana(gameTime);
 
             // If the player presses the die key, stop movement and set the sprite to the death animation (helped made by Chatgpt free)
             if (Keyboard.die())
@@ -251,6 +260,27 @@ namespace _3902sprint0
                 }
                 // Update the sprite for this frame, ensuring that the correct animation is displayed based on the player's current state and actions
                 PlayerSprite1.UpdateSprite(gameTime);
+            }
+        }
+        private void RegenerateMana(GameTime gameTime)
+        {
+            if (mana >= MaxMana)
+            {
+                mana = MaxMana;
+                manaRegenerationTimer = 0f;
+                return;
+            }
+
+            manaRegenerationTimer +=
+                (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (manaRegenerationTimer >= 1f)
+            {
+                mana = Math.Min(
+                    mana + (int)(manaRegenerationTimer * ManaRegenerationRate),
+                    MaxMana);
+
+                manaRegenerationTimer %= 1f;
             }
         }
         private void fireballHitCheck()

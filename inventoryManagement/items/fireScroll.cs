@@ -60,6 +60,7 @@ namespace _3902sprint0
             {
                 ApplyEffect(player);
                 useTime = 0f;
+                player.mana -= 12;
             }
         }
 
