@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace _3902sprint0
 {
-    internal class Chest
+    public class Chest
     {
         public Vector2 Location;
         public bool isOpen = false;
@@ -18,13 +18,15 @@ namespace _3902sprint0
         private ChestSprite ChestSprite1;
         private Inventory inventory;
         private itemDatabase database;
+        private chestManager chestManager;
 
-        public Chest(Vector2 startingLocation, Inventory inventory, itemDatabase database, Player player)
+        public Chest(Vector2 startingLocation, Inventory inventory, itemDatabase database, Player player, chestManager chestManager)
         {
             Location = startingLocation;
             ChestSprite1 = new ChestSprite();
             Mouse = new Mousecontroller();
             this.player = player;
+            this.chestManager = chestManager;
 
             this.inventory = inventory;
             this.database = database;
@@ -51,6 +53,11 @@ namespace _3902sprint0
         }
         public void generateItem()
         {
+            if(database.items.Count == 0)
+            {
+                chestManager.deleteChest(this);
+                return;
+            }
             Vector2 mousePosition = Mouse.RightClickPressed();
            
             if (mousePosition != Vector2.Zero && !isOpen)

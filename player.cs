@@ -52,6 +52,7 @@ namespace _3902sprint0
         private const int InsetRight = 32;
         private const int InsetTop = 16;
         private const int InsetBottom = 0;
+        private chestManager chestManager;
 
         public Rectangle Bounds => GetBoundsAt(Location);
 
@@ -61,7 +62,7 @@ namespace _3902sprint0
         /// Initializes a new instance of the Player class with the specified starting location. The constructor sets up the player's initial position, creates a new PlayerSprite for rendering, and initializes the keyboard and mouse controllers for handling input.
         /// </summary>
         /// <param name="startingLocation"></param>
-        public Player(Vector2 startingLocation, Inventory inventory, InventoryHUD inventoryHUD, fireballManager fireballManager)
+        public Player(Vector2 startingLocation, Inventory inventory, InventoryHUD inventoryHUD, fireballManager fireballManager, chestManager chestManager)
         {
             Location = startingLocation;
             PlayerSprite1 = new PlayerSprite();
@@ -70,6 +71,7 @@ namespace _3902sprint0
             this.inventory = inventory;
             this.inventoryHUD = inventoryHUD;
             this.fireballManager = fireballManager;
+            this.chestManager = chestManager;
 
             Terrain = new terrain();
             Terrain.currentState = terrain.terrainState.Stone;
@@ -391,6 +393,7 @@ namespace _3902sprint0
         /// </summary>
         private void Attack()
         {
+
             
                 PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Attack);
             SoundManager.PlaySwordSwing();
@@ -447,7 +450,11 @@ namespace _3902sprint0
                         Terrain.newTerrainAccessed(this);
                         Terrain.getTerainEffect(this);
                         inventory.ResetItems();
-                        enemyManager.RespawnEnemies(
+                    if (chestManager.chests.Count > 0)
+                    {
+                        chestManager.deleteChest(chestManager.chests[0]);
+                    }
+                    enemyManager.RespawnEnemies(
                             EnemyType.Basic,
                             EnemyType.Basic,
                             EnemyType.Chaser,
@@ -465,7 +472,11 @@ namespace _3902sprint0
                         Terrain.newTerrainAccessed(this);
                         Terrain.getTerainEffect(this);
                         inventory.ResetItems();
-                        enemyManager.RespawnEnemies(
+                    if (chestManager.chests.Count > 0)
+                    {
+                        chestManager.deleteChest(chestManager.chests[0]);
+                    }
+                    enemyManager.RespawnEnemies(
                             EnemyType.Basic,
                             EnemyType.Basic,
                             EnemyType.Chaser,
@@ -482,7 +493,12 @@ namespace _3902sprint0
                         Terrain.newTerrainAccessed(this);
                         Terrain.getTerainEffect(this);
                         inventory.ResetItems();
-                        enemyManager.RespawnEnemies(
+                    if (chestManager.chests.Count > 0)
+                    {
+                        chestManager.deleteChest(chestManager.chests[0]);
+                    }
+                    chestManager.CreateRandomChest();
+                    enemyManager.RespawnEnemies(
                             EnemyType.Basic,
                             EnemyType.Basic,
                             EnemyType.Chaser,

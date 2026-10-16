@@ -139,23 +139,29 @@ namespace _3902sprint0
             inventoryHUD = new InventoryHUD(GraphicsDevice);
             healthHUD = new HealthHUD(heartTexture);
             FireballManager = new fireballManager(fireballTexture, detonateTexture);
-            player = new Player(new Vector2(300, 300), inventory, inventoryHUD, FireballManager);
-            player.InitializeSprite(knightTexture);
-
-            currentPlayer = player;
-
-
-           
             database = new itemDatabase(magicSwordTexture, fireScrollTexture, FireballManager, shieldOfInvulnerabilityTexture);
+            LoadRoom();
+
+            Rectangle chestmovementBounds = GetRoomBounds();
+
             ChestManager = new chestManager(
             chestTexture,
             inventory,
             database,
-            player);
+            room,
+            chestmovementBounds);
+            player = new Player(new Vector2(300, 300), inventory, inventoryHUD, FireballManager, ChestManager);
+            player.InitializeSprite(knightTexture);
+            ChestManager.SetPlayer(player);
+            currentPlayer = player;
+
+
+           
+            
+            
 
             ChestManager.CreateChest(new Vector2(600, 300));
-            ChestManager.CreateChest(new Vector2(800, 300));
-            ChestManager.CreateChest(new Vector2(400, 300));
+            
             enemySlimeTexture = Content.Load<Texture2D>("enemySlime");
             enemyZombieTexture = Content.Load<Texture2D>("enemyZombie");
             enemyMageTexture = Content.Load<Texture2D>("enemyMage");
@@ -170,12 +176,10 @@ namespace _3902sprint0
 
             Rectangle movementBounds = GetRoomBounds();
 enemyManager.SetMovementBounds(movementBounds);
-            enemyManager.SetMovementBounds(movementBounds);
+            ChestManager.SetMovementBounds(movementBounds);
 
-            
-        
 
-            LoadRoom();
+
             player.SetRoom(room);
             FireballManager.SetRoom(room);
             enemyManager.SetRoom(room);

@@ -7,7 +7,7 @@ using static Microsoft.Xna.Framework.MathHelper;
 
 namespace _3902sprint0
 {
-    internal class itemDatabase
+    public class itemDatabase
     {
 
         public List<Iitem> items = new List<Iitem>();

@@ -33,8 +33,33 @@ namespace _3902sprint0
 
         public bool IsActive => isActive;
         public bool IsHostile => isHostile;
-        public int Damage { get; set; } = 2;
-        public int ExplosionDamage { get; set; } = 2;
+        public int Damage { get; set; } = 1;
+        public int ExplosionDamage { get; set; } = 1;
+
+        private readonly HashSet<Enemy> explosionDamagedEnemies = new HashSet<Enemy>();
+
+        public bool IsExplosionActive { get; private set; }
+
+        public bool HasExplosionDamaged(Enemy enemy)
+        {
+            return explosionDamagedEnemies.Contains(enemy);
+        }
+
+        public void MarkExplosionDamage(Enemy enemy)
+        {
+            explosionDamagedEnemies.Add(enemy);
+        }
+        public Rectangle ExplosionBounds { get; private set; }
+
+        private Rectangle GetExplosionBoundsAt(Vector2 pos)
+        {
+            return new Rectangle(
+                (int)pos.X - 16,
+                (int)pos.Y - 32,
+                128,
+                128
+            );
+        }
 
         public Rectangle Bounds => GetBoundsAt(position);
         public Fireball(Texture2D texture, FireballSprite fireballSprite,
@@ -84,12 +109,21 @@ namespace _3902sprint0
             }
             fireballSprite.UpdateSprite(gameTime);
             detonateSprite.UpdateSprite(gameTime);
+            if (IsExplosionActive && !detonateSprite.IsDetonating)
+            {
+                IsExplosionActive = false;
+            }
         }
         public void ApplyEffect(Vector2 position)
         {
             SoundManager.PlayExplosion();
 
             this.position = position;
+            ExplosionBounds = GetExplosionBoundsAt(position);
+
+            explosionDamagedEnemies.Clear();
+            IsExplosionActive = true;
+
             detonateSprite.SetLocation(position);
             detonateSprite.activate();
         }
