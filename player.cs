@@ -582,6 +582,7 @@ namespace _3902sprint0
                             EnemyType.Fleeing,
                             EnemyType.Erratic,
                             EnemyType.ToadBoss);
+                    damage = 1f;
 
                 }
             }
