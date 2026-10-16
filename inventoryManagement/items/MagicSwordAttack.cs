@@ -20,7 +20,7 @@ namespace _3902sprint0
 
         public MagicSword2(Texture2D texture)
         {
-            Name = "Magic Sword 2";
+            Name = "Magic Attack Sword";
             Texture = texture;
         }
 

@@ -13,6 +13,8 @@ namespace _3902sprint0
         private float useSpeed = 3f;
        
         bool fireEffect = false;
+
+        private const int ManaCost = 12;
         private fireballManager fireballManager;
 
         public string Name { get; set; }
@@ -56,6 +58,8 @@ namespace _3902sprint0
 
         public void Use(Player player, GameTime gameTime)
         {
+            if (!IsOffCooldown || player.mana < ManaCost)
+                return;
             if (useTime >= useSpeed)
             {
                 ApplyEffect(player);

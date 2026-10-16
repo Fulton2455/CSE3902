@@ -12,8 +12,10 @@ namespace _3902sprint0
         private float useTime = 10f;
         private float useSpeed = 10f;
 
+        private const int ManaCost = 10;
 
-        
+
+
         public string Name { get; set; }
 
         public bool firstUse = true;
@@ -53,6 +55,8 @@ namespace _3902sprint0
 
         public void Use(Player player, GameTime gameTime)
         {
+            if (!IsOffCooldown || player.mana < ManaCost)
+                return;
             if (useTime >= useSpeed)
             {
                 ApplyEffect(player);

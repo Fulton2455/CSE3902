@@ -19,12 +19,11 @@ namespace _3902sprint0
         public Texture2D Texture { get; }
         public bool IsOffCooldown => useTime >= useSpeed;
 
-        public deckOfCards(Texture2D texture,fireballManager fireballManager)
+        public deckOfCards(Texture2D texture, fireballManager fireballManager)
         {
             Name = "Deck of Cards";
             Texture = texture;
             this.fireballManager = fireballManager;
-
         }
 
         public void cooldownReset()
@@ -45,106 +44,109 @@ namespace _3902sprint0
             // Tick timers for timed effects here.
         }
 
+        private void ShootRandom(int count, int fireballType, bool hostile, Vector2 origin)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                float angle = (float)(rng.NextDouble() * MathHelper.TwoPi);
+                Vector2 direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+
+                fireballManager.createFireball(fireballType, origin, direction, hostile);
+            }
+        }
+
         public void ApplyEffect(Player player)
         {
-            int roll = rng.Next(EffectCount); // 0 to 19
+            int roll = rng.Next(EffectCount); // 0 to 20
             Vector2 playerCeneter = new Vector2(player.Location.X, player.Location.Y + 40);
             SoundManager.PlaySwordSwing();
-
             switch (roll)
             {
                 case 0:
                     player.becomeInvulnerable();
+                    EffectMessage.Show("Invulnerable!", Color.Gold);
                     break;
                 case 1:
-                    player.mana -= 10; // Example effect: reduce mana by 10
+                    player.mana -= 10;
+                    EffectMessage.Show("-10 Mana", Color.OrangeRed);
                     break;
                 case 2:
-                    player.mana += 12; // Example effect: increase mana by 10
+                    player.mana += 12;
+                    EffectMessage.Show("+12 Mana", Color.CornflowerBlue);
                     break;
                 case 3:
                     player.heal(3);
+                    EffectMessage.Show("+3 Health", Color.LimeGreen);
                     break;
                 case 4:
                     player.heal(4);
+                    EffectMessage.Show("+4 Health", Color.LimeGreen);
                     break;
                 case 5:
                     player.heal(5);
+                    EffectMessage.Show("+5 Health", Color.LimeGreen);
                     break;
                 case 6:
                     player.TakeDamage(1);
+                    EffectMessage.Show("-1 Health", Color.Red);
                     break;
                 case 7:
                     player.TakeDamage(2);
+                    EffectMessage.Show("-2 Health", Color.Red);
                     break;
                 case 8:
-                    player.damage += 1;//will need reversing effect
+                    player.damage += 1; //will need reversing effect
+                    EffectMessage.Show("+1 Damage", Color.Orange);
                     break;
                 case 9:
-                    player.damage -= .5f;//will need reversing effect
+                    player.damage -= .5f; //will need reversing effect
+                    EffectMessage.Show("-0.5 Damage", Color.Red);
                     break;
                 case 10:
-                    player.damage += .5f;//will need reversing effect
+                    player.damage += .5f; //will need reversing effect
+                    EffectMessage.Show("+0.5 Damage", Color.Orange);
                     break;
                 case 11:
-                    for (int i = 0; i < 4; i++)
-                    {
-                        float angle = (float)(rng.NextDouble() * MathHelper.TwoPi);
-                        Vector2 direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-
-                        fireballManager.createFireball(2, playerCeneter, direction, false);
-                    }
+                    ShootRandom(4, 2, false, playerCeneter);
+                    EffectMessage.Show("Fireball Burst!", Color.OrangeRed);
                     break;
                 case 12:
-                    for (int i = 0; i < 2; i++)
-                    {
-                        float angle = (float)(rng.NextDouble() * MathHelper.TwoPi);
-                        Vector2 direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                    ShootRandom(1, 1, true, player.Location+new Vector2(10, 10));
+                    ShootRandom(1, 1, true, playerCeneter);
 
-                        fireballManager.createFireball(1, playerCeneter, direction, true);
-                    }
+                    EffectMessage.Show("Cursed Fireballs!", Color.Red);
                     break;
                 case 13:
-                    for (int i = 0; i < 3; i++)
-                    {
-                        float angle = (float)(rng.NextDouble() * MathHelper.TwoPi);
-                        Vector2 direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-
-                        fireballManager.createFireball(1, playerCeneter, direction, false);
-                    }
+                    ShootRandom(3, 1, false, playerCeneter);
+                    EffectMessage.Show("Triple Fireball", Color.OrangeRed);
                     break;
                 case 14:
-                    for (int i = 0; i < 2; i++)
-                    {
-                        float angle = (float)(rng.NextDouble() * MathHelper.TwoPi);
-                        Vector2 direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-
-                        fireballManager.createFireball(2, playerCeneter, direction, false);
-                    }
+                    ShootRandom(2, 2, false, playerCeneter);
+                    EffectMessage.Show("Double Fireball", Color.OrangeRed);
                     break;
                 case 15:
-                    for (int i = 0; i < 6; i++)
-                    {
-                        float angle = (float)(rng.NextDouble() * MathHelper.TwoPi);
-                        Vector2 direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-
-                        fireballManager.createFireball(2, playerCeneter, direction, false);
-                    }
+                    ShootRandom(6, 2, false, playerCeneter);
+                    EffectMessage.Show("Fireball Storm!", Color.OrangeRed);
                     break;
                 case 16:
-                    player.Speed += 100; // Example effect: increase speed by 100
+                    player.Speed += 100;
+                    EffectMessage.Show("+100 Speed", Color.Cyan);
                     break;
                 case 17:
                     player.Speed -= 100;
+                    EffectMessage.Show("-100 Speed", Color.Red);
                     break;
                 case 18:
                     player.Speed += 100;
+                    EffectMessage.Show("+100 Speed", Color.Cyan);
                     break;
                 case 19:
-                   player.becomeInvulnerable();
+                    player.becomeInvulnerable();
+                    EffectMessage.Show("Invulnerable!", Color.Gold);
                     break;
                 case 20:
                     player.becomeInvisible();
+                    EffectMessage.Show("Invisible!", Color.LightGray);
                     break;
             }
         }
