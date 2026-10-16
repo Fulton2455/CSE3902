@@ -80,7 +80,7 @@ namespace _3902sprint0
         public Game1()
         {
             DeviceManager3902 = new GraphicsDeviceManager(this);
-            DeviceManager3902.PreferredBackBufferWidth = 1820;
+            DeviceManager3902.PreferredBackBufferWidth = 1792;
             DeviceManager3902.PreferredBackBufferHeight = 1280;
 
             Content.RootDirectory = "Content";
@@ -243,6 +243,10 @@ private void DrawDebugBounds(SpriteBatch spriteBatch)
                     DrawRectOutline(spriteBatch, fireball2.Bounds, Color.White);
                 }
 
+            }
+    foreach (Chest chest in ChestManager.Chests)
+            {
+                DrawRectOutline(spriteBatch, chest.GetBounds(), Color.Gold);
             }
 }
 
