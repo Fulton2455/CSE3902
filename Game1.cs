@@ -132,6 +132,8 @@ namespace _3902sprint0
             Texture2D robeOfInvisibilityTexture = Content.Load<Texture2D>("items/robeOfInvisibility");
             Texture2D PanaceaTexture=Content.Load<Texture2D>("items/panacea");
             Texture2D magicArmor = Content.Load<Texture2D>("items/healthShield");
+            Texture2D deckOfcardsTexture = Content.Load<Texture2D>("items/deckOfCards");
+
 
             gameFont = Content.Load<SpriteFont>("GameFont");
 
@@ -143,7 +145,7 @@ namespace _3902sprint0
             inventoryHUD = new InventoryHUD(GraphicsDevice);
             healthHUD = new HealthHUD(heartTexture);
             FireballManager = new fireballManager(fireballTexture, detonateTexture);
-            database = new itemDatabase(magicSwordTexture, fireScrollTexture, FireballManager, shieldOfInvulnerabilityTexture, robeOfInvisibilityTexture, PanaceaTexture, magicArmor);
+            database = new itemDatabase(magicSwordTexture, fireScrollTexture, FireballManager, shieldOfInvulnerabilityTexture, robeOfInvisibilityTexture, PanaceaTexture, magicArmor, deckOfcardsTexture);
             LoadRoom();
 
             Rectangle chestmovementBounds = GetRoomBounds();

@@ -31,7 +31,7 @@ namespace _3902sprint0
         // The player's maximum movement speed, which determines how fast the player can move.
         public float Speed = 200f;
 
-        public int damage = 1;
+        public float damage = 1f;
 
         public int MaxShieldHealth = 6;
         public int ShieldHealth { get; private set; } = 0;
@@ -557,10 +557,12 @@ namespace _3902sprint0
                             EnemyType.Chaser,
                             EnemyType.Fleeing,
                             EnemyType.Erratic);
+                    damage = 1f;
+
 
 
                 }
-                }
+            }
                 else if (terrainInput == "Swamp")
                 {
                     if (Terrain.currentState != terrain.terrainState.Swamp)
@@ -579,9 +581,11 @@ namespace _3902sprint0
                             EnemyType.Chaser,
                             EnemyType.Fleeing,
                             EnemyType.Erratic);
+                    damage = 1f;
+
 
                 }
-                }
+            }
                 else if (terrainInput == "Stone")
                 {
                     if (Terrain.currentState != terrain.terrainState.Stone)
@@ -601,6 +605,7 @@ namespace _3902sprint0
                             EnemyType.Chaser,
                             EnemyType.Fleeing,
                             EnemyType.Erratic);
+                    damage = 1f;
 
                 }
                 }
