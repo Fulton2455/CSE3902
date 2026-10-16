@@ -14,6 +14,8 @@ namespace _3902sprint0
         private double detonationTimer = 0;
         private FireballSprite fireballSprite;
 
+       
+
         private Vector2 direction;
         private Room room;
        

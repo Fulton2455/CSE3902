@@ -450,7 +450,8 @@ namespace _3902sprint0
                             EnemyType.Basic,
                             EnemyType.Chaser,
                             EnemyType.Fleeing,
-                            EnemyType.Erratic);
+                            EnemyType.Erratic,
+                            EnemyType.ToadBoss);
 
                 }
                 }

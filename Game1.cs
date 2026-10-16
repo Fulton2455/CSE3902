@@ -126,6 +126,7 @@ namespace _3902sprint0
             Texture2D fireScrollTexture = Content.Load<Texture2D>("items/fireScroll");
             Texture2D chestTexture = Content.Load<Texture2D>("Chest");
             Texture2D fireballTexture = Content.Load<Texture2D>("Fireball");
+            Texture2D acidTexture = fireballTexture;                                   //change when texture created
             Texture2D detonateTexture = Content.Load<Texture2D>("Explosion");
             Texture2D shieldOfInvulnerabilityTexture = Content.Load<Texture2D>("items/shieldOfInvulnerability");
             gameFont = Content.Load<SpriteFont>("GameFont");
@@ -168,11 +169,16 @@ namespace _3902sprint0
             enemyZombieTexture = Content.Load<Texture2D>("enemyZombie");
             enemyMageTexture = Content.Load<Texture2D>("enemyMage");
             enemyBatTexture = Content.Load<Texture2D>("enemyBat");
+            Texture2D toadTexture = enemySlimeTexture;                          //change when texture created
+            Texture2D shockwavePixel = new Texture2D(GraphicsDevice, 1, 1);
+            shockwavePixel.SetData(new[] { Color.White });
             enemyManager = new EnemyManager(player,
                 enemySlimeTexture,
                 enemyZombieTexture,
                 enemyMageTexture,
                 enemyBatTexture,
+                toadTexture,
+                shockwavePixel,
                 FireballManager);
             player.SetEnemyManager(enemyManager);
 
@@ -185,6 +191,7 @@ namespace _3902sprint0
             LoadRoom();
             player.SetRoom(room);
             FireballManager.SetRoom(room);
+            FireballManager.SetAcidTexture(acidTexture);
             enemyManager.SetRoom(room);
             enemyManager.RespawnEnemies(
                 EnemyType.Basic,
