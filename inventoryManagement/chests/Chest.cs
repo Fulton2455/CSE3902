@@ -47,6 +47,10 @@ namespace _3902sprint0
 
             ChestSprite1.Initialize(texture);
         }
+        public Rectangle GetBounds()
+        {
+            return ChestSprite1.GetDestinationRectangle();
+        }
         public void Draw(SpriteBatch spriteBatch)
         {
             ChestSprite1.Draw(spriteBatch);

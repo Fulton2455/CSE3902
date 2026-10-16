@@ -80,7 +80,7 @@ namespace _3902sprint0
         public Game1()
         {
             DeviceManager3902 = new GraphicsDeviceManager(this);
-            DeviceManager3902.PreferredBackBufferWidth = 1820;
+            DeviceManager3902.PreferredBackBufferWidth = 1792;
             DeviceManager3902.PreferredBackBufferHeight = 1280;
 
             Content.RootDirectory = "Content";
@@ -221,6 +221,33 @@ private void DrawDebugBounds(SpriteBatch spriteBatch)
     DrawRectOutline(spriteBatch, player.Bounds, Color.Red);
     foreach (var tile in room.Tiles)
         DrawRectOutline(spriteBatch, tile.Bounds, tile.IsSolid ? Color.Cyan : Color.Yellow);
+            
+    foreach (Enemy enemy in enemyManager.Enemies) 
+        DrawRectOutline(spriteBatch, enemy.bounds, Color.Magenta);
+
+    foreach (Fireball fireball in FireballManager.Fireballs)
+            {
+                if (fireball.IsActive)
+                {
+                    DrawRectOutline(spriteBatch, fireball.Bounds, Color.White);
+                }
+                if (fireball.IsExplosionActive)
+                {
+                    DrawRectOutline(spriteBatch, fireball.ExplosionBounds, Color.Purple);
+                }
+            }
+    foreach (Fireball2 fireball2 in FireballManager.Fireballs2)
+            {
+                if (fireball2.IsActive)
+                {
+                    DrawRectOutline(spriteBatch, fireball2.Bounds, Color.White);
+                }
+
+            }
+    foreach (Chest chest in ChestManager.Chests)
+            {
+                DrawRectOutline(spriteBatch, chest.GetBounds(), Color.Gold);
+            }
 }
 
 private void DrawRectOutline(SpriteBatch spriteBatch, Rectangle rect, Color color)
