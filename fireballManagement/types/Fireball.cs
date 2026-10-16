@@ -20,6 +20,8 @@ namespace _3902sprint0
 
         private Room room;
 
+        public bool finishedDetonation = false;
+        private int detCount = 0;
         private IEnemyTileInteraction tileInteraction;
 
         private float speed = 400f;
@@ -58,6 +60,7 @@ namespace _3902sprint0
         }
         public void Update(GameTime gameTime)
         {
+            if (detCount > 1) { finishedDetonation = true; }
             if (isActive)
             {
                 move(gameTime);
@@ -69,6 +72,7 @@ namespace _3902sprint0
                 {
                     fireballSprite.deactivate();
                     ApplyEffect(position);
+                    detCount++;
                     isActive = false;
 
                 }

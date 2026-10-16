@@ -61,10 +61,18 @@ namespace _3902sprint0
         {
             foreach (Fireball fireball in fireballs)
             {
+                if (fireball.finishedDetonation)
+                {
+                    fireballs.Remove(fireball);
+                    break;
+                }
                 fireball.Update(gameTime);
             }
             foreach (Fireball2 fireball2 in fireballs2)
             {
+                if (fireball2.finishedDetonation) { 
+                    fireballs2.Remove(fireball2);
+                    break;}
                 fireball2.Update(gameTime);
             }
         }

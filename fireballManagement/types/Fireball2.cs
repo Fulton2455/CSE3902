@@ -26,6 +26,8 @@ namespace _3902sprint0
 
         private bool isHostile = false;
 
+        public bool finishedDetonation = false;
+        private int detCount = 0;
         public bool IsActive => isActive;
         public bool IsHostile => isHostile;
         public int Damage { get; set; } = 1;
@@ -65,6 +67,7 @@ private Rectangle GetBoundsAt(Vector2 pos) => new Rectangle((int)(pos.X + 64), (
         
         public void Update(GameTime gameTime)
         {
+            if (detCount > 1) { finishedDetonation = true; }
             if (isActive)
             {
                 move(gameTime);
@@ -76,7 +79,8 @@ private Rectangle GetBoundsAt(Vector2 pos) => new Rectangle((int)(pos.X + 64), (
                 if (detonationTimer >= detonationTime)
                 {
                     fireballSprite.deactivate();
-               
+                    detCount++;
+
                     isActive = false;
                    
                 }

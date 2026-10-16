@@ -43,6 +43,8 @@ namespace _3902sprint0
 
         private InventoryHUD inventoryHUD;
 
+        private fireballManager fireballManager;
+
         // The player's sprite, which is responsible for rendering the player character on the screen and managing animations.
         private PlayerSprite PlayerSprite1;
 
@@ -59,7 +61,7 @@ namespace _3902sprint0
         /// Initializes a new instance of the Player class with the specified starting location. The constructor sets up the player's initial position, creates a new PlayerSprite for rendering, and initializes the keyboard and mouse controllers for handling input.
         /// </summary>
         /// <param name="startingLocation"></param>
-        public Player(Vector2 startingLocation, Inventory inventory, InventoryHUD inventoryHUD)
+        public Player(Vector2 startingLocation, Inventory inventory, InventoryHUD inventoryHUD, fireballManager fireballManager)
         {
             Location = startingLocation;
             PlayerSprite1 = new PlayerSprite();
@@ -67,8 +69,8 @@ namespace _3902sprint0
             Mouse = new Mousecontroller();
             this.inventory = inventory;
             this.inventoryHUD = inventoryHUD;
+            this.fireballManager = fireballManager;
 
-            
             Terrain = new terrain();
             Terrain.currentState = terrain.terrainState.Stone;
 
@@ -156,6 +158,7 @@ namespace _3902sprint0
                     invulnerable = false;
                 }
             }
+            fireballHitCheck();
 
             // Update the keyboard and mouse controllers to process input
             Keyboard.update();
@@ -244,6 +247,32 @@ namespace _3902sprint0
                 }
                 // Update the sprite for this frame, ensuring that the correct animation is displayed based on the player's current state and actions
                 PlayerSprite1.UpdateSprite(gameTime);
+            }
+        }
+        private void fireballHitCheck()
+        {
+            if (currentRoom == null)
+                return;
+
+            if (fireballManager.Fireballs == null)
+                return;
+            if (fireballManager.Fireballs2 == null)
+                return;
+            foreach (Fireball2 fireball2 in fireballManager.Fireballs2)
+    		{
+                if (fireball2.IsActive && fireball2.IsHostile && Bounds.Intersects(fireball2.Bounds))
+                {
+                    TakeDamage(fireball2.Damage);
+                    fireball2.Hit();
+                }
+            }
+            foreach (Fireball fireball in fireballManager.Fireballs)
+            {
+                if (fireball.IsActive && fireball.IsHostile && Bounds.Intersects(fireball.Bounds))
+                {
+                    TakeDamage(fireball.Damage);
+                    fireball.Hit();
+                }
             }
         }
         /// <summary>

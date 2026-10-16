@@ -137,14 +137,14 @@ namespace _3902sprint0
             inventory = new Inventory();
             inventoryHUD = new InventoryHUD(GraphicsDevice);
             healthHUD = new HealthHUD(heartTexture);
-
-            player = new Player(new Vector2(300, 300), inventory, inventoryHUD);
+            FireballManager = new fireballManager(fireballTexture, detonateTexture);
+            player = new Player(new Vector2(300, 300), inventory, inventoryHUD, FireballManager);
             player.InitializeSprite(knightTexture);
 
             currentPlayer = player;
 
 
-            FireballManager = new fireballManager(fireballTexture, detonateTexture);
+           
             database = new itemDatabase(magicSwordTexture, fireScrollTexture, FireballManager, shieldOfInvulnerabilityTexture);
             chest = new Chest(
                 new Vector2(600, 300),
