@@ -8,7 +8,7 @@ namespace _3902sprint0
         private static readonly Random random = new Random();
         private fireballManager fireballManager;
 
-
+        private readonly BasicEnemyAI basicEnemyAI = new BasicEnemyAI();
         private bool isPaused;
         private float stateTimer;
 
@@ -47,6 +47,15 @@ namespace _3902sprint0
 
         public void Update(Enemy enemy, Player player, GameTime gameTime, float terrainAcceleration)
         {
+            if (player != null && player.IsInvisivble)
+            {
+                basicEnemyAI.Update(
+                    enemy,
+                    player,
+                    gameTime,
+                    terrainAcceleration);
+                return;
+            }
             if (player == null)
                 return;
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;

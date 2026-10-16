@@ -48,6 +48,15 @@ namespace _3902sprint0
         private bool invulnerable = false;
         private double invulnerableTimer = 0;
 
+        public bool IsInvisivble
+        {
+            get
+            {
+                //should be changed to check invisibility cloak item is active
+                return false;
+            }
+        }
+
         private InventoryHUD inventoryHUD;
 
         private fireballManager fireballManager;
