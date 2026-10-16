@@ -21,7 +21,7 @@ namespace _3902sprint0
         public Texture2D Texture { get; }
     public MagicSword2(Texture2D texture)
     {
-        Name = "Magic Sword";
+        Name = "Magic Sword 2";
         Texture = texture;
     }
         public void cooldownReset()
@@ -43,16 +43,15 @@ namespace _3902sprint0
            
             if (toggleOff)
             {
-                player.Speed += 300;
-                player.Acceleration += 2500;
+                player.damage += 1;
+               
                 toggleOff = false;
                 SoundManager.PlaySwordSwing();
 
             }
             else if (!toggleOff)
             {
-                player.Speed -= 300;
-                player.Acceleration -= 2500;
+                player.damage -= 1;
                 toggleOff = true;
 
             }

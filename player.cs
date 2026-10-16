@@ -26,6 +26,8 @@ namespace _3902sprint0
         // The player's maximum movement speed, which determines how fast the player can move.
         public float Speed = 200f;
 
+        public int damage = 1;
+
         // The player's acceleration, which affects how quickly the player can change their velocity. This value may be adjusted in the future to accommodate different terrains or gameplay mechanics.
         public float Acceleration = 500f;
 
