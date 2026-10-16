@@ -410,6 +410,28 @@ namespace _3902sprint0
             }
 
         }
+
+        public void LeapTowards(Vector2 target,
+            GameTime gameTime,
+            float leapSpeed)
+        {
+            Vector2 direction = target - position;
+
+            if (direction == Vector2.Zero)
+            {
+                velocity = Vector2.Zero;
+                return;
+            }
+
+            direction.Normalize();
+            velocity = direction * leapSpeed;
+
+            float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            Vector2 delta = velocity * elapsedSeconds;
+            MoveAxis(new Vector2(delta.X, 0f));
+            MoveAxis(new Vector2(0f, delta.Y));
+        }
         public void SetDirection(Direction direction)
         {
             currentDirection = direction;

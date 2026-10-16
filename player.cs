@@ -580,9 +580,8 @@ namespace _3902sprint0
                             EnemyType.Basic,
                             EnemyType.Chaser,
                             EnemyType.Fleeing,
-                            EnemyType.Erratic);
-                    damage = 1f;
-
+                            EnemyType.Erratic,
+                            EnemyType.ToadBoss);
 
                 }
             }

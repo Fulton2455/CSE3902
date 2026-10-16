@@ -99,33 +99,172 @@ namespace _3902sprint0
         private void updateApproach(
             Enemy enemy,
             Player player,
-            GameTime gameTime, float terrainAcceleration)
+            GameTime gameTime, float acceleration)
         {
-            return;
+            Vector2 toPlayer = player.Location - enemy.Position;
+
+            float distance = toPlayer.Length();
+
+            if (distance > 90f)
+            {
+                enemy.MoveInDirection(
+                toPlayer,
+                gameTime,
+                acceleration
+                );
+            }
+            else
+            {
+                enemy.StopMovement();
+            }
+
+            if (stateTimer > 0f)
+            {
+                return;
+            }
+
+            if (summonCooldown <= 0f &&
+            enemyManager.CanSpawnBossMinion())
+            {
+                state = BossState.Summon;
+                stateTimer = 0.75f;
+                summonCooldown = phase2 ? 7f : 12f;
+                enemy.StopMovement();
+                return;
+            }
+
+            if (attackCooldown > 0f)
+            {
+                return;
+            }
+
+            
+            float roll = (float)random.NextDouble();
+
+            if (distance <= 120f && roll < 0.4f)
+            {
+                state = BossState.Melee;
+                stateTimer = 0.45f;
+            }
+            else if (roll < (phase2 ? 0.55f : 0.35f))
+            {
+                leapTarget = player.Location;
+                state = BossState.TelegraphLeap;
+                stateTimer = phase2 ? 0.55f : 0.8f;
+                enemy.StopMovement();
+
+                
+            }
+            else
+            {
+                state = BossState.AcidSpit;
+                stateTimer = 0.5f;
+            }
+
+            enemy.StopMovement();
+            attackCooldown = phase2 ? 0.8f : 1.5f;
         }
         private void updateTelegraph(Enemy enemy)
         {
-            return;
+            enemy.StopMovement();
+            if (stateTimer <= 0f)
+            {
+                state = BossState.Leap;
+                stateTimer = phase2 ? 0.45f : 0.55f;
+            }
         }
-        private void updateLeap(Enemy enemy, Player player, GameTime gameTime, float terrainAcceleration)
+        private void updateLeap(Enemy enemy, Player player, GameTime gameTime, float acceleration)
         {
-            return;
+            float leapSpeed = phase2 ? 700f : 500f;
+            enemy.LeapTowards(
+                leapTarget,
+                gameTime,
+                leapSpeed);
+
+            if (stateTimer <= 0f)
+            {
+                enemy.StopMovement();
+
+                enemyManager.CreateBossShockwave(
+                enemy.Position,
+                phase2 ? 420f : 300f,
+                2f,
+                phase2 ? 3 : 2
+                );
+
+                state = BossState.Recover;
+                stateTimer = phase2 ? 0.35f : 0.7f;
+            }
         }
         private void updateRecover(Enemy enemy)
         {
-            return;
+            enemy.StopMovement();
+
+            if (stateTimer <= 0f)
+            {
+                state = BossState.Approach;
+                stateTimer = phase2 ? 0.2f : 0.5f;
+            }
         }
         private void updateMelee(Enemy enemy, Player player)
         {
-            return;
+            enemy.StopMovement();
+
+            if (stateTimer <= 0f)
+            {
+                float distance = Vector2.Distance(
+                enemy.Position,
+                player.Location);
+
+                if (distance <= (phase2 ? 110f : 90f))
+                {
+                    player.TakeDamage(phase2 ? 4 : 3);
+                }
+
+                state = BossState.Recover;
+                stateTimer = phase2 ? 0.35f : 0.65f;
+            }
         }
         private void updateAcidSpit(Enemy enemy, Player player)
         {
-            return;
+            enemy.StopMovement();
+
+            if (stateTimer <= 0f)
+            {
+                Vector2 direction =
+                player.Location - enemy.Position;
+
+                if (direction != Vector2.Zero)
+                {
+                    direction.Normalize();
+
+                    Vector2 projectilePosition =
+                    enemy.Position + direction * 45f;
+
+                    fireballManager.CreateAcidProjectile(
+                    projectilePosition,
+                    direction
+                    );
+                }
+
+                state = BossState.Recover;
+                stateTimer = phase2 ? 0.3f : 0.6f;
+            }
         }
         private void updateSummon(Enemy enemy)
         {
-            return;
+            enemy.StopMovement();
+
+            if (stateTimer <= 0f)
+            {
+                enemyManager.SpawnBossMinions(
+                enemy.Position,
+                phase2 ? 3 : 2
+                );
+
+                state = BossState.Recover;
+                stateTimer = phase2 ? 0.3f : 0.6f;
+            }
         }
     }
 }

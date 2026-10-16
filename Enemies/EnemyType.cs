@@ -8,7 +8,7 @@
 		Fleeing,
 		Erratic,
 		ToadBoss,
-		ToadBossMinion
+		BossMinion
 
 
 	}

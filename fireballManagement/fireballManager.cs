@@ -13,7 +13,9 @@ namespace _3902sprint0
         public List<Fireball2> fireballs2;
 
         public IReadOnlyList<Fireball> Fireballs => fireballs;
-        public IReadOnlyList<Fireball2> Fireballs2 => fireballs2;        private Texture2D fireballTexture;
+        public IReadOnlyList<Fireball2> Fireballs2 => fireballs2;        
+        private Texture2D fireballTexture;
+        private Texture2D acidTexture;
         private Texture2D detonateTexture;
         private Room room;
 
@@ -31,8 +33,33 @@ namespace _3902sprint0
         {
             this.room = room;
         }
+        public void SetAcidTexture(Texture2D texture)
+        {
+            acidTexture = texture;
+        }
+        public void CreateAcidProjectile(
+            Vector2 position,
+            Vector2 direction)
+        {
+            if (acidTexture == null)
+            {
+                throw new InvalidOperationException(
+                "Acid texture has not been initialized."
+                );
+            }
 
+            FireballSprite sprite = new FireballSprite();
+            sprite.Initialize(acidTexture);
 
+            Fireball2 acid = new Fireball2(
+            acidTexture,
+            sprite,
+            room
+            );
+
+            acid.generateEntity(position, direction, true);
+            fireballs2.Add(acid);
+        }
         public void createFireball(int fireballtype, Vector2 position, Vector2 direction, bool isHostile)
         {
           

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace _3902sprint0
 {
@@ -11,12 +12,14 @@ namespace _3902sprint0
         private readonly int damage;
 
         private readonly Texture2D pixel;
+        
 
         private float elapsedTime;
         private float previousRadius;
         private bool hasHitPlayer;
+        private bool isFinished;
 
-        public bool IsFinished => elapsedTime >= duration;
+        public bool IsFinished => isFinished;
 
         public float Radius => MathHelper.Lerp(
             0f,
@@ -38,6 +41,7 @@ namespace _3902sprint0
             elapsedTime = 0f;
             previousRadius = 0f;
             hasHitPlayer = false;
+            isFinished = false;
         }
         public void Update(GameTime gameTime, Player player)
         {
@@ -45,25 +49,72 @@ namespace _3902sprint0
             {
                 return;
             }
-            previousRadius = Radius;
 
-            elapsedTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (elapsedTime > duration)
+            float previousRadius = Radius;
+
+            float elapsedSeconds =
+                (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            elapsedTime += elapsedSeconds;
+
+            
+            float progress = MathHelper.Clamp(
+                elapsedTime / duration,
+                0f,
+                1f);
+            
+
+            CheckPlayerCollision(player, previousRadius, Radius);
+
+            if (elapsedTime >= duration)
             {
-                elapsedTime = duration;
+                isFinished = true;
             }
-            if (player == null || player.IsDead || hasHitPlayer)
+        }
+        private void CheckPlayerCollision(Player player, float previousRadius, float currentRadius)
+        {
+            if (hasHitPlayer || player == null || player.IsDead)
             {
                 return;
             }
-            float currentRadius = Radius;
-            float distance = Vector2.Distance(
-                center,
-                player.Location);
-            float playerRadius = player.Bounds.Width / 2f;
+
+            Rectangle playerBounds = player.Bounds;
+
+            
+            float closestX = MathHelper.Clamp(
+                center.X,
+                playerBounds.Left,
+                playerBounds.Right);
+
+            float closestY = MathHelper.Clamp(
+                center.Y,
+                playerBounds.Top,
+                playerBounds.Bottom);
+
+            Vector2 closestPoint = new Vector2(closestX, closestY);
+
+           
+            float minDistance = Vector2.Distance(center, closestPoint);
+
+            
+            Vector2 topLeft = new Vector2(playerBounds.Left, playerBounds.Top);
+            Vector2 topRight = new Vector2(playerBounds.Right, playerBounds.Top);
+            Vector2 bottomLeft = new Vector2(playerBounds.Left, playerBounds.Bottom);
+            Vector2 bottomRight = new Vector2(playerBounds.Right, playerBounds.Bottom);
+
+            float maxDistance = Math.Max(
+                Math.Max(
+                    Vector2.Distance(center, topLeft),
+                    Vector2.Distance(center, topRight)),
+                Math.Max(
+                    Vector2.Distance(center, bottomLeft),
+                    Vector2.Distance(center, bottomRight)));
+
+            
             bool waveReachedPlayer =
-                distance + playerRadius >= previousRadius &&
-                distance - playerRadius <= currentRadius;
+                currentRadius >= minDistance &&
+                previousRadius <= maxDistance;
+
             if (waveReachedPlayer)
             {
                 player.TakeDamage(damage);
@@ -72,43 +123,60 @@ namespace _3902sprint0
         }
         public void draw(SpriteBatch spriteBatch)
         {
-            if (IsFinished)
+            if (IsFinished || pixel == null)
             {
                 return;
             }
+
             float radius = Radius;
-            int thickness = 6;
-            int diameter = (int)(radius * 2f);
-            if (diameter < 0)
+
+            if (radius <= 0f)
             {
                 return;
             }
-            Rectangle top = new Rectangle(
-                (int)(center.X - radius),
-                (int)(center.Y - radius),
-                diameter,
-                thickness);
-            Rectangle bottom = new Rectangle(
-                (int)(center.X - radius),
-                (int)(center.Y + radius - thickness),
-                diameter,
-                thickness);
-            Rectangle left = new Rectangle(
-                (int)(center.X - radius),
-                (int)(center.Y - radius),
-                diameter,
-                thickness);
-            Rectangle right = new Rectangle(
-                (int)(center.X + radius - thickness),
-                (int)(center.Y - radius),
-                diameter,
-                thickness);
+
+            const int segments = 96;
+            const float thickness = 3f;
+
             Color waveColor = Color.LimeGreen * 0.8f;
 
-            spriteBatch.Draw(pixel, top, waveColor);
-            spriteBatch.Draw(pixel, bottom, waveColor);
-            spriteBatch.Draw(pixel, left, waveColor);
-            spriteBatch.Draw(pixel, right, waveColor);
+            float angleStep = MathHelper.TwoPi / segments;
+
+            for (int i = 0; i < segments; i++)
+            {
+                float angle1 = i * angleStep;
+                float angle2 = (i + 1) * angleStep;
+
+                Vector2 start = center + new Vector2(
+                (float)Math.Cos(angle1) * radius,
+                (float)Math.Sin(angle1) * radius
+                );
+
+                Vector2 end = center + new Vector2(
+                (float)Math.Cos(angle2) * radius,
+                (float)Math.Sin(angle2) * radius
+                );
+
+                Vector2 difference = end - start;
+
+                float length = difference.Length();
+                float rotation = (float)Math.Atan2(
+                difference.Y,
+                difference.X
+                );
+
+                spriteBatch.Draw(
+                pixel,
+                start,
+                null,
+                waveColor,
+                rotation,
+                Vector2.Zero,
+                new Vector2(length, thickness),
+                SpriteEffects.None,
+                0f
+                );
+            }
         }
     }
 }

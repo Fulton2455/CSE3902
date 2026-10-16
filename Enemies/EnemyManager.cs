@@ -1,6 +1,7 @@
 ﻿using _3902sprint0.Environment;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 
 namespace _3902sprint0
@@ -8,6 +9,10 @@ namespace _3902sprint0
 	public class EnemyManager
 	{
 		private readonly List<Enemy> enemies;
+		public IReadOnlyList<Enemy> Enemies => enemies;
+		private readonly List<BossShockwave> bossShockwaves = new List<BossShockwave>();
+		private Texture2D ShockwavePixel;
+		private Texture2D toadTexture;
 
         private  fireballManager fireballManager;
 
@@ -31,6 +36,8 @@ namespace _3902sprint0
 			Texture2D zombieTexture,
 			Texture2D mageTexture,
 			Texture2D batTexture,
+			Texture2D toadTexture,
+			Texture2D shockwavePixel,
 			fireballManager fireballManager)
 		{
 			this.player = player;
@@ -38,6 +45,8 @@ namespace _3902sprint0
 			this.zombieTexture = zombieTexture;
 			this.mageTexture = mageTexture;
 			this.batTexture = batTexture;
+			this.toadTexture = toadTexture;
+			this.ShockwavePixel = shockwavePixel;
 			this.fireballManager = fireballManager;
 
 			enemies = new List<Enemy>();
@@ -51,14 +60,162 @@ namespace _3902sprint0
 			this.room = room;
 		}
 		
+		public void CreateBossShockwave(
+			Vector2 position,
+			float radius,
+			float duration,
+			int damage)
+		{
+			bossShockwaves.Add(
+				new BossShockwave(position, radius, duration, damage, ShockwavePixel));
+		}
+		private void UpdateBossShockwave(GameTime gameTime)
+		{
+			foreach (BossShockwave shockwave in bossShockwaves)
+			{
+				shockwave.Update(gameTime, player);
+			}
+			bossShockwaves.RemoveAll(shockwave => shockwave.IsFinished);
+		}
+		public bool CanSpawnBossMinion()
+		{
+			int minionCount = 0;
+			foreach (Enemy enemy in enemies)
+			{
+				if (enemy.Type == EnemyType.BossMinion && !enemy.IsDead)
+				{
+					minionCount++;
+				}
+				
+			}
+            return minionCount < 4;
+        }
+        private bool TryGetMinionSpawnPosition(
+Vector2 bossPosition,
+int minionSize,
+out Vector2 spawnPosition)
+        {
+            const int attempts = 30;
+            const float minimumDistanceFromBoss = 80f;
 
-		
-		public void RespawnEnemies(params EnemyType[] enemyTypes)
+            for (int i = 0; i < attempts; i++)
+            {
+                
+                float angle =
+                (float)(random.NextDouble() * MathHelper.TwoPi);
+
+                float distance =
+                minimumDistanceFromBoss +
+                (float)(random.NextDouble() * 80f);
+
+                Vector2 candidate = bossPosition + new Vector2(
+                (float)Math.Cos(angle) * distance,
+                (float)Math.Sin(angle) * distance
+                );
+
+                Rectangle candidateBounds = new Rectangle(
+                (int)(candidate.X - minionSize / 2f),
+                (int)(candidate.Y - minionSize / 2f),
+                minionSize,
+                minionSize
+                );
+
+                
+                if (candidateBounds.Left < movementBounds.Left ||
+                candidateBounds.Right > movementBounds.Right ||
+                candidateBounds.Top < movementBounds.Top ||
+                candidateBounds.Bottom > movementBounds.Bottom)
+                {
+                    continue;
+                }
+
+                
+                if (room == null || room.IsBlocked(candidateBounds))
+                {
+                    continue;
+                }
+
+                
+                if (candidateBounds.Intersects(player.Bounds))
+                {
+                    continue;
+                }
+
+                
+                bool overlapsEnemy = false;
+
+                foreach (Enemy enemy in enemies)
+                {
+                    if (enemy.IsDead)
+                    {
+                        continue;
+                    }
+
+                    if (candidateBounds.Intersects(enemy.bounds))
+                    {
+                        overlapsEnemy = true;
+                        break;
+                    }
+                }
+
+                if (overlapsEnemy)
+                {
+                    continue;
+                }
+
+                spawnPosition = candidate;
+                return true;
+            }
+
+            
+            spawnPosition = Vector2.Zero;
+            return false;
+        }
+
+        public void SpawnBossMinions(
+			Vector2 bossPosition,
+			int requestedCount)
+        {
+            const int minionSize = 48;
+
+            for (int i = 0; i < requestedCount; i++)
+            {
+                if (!CanSpawnBossMinion())
+                {
+                    break;
+                }
+
+                if (!TryGetMinionSpawnPosition(
+                bossPosition,
+                minionSize,
+                out Vector2 spawnPosition))
+                {
+                    continue;
+                }
+                Enemy minion = EnemyCreator.CreateEnemy(
+                EnemyType.BossMinion,
+                toadTexture,
+                slimeTexture,
+                zombieTexture,
+                mageTexture,
+                batTexture,
+                movementBounds,
+                room,
+				player,
+                fireballManager,
+				this,
+                spawnPosition);
+
+                enemies.Add(minion);
+            }
+        }
+        public void RespawnEnemies(params EnemyType[] enemyTypes)
 		{
 			enemies.Clear();
 			foreach (EnemyType enemyType in enemyTypes)
 			{
                 Enemy enemy = EnemyCreator.CreateEnemy(enemyType,
+                    toadTexture,
                     slimeTexture,
 					zombieTexture,
 					mageTexture,
@@ -66,7 +223,8 @@ namespace _3902sprint0
                     movementBounds,
 					room,
 					player,
-					fireballManager);
+					fireballManager,
+					this);
                 enemies.Add(enemy);
             }
 		}
@@ -91,6 +249,7 @@ namespace _3902sprint0
         		}
 
         		CheckFireballHits(enemy);
+				UpdateBossShockwave(gameTime);
     		}
 		}
 
@@ -139,6 +298,10 @@ namespace _3902sprint0
 			foreach(Enemy enemy in enemies)
 			{
 				enemy.Draw(spriteBatch);
+			}
+			foreach (BossShockwave shockwave in bossShockwaves)
+			{
+				shockwave.draw(spriteBatch);
 			}
 		}
     }

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using _3902sprint0.Environment;
 using System;
+using System.Diagnostics.Contracts;
 namespace _3902sprint0
 {
 	public static class EnemyCreator
@@ -10,15 +11,18 @@ namespace _3902sprint0
         private const int MaxSpawnAttempts = 500;
         public static Enemy CreateEnemy(
 
-			EnemyType enemyType,
+            EnemyType enemyType,
+            Texture2D toadTexture,
             Texture2D slimeTexture,
             Texture2D zombieTexture,
             Texture2D mageTexture,
             Texture2D batTexture,
             Rectangle movementBounds,
-			Room room,
-			Player player,
-            fireballManager fireballManager)
+            Room room,
+            Player player,
+            fireballManager fireballManager,
+            EnemyManager enemyManager = null,
+            Vector2? requestedSpawnPosition = null)
 		{
 			IEnemyAI enemyAI;
 			IEnemyTileInteraction tileInteraction;
@@ -72,6 +76,29 @@ namespace _3902sprint0
                     size = 32;
 					spriteSheet = batTexture;
 					break;
+                case EnemyType.ToadBoss:
+                    enemyAI = new BossEnemyAI(
+                        enemyManager,
+                        fireballManager);
+                    tileInteraction= new GroundEnemyTileInteraction();
+                    health = 20;
+                    damage = 3;
+                    movementSpeed = 100f;
+                    acceleration = 500f;
+                    size = 128;
+                    spriteSheet = toadTexture;
+                    break;
+                case EnemyType.BossMinion:
+                    enemyAI = new ChaserEnemyAI();
+                    tileInteraction = new GroundEnemyTileInteraction();
+                    health = 1;
+                    damage = 1;
+                    movementSpeed = 120f;
+                    acceleration = 500f;
+                    size = 48;
+                    spriteSheet = slimeTexture;
+
+                    break;
                 default:
 					enemyAI = new BasicEnemyAI();
                     tileInteraction = new GroundEnemyTileInteraction();
@@ -83,7 +110,7 @@ namespace _3902sprint0
 					spriteSheet = slimeTexture;
 					break;
 			}
-			Vector2 spawnPosition = GetSpawnBehavior( 
+			Vector2 spawnPosition = requestedSpawnPosition ?? GetSpawnBehavior( 
 				movementBounds,
 				room,
 				player,
