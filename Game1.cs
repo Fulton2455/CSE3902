@@ -41,6 +41,10 @@ namespace _3902sprint0
         private Texture2D enemyBatTexture;
         private List<Enemy> enemies;
 
+        private ConfirmationWindow confirmationWindow;
+        private Texture2D confirmationPixel;
+        private SpriteFont confirmationFont;
+
         private EnemyManager enemyManager;
 
         private Texture2D pixelTexture;
@@ -152,13 +156,21 @@ namespace _3902sprint0
             LoadRoom();
 
             Rectangle chestmovementBounds = GetRoomBounds();
+            confirmationPixel = new Texture2D(GraphicsDevice, 1, 1);
+            confirmationPixel.SetData(new[] { Color.White });
 
+            confirmationFont = gameFont;
+
+            confirmationWindow = new ConfirmationWindow(
+                confirmationPixel,
+                confirmationFont);
             ChestManager = new chestManager(
             chestTexture,
             inventory,
             database,
             room,
-            chestmovementBounds);
+            chestmovementBounds,
+            confirmationWindow);
             player = new Player(new Vector2(300, 300), inventory, inventoryHUD, FireballManager, ChestManager);
             player.InitializeSprite(knightTexture);
             ChestManager.SetPlayer(player);
@@ -271,6 +283,9 @@ private void DrawRectOutline(SpriteBatch spriteBatch, Rectangle rect, Color colo
             }
             EffectMessage.Update(gameTime);
             ChestMessage.Update(gameTime);
+            if (confirmationWindow.IsOpen)
+                confirmationWindow.Update();
+
 
             if (player.IsQuit())
                 Exit();
@@ -297,8 +312,9 @@ private void DrawRectOutline(SpriteBatch spriteBatch, Rectangle rect, Color colo
 
             spriteBatch.Begin(
                  samplerState: SamplerState.PointClamp);
-
+            confirmationWindow.Draw(spriteBatch);
             room.Draw(spriteBatch);
+
             player.Draw(spriteBatch);
 
             FireballManager.Draw(spriteBatch);

@@ -11,6 +11,7 @@ namespace _3902sprint0
 {
     public class chestManager
     {
+        private ConfirmationWindow confirmationWindow;
         public List<Chest> chests;
         public IReadOnlyList<Chest> Chests => chests;
         private Texture2D chestTexture;
@@ -28,7 +29,8 @@ namespace _3902sprint0
             Inventory inventory,
             itemDatabase database,
              Room room,
-            Rectangle movementBounds)
+            Rectangle movementBounds,
+            ConfirmationWindow confirmationWindow)
         {
             chests = new List<Chest>();
 
@@ -37,6 +39,7 @@ namespace _3902sprint0
             this.database = database;
             this.room = room;
             this.movementBounds = movementBounds;
+            this.confirmationWindow = confirmationWindow;
         }
 
         public void SetPlayer(Player player)
@@ -58,7 +61,9 @@ namespace _3902sprint0
                 inventory,
                 database,
                 player,
-                this);
+                this,
+                confirmationWindow
+                );
 
             newChest.InitializeSprite(chestTexture);
 

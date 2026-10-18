@@ -20,26 +20,42 @@ namespace _3902sprint0
         private itemDatabase database;
         private chestManager chestManager;
 
-        public Chest(Vector2 startingLocation, Inventory inventory, itemDatabase database, Player player, chestManager chestManager)
+        private ConfirmationWindow confirmationWindow;
+        private bool waitingForConfirmation = false;
+        private Iitem pendingItem;
+
+        public Chest(Vector2 startingLocation, Inventory inventory, itemDatabase database, Player player, chestManager chestManager, ConfirmationWindow confirmationWindow)
         {
             Location = startingLocation;
             ChestSprite1 = new ChestSprite();
             Mouse = new Mousecontroller();
             this.player = player;
             this.chestManager = chestManager;
-
+            this.confirmationWindow = confirmationWindow;
             this.inventory = inventory;
             this.database = database;
         }
 
         public void Update(GameTime gameTime)
         {
-            
-
             ChestSprite1.UpdateSprite(gameTime);
-        
+
+            if (waitingForConfirmation)
+            {
+                if (confirmationWindow.Answered)
+                {
+                    if (confirmationWindow.Confirmed)
+                    {
+                        GiveItem();
+                    }
+
+                    waitingForConfirmation = false;
+                }
+
+                return;
+            }
+
             generateItem();
-              
         }
         public void InitializeSprite(Texture2D texture)
         {
@@ -62,18 +78,25 @@ namespace _3902sprint0
                 chestManager.deleteChest(this);
                 return;
             }
+
+            if (isOpen || confirmationWindow.IsOpen)
+                return;
+
             Vector2 mousePosition = Mouse.RightClickPressed();
 
-            if (mousePosition != Vector2.Zero && !isOpen)
+            if (mousePosition != Vector2.Zero)
             {
-                float distance = Vector2.Distance(player.getPosition(), Location);
+                float distance = Vector2.Distance(
+                    player.getPosition(), Location);
+
                 if (distance <= 300 &&
                     mousePosition.X >= Location.X &&
                     mousePosition.X <= Location.X + 48 &&
                     mousePosition.Y >= Location.Y &&
                     mousePosition.Y <= Location.Y + 32)
                 {
-                    GiveItem();
+                    waitingForConfirmation = true;
+                    confirmationWindow.Open();
                 }
             }
         }
