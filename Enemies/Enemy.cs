@@ -31,7 +31,10 @@ namespace _3902sprint0
         private float damageCooldown;
         private const float CoolDownTime = 0.8f;
 
-        
+        private float hitFlashTimer = 0f;
+        private const float HitFlashTime = 0.15f;
+
+
         private readonly Texture2D spriteSheet;
         private readonly Rectangle movementBounds;
         private readonly float movementSpeed;
@@ -229,6 +232,10 @@ namespace _3902sprint0
         
         public void Update(GameTime gameTime, float terrainAcceleration)
         {
+            if (hitFlashTimer > 0f)
+            {
+                hitFlashTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
             Player player = Game1.currentPlayer;
             if (player == null || player.IsDead)
             {
@@ -297,6 +304,7 @@ namespace _3902sprint0
                 return;
 
             health -= damageAmount;
+            hitFlashTimer = HitFlashTime;
             SoundManager.PlayEnemyHit();
 
             if (health <= 0)
@@ -309,6 +317,7 @@ namespace _3902sprint0
                 animationFinished = false;
             }
         }
+
         public void StopMovement()
         {
             velocity = Vector2.Zero;
@@ -680,15 +689,18 @@ namespace _3902sprint0
 
         public void Draw(SpriteBatch spriteBatch)
         {
-           
+            Color drawColor = Color.White;
+
+            if (hitFlashTimer > 0f)
+                drawColor = Color.Red;
+
             spriteBatch.Draw(
                 spriteSheet,
                 destinationRectangle,
                 GetSourceRectangle(),
-                Color.White
+                drawColor
             );
         }
 
-        
     }
 }

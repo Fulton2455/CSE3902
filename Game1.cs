@@ -70,6 +70,8 @@ namespace _3902sprint0
         private float stairsCooldown = 0f;
         private const float stairsCooldownTime = 1.0f;
 
+        private HashSet<Enemy> swordHitEnemies = new HashSet<Enemy>();
+
         /// <summary>
         /// Indicates if the game is running on a desktop platform. it came from a previous template and i dont really have a reason to get rid of it.
         /// </summary>
@@ -285,6 +287,8 @@ namespace _3902sprint0
 
                     enemyManager.update(gameTime, player.GetTerrainAcceleration());
 
+                    CheckSwordHits();
+
                     base.Update(gameTime);
                 }
 
@@ -384,5 +388,31 @@ namespace _3902sprint0
                 stairsCooldown = stairsCooldownTime;
             }
         }
+
+        private void CheckSwordHits()
+        {
+            if (!player.IsAttacking)
+            {
+                swordHitEnemies.Clear();
+                return;
+            }
+
+            foreach (Enemy enemy in enemyManager.Enemies)
+            {
+                if (enemy.IsDying || enemy.IsDead)
+                    continue;
+
+                if (swordHitEnemies.Contains(enemy))
+                    continue;
+
+                if (player.SwordBounds.Intersects(enemy.bounds))
+                {
+                    enemy.TakeDamage((int)player.damage);
+                    swordHitEnemies.Add(enemy);
+                }
+            }
+        }
+
+
     }
 }

@@ -623,5 +623,35 @@ namespace _3902sprint0
                 }
             
         }
+
+
+        public Rectangle SwordBounds
+        {
+            get
+            {
+                Rectangle bounds = Bounds;
+                int swordRange = 70;
+                int swordWidth = 80;
+
+                if (Math.Abs(AimDirection.X) > Math.Abs(AimDirection.Y))
+                {
+                    if (AimDirection.X > 0)
+                        return new Rectangle(bounds.Right, bounds.Center.Y - swordWidth / 2, swordRange, swordWidth);
+                    else
+                        return new Rectangle(bounds.Left - swordRange, bounds.Center.Y - swordWidth / 2, swordRange, swordWidth);
+                }
+                else
+                {
+                    if (AimDirection.Y > 0)
+                        return new Rectangle(bounds.Center.X - swordWidth / 2, bounds.Bottom, swordWidth, swordRange);
+                    else
+                        return new Rectangle(bounds.Center.X - swordWidth / 2, bounds.Top - swordRange, swordWidth, swordRange);
+                }
+            }
+        }
+
+
+        public bool IsAttacking => PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Attack);
+
     }
 }
