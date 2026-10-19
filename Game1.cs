@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework.Input;
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -63,6 +62,10 @@ namespace _3902sprint0
         private int currentLevel = 1;
 
         private CurrentSwordHUD currentSwordHUD;
+
+        private Rupee rupee;
+
+        private RupeeHUD rupeeHUD;
 
         private float stairsCooldown = 0f;
         private const float stairsCooldownTime = 1.0f;
@@ -134,9 +137,15 @@ namespace _3902sprint0
             Texture2D PanaceaTexture=Content.Load<Texture2D>("items/panacea");
             Texture2D magicArmor = Content.Load<Texture2D>("items/healthShield");
             Texture2D deckOfcardsTexture = Content.Load<Texture2D>("items/deckOfCards");
+            Texture2D rupeeTexture = Content.Load<Texture2D>("items/coin3_16x16");
+
+            rupee = new Rupee(new Vector2(500, 300), rupeeTexture);
 
 
             gameFont = Content.Load<SpriteFont>("GameFont");
+
+            rupeeHUD = new RupeeHUD(gameFont, rupeeTexture);
+
             EffectMessage.Load(gameFont);
             ChestMessage.Load(gameFont);
 
@@ -164,11 +173,6 @@ namespace _3902sprint0
             ChestManager.SetPlayer(player);
             currentPlayer = player;
 
-
-           
-            
-            
-
             ChestManager.CreateChest(new Vector2(600, 300));
             
             enemySlimeTexture = Content.Load<Texture2D>("enemySlime");
@@ -189,7 +193,7 @@ namespace _3902sprint0
             player.SetEnemyManager(enemyManager);
 
             Rectangle movementBounds = GetRoomBounds();
-enemyManager.SetMovementBounds(movementBounds);
+            enemyManager.SetMovementBounds(movementBounds);
             ChestManager.SetMovementBounds(movementBounds);
 
 
@@ -204,88 +208,85 @@ enemyManager.SetMovementBounds(movementBounds);
                 EnemyType.Chaser,
                 EnemyType.Fleeing,
                 EnemyType.Erratic);
-      
-
-
-
-
-
 
             base.LoadContent();
         }
 
-private void DrawDebugBounds(SpriteBatch spriteBatch)
-{
-    if (!Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.F1))
-        return;
-    DrawRectOutline(spriteBatch, player.Bounds, Color.Red);
-    foreach (var tile in room.Tiles)
-        DrawRectOutline(spriteBatch, tile.Bounds, tile.IsSolid ? Color.Cyan : Color.Yellow);
-            
-    foreach (Enemy enemy in enemyManager.Enemies) 
-        DrawRectOutline(spriteBatch, enemy.bounds, Color.Magenta);
-
-    foreach (Fireball fireball in FireballManager.Fireballs)
-            {
-                if (fireball.IsActive)
-                {
-                    DrawRectOutline(spriteBatch, fireball.Bounds, Color.White);
-                }
-                if (fireball.IsExplosionActive)
-                {
-                    DrawRectOutline(spriteBatch, fireball.ExplosionBounds, Color.Purple);
-                }
-            }
-    foreach (Fireball2 fireball2 in FireballManager.Fireballs2)
-            {
-                if (fireball2.IsActive)
-                {
-                    DrawRectOutline(spriteBatch, fireball2.Bounds, Color.White);
-                }
-
-            }
-    foreach (Chest chest in ChestManager.Chests)
-            {
-                DrawRectOutline(spriteBatch, chest.GetBounds(), Color.Gold);
-            }
-}
-
-private void DrawRectOutline(SpriteBatch spriteBatch, Rectangle rect, Color color)
-{
-    const int t = 2;
-    spriteBatch.Draw(pixelTexture, new Rectangle(rect.Left, rect.Top, rect.Width, t), color);
-    spriteBatch.Draw(pixelTexture, new Rectangle(rect.Left, rect.Bottom - t, rect.Width, t), color);
-    spriteBatch.Draw(pixelTexture, new Rectangle(rect.Left, rect.Top, t, rect.Height), color);
-    spriteBatch.Draw(pixelTexture, new Rectangle(rect.Right - t, rect.Top, t, rect.Height), color);
-}
-
-        /// <summary>
-        /// updates the game state, including player input and game logic. This method is called once per frame.
-        /// </summary>
-        /// <param name="gameTime"></param>
-        protected override void Update(GameTime gameTime)
+        private void DrawDebugBounds(SpriteBatch spriteBatch)
         {
-            if (stairsCooldown > 0)
-            {
-                stairsCooldown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-            }
-            EffectMessage.Update(gameTime);
-            ChestMessage.Update(gameTime);
+            if (!Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.F1))
+                return;
+            DrawRectOutline(spriteBatch, player.Bounds, Color.Red);
+            foreach (var tile in room.Tiles)
+                DrawRectOutline(spriteBatch, tile.Bounds, tile.IsSolid ? Color.Cyan : Color.Yellow);
+            
+            foreach (Enemy enemy in enemyManager.Enemies) 
+                DrawRectOutline(spriteBatch, enemy.bounds, Color.Magenta);
 
-            if (player.IsQuit())
-                Exit();
-            room.Update(gameTime);
-            ChestManager.Update(gameTime);
+            foreach (Fireball fireball in FireballManager.Fireballs)
+                    {
+                        if (fireball.IsActive)
+                        {
+                            DrawRectOutline(spriteBatch, fireball.Bounds, Color.White);
+                        }
+                        if (fireball.IsExplosionActive)
+                        {
+                            DrawRectOutline(spriteBatch, fireball.ExplosionBounds, Color.Purple);
+                        }
+                    }
+            foreach (Fireball2 fireball2 in FireballManager.Fireballs2)
+                    {
+                        if (fireball2.IsActive)
+                        {
+                            DrawRectOutline(spriteBatch, fireball2.Bounds, Color.White);
+                        }
 
-
-            player.Update(gameTime);
-;
-            FireballManager.Update(gameTime);
-
-            enemyManager.update(gameTime, player.GetTerrainAcceleration());
-
-            base.Update(gameTime);
+                    }
+            foreach (Chest chest in ChestManager.Chests)
+                    {
+                        DrawRectOutline(spriteBatch, chest.GetBounds(), Color.Gold);
+                    }
         }
+
+        private void DrawRectOutline(SpriteBatch spriteBatch, Rectangle rect, Color color)
+        {
+            const int t = 2;
+            spriteBatch.Draw(pixelTexture, new Rectangle(rect.Left, rect.Top, rect.Width, t), color);
+            spriteBatch.Draw(pixelTexture, new Rectangle(rect.Left, rect.Bottom - t, rect.Width, t), color);
+            spriteBatch.Draw(pixelTexture, new Rectangle(rect.Left, rect.Top, t, rect.Height), color);
+            spriteBatch.Draw(pixelTexture, new Rectangle(rect.Right - t, rect.Top, t, rect.Height), color);
+        }
+
+                /// <summary>
+                /// updates the game state, including player input and game logic. This method is called once per frame.
+                /// </summary>
+                /// <param name="gameTime"></param>
+                protected override void Update(GameTime gameTime)
+                {
+                    if (stairsCooldown > 0)
+                    {
+                        stairsCooldown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    }
+                    EffectMessage.Update(gameTime);
+                    ChestMessage.Update(gameTime);
+                    
+
+                    if (player.IsQuit())
+                        Exit();
+                    room.Update(gameTime);
+                    ChestManager.Update(gameTime);
+
+
+                    player.Update(gameTime);
+
+                    rupee.Update(gameTime, player);
+
+                    FireballManager.Update(gameTime);
+
+                    enemyManager.update(gameTime, player.GetTerrainAcceleration());
+
+                    base.Update(gameTime);
+                }
 
         /// <summary>
         /// Draws the game scene, including the player and other game elements. This method is called once per frame.
@@ -310,10 +311,12 @@ private void DrawRectOutline(SpriteBatch spriteBatch, Rectangle rect, Color colo
             
             levelHUD.Draw(spriteBatch, currentLevel);
             currentSwordHUD.Draw(spriteBatch, inventory);
+            rupeeHUD.Draw(spriteBatch, player.RupeeCount);
 
             DrawDebugBounds(spriteBatch);
             EffectMessage.Draw(spriteBatch, player.getPosition() - new Vector2(0, 90));
             ChestMessage.Draw(spriteBatch);
+            rupee.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -326,52 +329,52 @@ private void DrawRectOutline(SpriteBatch spriteBatch, Rectangle rect, Color colo
         }
 
        private Rectangle GetRoomBounds()
-{
-    int cols = DeviceManager3902.PreferredBackBufferWidth / 64;
-    int rows = DeviceManager3902.PreferredBackBufferHeight / 64;
-    return new Rectangle(0, 0, cols * 64, rows * 64);
-}
+        {
+            int cols = DeviceManager3902.PreferredBackBufferWidth / 64;
+            int rows = DeviceManager3902.PreferredBackBufferHeight / 64;
+            return new Rectangle(0, 0, cols * 64, rows * 64);
+        }
 
-private Vector2 GridPosition(int col, int row) => new Vector2(32 + col * 64, 32 + row * 64);
+        private Vector2 GridPosition(int col, int row) => new Vector2(32 + col * 64, 32 + row * 64);
 
-private Texture2D environmentSpriteSheet;
+        private Texture2D environmentSpriteSheet;
 
-private void LoadRoom()
-{
-    Rectangle roomBounds = GetRoomBounds();
-    int cols = roomBounds.Width / 64;
-    int rows = roomBounds.Height / 64;
+        private void LoadRoom()
+        {
+            Rectangle roomBounds = GetRoomBounds();
+            int cols = roomBounds.Width / 64;
+            int rows = roomBounds.Height / 64;
 
-    room = new Room(tileSize: 64f, worldBounds: roomBounds);
-    environmentSpriteSheet = Content.Load<Texture2D>("environment/environment_spritesheet");
+            room = new Room(tileSize: 64f, worldBounds: roomBounds);
+            environmentSpriteSheet = Content.Load<Texture2D>("environment/environment_spritesheet");
 
-    for (int col = 0; col < cols; col++)
-    {
-        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(col, 0)));
-        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(col, rows - 1)));
-    }
-    for (int row = 0; row < rows; row++)
-    {
-        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(0, row)));
-        room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(cols - 1, row)));
-    }
+            for (int col = 0; col < cols; col++)
+            {
+                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(col, 0)));
+                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(col, rows - 1)));
+            }
+            for (int row = 0; row < rows; row++)
+            {
+                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(0, row)));
+                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(cols - 1, row)));
+            }
 
-    room.AddTile(TileFactory.CreateTile(TileType.Statue, environmentSpriteSheet, GridPosition(7, 7)));
-    room.AddTile(TileFactory.CreateTile(TileType.SquareBlock, environmentSpriteSheet, GridPosition(10, 7)));
-    room.AddTile(TileFactory.CreateTile(TileType.PushableBlock, environmentSpriteSheet, GridPosition(13, 7)));
-    room.AddTile(TileFactory.CreateTile(TileType.Fire, environmentSpriteSheet, GridPosition(16, 7)));
-    room.AddTile(TileFactory.CreateTile(TileType.BlueGap, environmentSpriteSheet, GridPosition(19, 7)));
+            room.AddTile(TileFactory.CreateTile(TileType.Statue, environmentSpriteSheet, GridPosition(7, 7)));
+            room.AddTile(TileFactory.CreateTile(TileType.SquareBlock, environmentSpriteSheet, GridPosition(10, 7)));
+            room.AddTile(TileFactory.CreateTile(TileType.PushableBlock, environmentSpriteSheet, GridPosition(13, 7)));
+            room.AddTile(TileFactory.CreateTile(TileType.Fire, environmentSpriteSheet, GridPosition(16, 7)));
+            room.AddTile(TileFactory.CreateTile(TileType.BlueGap, environmentSpriteSheet, GridPosition(19, 7)));
 
-    StairsTile stairs = (StairsTile)TileFactory.CreateTile(TileType.Stairs, environmentSpriteSheet, GridPosition(22, 7));
-    stairs.Traversed += OnStairsTraversed;
-    room.AddTile(stairs);
+            StairsTile stairs = (StairsTile)TileFactory.CreateTile(TileType.Stairs, environmentSpriteSheet, GridPosition(22, 7));
+            stairs.Traversed += OnStairsTraversed;
+            room.AddTile(stairs);
 
-    room.AddTile(TileFactory.CreateTile(TileType.OpenDoor, environmentSpriteSheet, GridPosition(15, 1)));
+            room.AddTile(TileFactory.CreateTile(TileType.OpenDoor, environmentSpriteSheet, GridPosition(15, 1)));
 
-    room.AddTile(new BombedWallOpeningTile(environmentSpriteSheet, GridPosition(13, 10)));
-    room.AddTile(new KeyholeLockedDoorTile(environmentSpriteSheet, GridPosition(16, 10)));
-    room.AddTile(new DiamondLockedDoorTile(environmentSpriteSheet, GridPosition(19, 10)));
-}
+            room.AddTile(new BombedWallOpeningTile(environmentSpriteSheet, GridPosition(13, 10)));
+            room.AddTile(new KeyholeLockedDoorTile(environmentSpriteSheet, GridPosition(16, 10)));
+            room.AddTile(new DiamondLockedDoorTile(environmentSpriteSheet, GridPosition(19, 10)));
+        }
 
         private void OnStairsTraversed(StairsTile stairs)
         {
