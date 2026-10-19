@@ -85,6 +85,7 @@ namespace _3902sprint0
         public Game1()
         {
             DeviceManager3902 = new GraphicsDeviceManager(this);
+
             DeviceManager3902.PreferredBackBufferWidth = 1792;
             DeviceManager3902.PreferredBackBufferHeight = 1280;
 
@@ -160,6 +161,8 @@ namespace _3902sprint0
             healthHUD = new HealthHUD(heartTexture);
             FireballManager = new fireballManager(fireballTexture, detonateTexture);
             database = new itemDatabase(magicSwordTexture, fireScrollTexture, FireballManager, shieldOfInvulnerabilityTexture, robeOfInvisibilityTexture, PanaceaTexture, magicArmor, deckOfcardsTexture);
+
+            // Call the new Level Loading method
             LoadRoom();
 
             Rectangle chestmovementBounds = GetRoomBounds();
@@ -170,6 +173,7 @@ namespace _3902sprint0
             database,
             room,
             chestmovementBounds);
+
             player = new Player(new Vector2(300, 300), inventory, inventoryHUD, FireballManager, ChestManager);
             player.InitializeSprite(knightTexture);
             ChestManager.SetPlayer(player);
@@ -184,6 +188,7 @@ namespace _3902sprint0
             Texture2D toadTexture = enemySlimeTexture;                          //change when texture created
             Texture2D shockwavePixel = new Texture2D(GraphicsDevice, 1, 1);
             shockwavePixel.SetData(new[] { Color.White });
+
             enemyManager = new EnemyManager(player,
                 enemySlimeTexture,
                 enemyZombieTexture,
@@ -197,8 +202,6 @@ namespace _3902sprint0
             Rectangle movementBounds = GetRoomBounds();
             enemyManager.SetMovementBounds(movementBounds);
             ChestManager.SetMovementBounds(movementBounds);
-
-
 
             player.SetRoom(room);
             FireballManager.SetRoom(room);
@@ -332,7 +335,7 @@ namespace _3902sprint0
             return texture;
         }
 
-       private Rectangle GetRoomBounds()
+        private Rectangle GetRoomBounds()
         {
             int cols = DeviceManager3902.PreferredBackBufferWidth / 64;
             int rows = DeviceManager3902.PreferredBackBufferHeight / 64;
@@ -346,38 +349,50 @@ namespace _3902sprint0
         private void LoadRoom()
         {
             Rectangle roomBounds = GetRoomBounds();
-            int cols = roomBounds.Width / 64;
-            int rows = roomBounds.Height / 64;
-
             room = new Room(tileSize: 64f, worldBounds: roomBounds);
-            environmentSpriteSheet = Content.Load<Texture2D>("environment/environment_spritesheet");
+            Texture2D environmentSpriteSheet = Content.Load<Texture2D>("environment/environment_spritesheet");
+
+            LevelLoader loader = new LevelLoader();
+            try 
+            {
+                loader.LoadRoom("rooms1.csv", room, environmentSpriteSheet);
+            }
+            catch (Exception)
+            {
+                try 
+                {
+                    // Fallback to checking Content folder
+                    loader.LoadRoom("Content/rooms/rooms1.csv", room, environmentSpriteSheet);
+                }
+                catch (Exception)
+                {
+                    // If CSV completely fails to load, generate the hardcoded room
+                    FallbackRoomGeneration(environmentSpriteSheet, roomBounds);
+                }
+            }
+
+            foreach (var tile in room.Tiles)
+            {
+                if (tile is StairsTile stairs)
+                    stairs.Traversed += OnStairsTraversed;
+            }
+        }
+
+        private void FallbackRoomGeneration(Texture2D envSheet, Rectangle bounds)
+        {
+            int cols = bounds.Width / 64;
+            int rows = bounds.Height / 64;
 
             for (int col = 0; col < cols; col++)
             {
-                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(col, 0)));
-                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(col, rows - 1)));
+                room.AddTile(TileFactory.CreateTile(TileType.Wall, envSheet, new Vector2(32 + col * 64, 32)));
+                room.AddTile(TileFactory.CreateTile(TileType.Wall, envSheet, new Vector2(32 + col * 64, 32 + (rows - 1) * 64)));
             }
             for (int row = 0; row < rows; row++)
             {
-                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(0, row)));
-                room.AddTile(TileFactory.CreateTile(TileType.Wall, environmentSpriteSheet, GridPosition(cols - 1, row)));
+                room.AddTile(TileFactory.CreateTile(TileType.Wall, envSheet, new Vector2(32, 32 + row * 64)));
+                room.AddTile(TileFactory.CreateTile(TileType.Wall, envSheet, new Vector2(32 + (cols - 1) * 64, 32 + row * 64)));
             }
-
-            room.AddTile(TileFactory.CreateTile(TileType.Statue, environmentSpriteSheet, GridPosition(7, 7)));
-            room.AddTile(TileFactory.CreateTile(TileType.SquareBlock, environmentSpriteSheet, GridPosition(10, 7)));
-            room.AddTile(TileFactory.CreateTile(TileType.PushableBlock, environmentSpriteSheet, GridPosition(13, 7)));
-            room.AddTile(TileFactory.CreateTile(TileType.Fire, environmentSpriteSheet, GridPosition(16, 7)));
-            room.AddTile(TileFactory.CreateTile(TileType.BlueGap, environmentSpriteSheet, GridPosition(19, 7)));
-
-            StairsTile stairs = (StairsTile)TileFactory.CreateTile(TileType.Stairs, environmentSpriteSheet, GridPosition(22, 7));
-            stairs.Traversed += OnStairsTraversed;
-            room.AddTile(stairs);
-
-            room.AddTile(TileFactory.CreateTile(TileType.OpenDoor, environmentSpriteSheet, GridPosition(15, 1)));
-
-            room.AddTile(new BombedWallOpeningTile(environmentSpriteSheet, GridPosition(13, 10)));
-            room.AddTile(new KeyholeLockedDoorTile(environmentSpriteSheet, GridPosition(16, 10)));
-            room.AddTile(new DiamondLockedDoorTile(environmentSpriteSheet, GridPosition(19, 10)));
         }
 
         private void OnStairsTraversed(StairsTile stairs)
