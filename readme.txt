@@ -48,4 +48,5 @@ Fleeing enemies can launch fireballs at player when within 950 units.
 
 ## SPRINT_3
 Hold F1 for collision detection debugging
+hold g when chest is in room to fill inventory with items for testing
 
