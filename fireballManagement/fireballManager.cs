@@ -103,6 +103,11 @@ namespace _3902sprint0
                 fireball2.Update(gameTime);
             }
         }
+        public void clearFireballs()
+        {
+            fireballs.Clear();
+            fireballs2.Clear();
+        }
         public void Draw(SpriteBatch spriteBatch)
         {
             foreach (Fireball fireball in fireballs)
