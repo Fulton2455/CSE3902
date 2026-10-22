@@ -14,11 +14,23 @@ namespace _3902sprint0
             Walk,
             Attack,
             Death,
-            Idle
+            Idle,
+            Telegraph,
+            Leap,
+            Spit,
+            Summon,
+            Recover
         }
 
-        private const int FrameWidth = 64;
-        private const int FrameHeight = 64;
+        private const int StandardFrameSize = 64;
+        private const int BossFrameSize = 128;
+        private const int BossSpecialFrameCount = 4;
+        private const int BossTelegraphStartColumn = 11;
+        private const int BossLeapStartColumn = 15;
+        private const int BossSpitStartColumn = 19;
+        private const int BossSummonStartColumn = 23;
+        private const int BossRecoverStartColumn = 27;
+        private const int BossEnragedRowOffset = 10;
         private const int MovementFrameCount = 8;
         private const int AttackFrameCount = 3;
         private const int DeathFrameCount = 8;
@@ -53,6 +65,10 @@ namespace _3902sprint0
         private float animationTimer;
         private AnimationState animationState;
         private bool animationFinished;
+        private readonly int frameSize;
+        private bool timedAnimationActive;
+        private float timedAnimationDuration;
+        private float timedAnimationElapsed;
         private Rectangle destinationRectangle;
         private Vector2 position;
         private Vector2 velocity;
@@ -175,7 +191,20 @@ namespace _3902sprint0
                 return animationState == AnimationState.Attack;
             }
         }
-
+        public bool IsPlayingTimedAnimation
+        {
+            get
+            {
+                return timedAnimationActive;
+            }
+        }
+        private bool IsEnraged
+        {
+            get
+            {
+                return enemyType == EnemyType.ToadBoss && health <= maxHealth / 2;
+            }
+        }
 
 
         public Enemy(
@@ -220,7 +249,9 @@ namespace _3902sprint0
 
             this.room = room;
 
-			currentDirection = Direction.Down;
+            frameSize = enemyType == EnemyType.ToadBoss ? BossFrameSize : StandardFrameSize;
+
+            currentDirection = Direction.Down;
 
 			currentFrame = 0;
 			animationTimer = 0f;
@@ -242,6 +273,7 @@ namespace _3902sprint0
                 velocity = Vector2.Zero;
                 if (!IsDying && !IsDead)
                 {
+                    timedAnimationActive = false;
                     animationState = AnimationState.Idle;
                 }
                 UpdateAnimation(gameTime);
@@ -279,7 +311,7 @@ namespace _3902sprint0
         }
         public void StartAttack()
         {
-            if (IsDying || IsDead)
+            if (IsDying || IsDead || timedAnimationActive)
                 return;
             Player player = Game1.currentPlayer;
             if (player != null)
@@ -311,6 +343,7 @@ namespace _3902sprint0
             {
                 health = 0;
                 velocity = Vector2.Zero;
+                timedAnimationActive = false;
                 animationState = AnimationState.Death;
                 currentFrame = 0;
                 animationTimer = 0f;
@@ -321,6 +354,62 @@ namespace _3902sprint0
         public void StopMovement()
         {
             velocity = Vector2.Zero;
+            if (animationState == AnimationState.Walk && !timedAnimationActive)
+            {
+                animationState = AnimationState.Idle;
+            }
+        }
+        public void PlayTimedAnimation(BossAnimation animation, float duration)
+        {
+            if (IsDying || IsDead)
+                return;
+
+            switch (animation)
+            {
+                case BossAnimation.Melee:
+                    animationState = AnimationState.Attack;
+                    break;
+                case BossAnimation.Telegraph:
+                    animationState = AnimationState.Telegraph;
+                    break;
+                case BossAnimation.Leap:
+                    animationState = AnimationState.Leap;
+                    break;
+                case BossAnimation.Spit:
+                    animationState = AnimationState.Spit;
+                    break;
+                case BossAnimation.Summon:
+                    animationState = AnimationState.Summon;
+                    break;
+                default:
+                    animationState = AnimationState.Recover;
+                    break;
+            }
+            timedAnimationActive = true;
+            timedAnimationDuration = System.Math.Max(duration, 0.01f);
+            timedAnimationElapsed = 0f;
+            currentFrame = 0;
+            animationFinished = false;
+        }
+
+        public void EndTimedAnimation()
+        {
+            if (!timedAnimationActive)
+                return;
+
+            timedAnimationActive = false;
+            animationState = AnimationState.Idle;
+            currentFrame = 0;
+            animationTimer = 0f;
+        }
+
+        public void FaceTowards(Vector2 target)
+        {
+            Vector2 direction = target - position;
+            if (direction != Vector2.Zero)
+            {
+                SetDirectionFromVector(direction);
+            }
         }
 
         private void UpdateDamageCooldown(GameTime gameTime)
@@ -334,7 +423,7 @@ namespace _3902sprint0
         }
         public void MoveInDirection(Vector2 direction, GameTime gametime, float terrainAcceleration)
         {
-            if (IsDying || IsDead || IsAttacking)
+            if (IsDying || IsDead || IsAttacking || timedAnimationActive)
                 return;
 
             float elapsedSeconds = (float)gametime.ElapsedGameTime.TotalSeconds;
@@ -414,7 +503,10 @@ namespace _3902sprint0
                 if (velocity.LengthSquared() < 0.001f)
                 {
                     velocity = Vector2.Zero;
-                    animationState = AnimationState.Idle;
+                    if (!timedAnimationActive)
+                    {
+                        animationState = AnimationState.Idle;
+                    }
                 }
             }
 
@@ -445,10 +537,39 @@ namespace _3902sprint0
         {
             currentDirection = direction;
         }
-        
+        private int GetTimedFrameCount()
+        {
+            return animationState == AnimationState.Attack ? AttackFrameCount : BossSpecialFrameCount;
+        }
+
+        private int GetTimedStartColumn()
+        {
+            switch (animationState)
+            {
+                case AnimationState.Attack:
+                    return AttackStartColumn;
+                case AnimationState.Telegraph:
+                    return BossTelegraphStartColumn;
+                case AnimationState.Leap:
+                    return BossLeapStartColumn;
+                case AnimationState.Spit:
+                    return BossSpitStartColumn;
+                case AnimationState.Summon:
+                    return BossSummonStartColumn;
+                default:
+                    return BossRecoverStartColumn;
+            }
+        }
         private void UpdateAnimation(GameTime gameTime)
         {
-
+            if (timedAnimationActive)
+            {
+                timedAnimationElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                int frameCount = GetTimedFrameCount();
+                int frame = (int)(timedAnimationElapsed / timedAnimationDuration * frameCount);
+                currentFrame = System.Math.Min(frame, frameCount - 1);
+                return;
+            }
             animationTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (animationTimer < AnimationSpeed)
                 return;
@@ -657,34 +778,48 @@ namespace _3902sprint0
         }
         private Rectangle GetSourceRectangle()
         {
-            int x = currentFrame * FrameWidth;
+            int x = currentFrame * frameSize;
             int y;
 
             switch (animationState)
             {
                 case AnimationState.Walk:
-                    y = GetDirectionRow(currentDirection) * FrameHeight;
+                    y = GetDirectionRow(currentDirection) * frameSize;
                     break;
 
                 case AnimationState.Attack:
-                    x = (AttackStartColumn + currentFrame) * FrameWidth;
-                    y = GetDirectionRow(currentDirection) * FrameHeight;
+                    x = (AttackStartColumn + currentFrame) * frameSize;
+                    y = GetDirectionRow(currentDirection) * frameSize;
+                    break;
+
+                case AnimationState.Telegraph:
+                case AnimationState.Leap:
+                case AnimationState.Spit:
+                case AnimationState.Summon:
+                case AnimationState.Recover:
+                    x = (GetTimedStartColumn() + currentFrame) * frameSize;
+                    y = GetDirectionRow(currentDirection) * frameSize;
                     break;
 
                 case AnimationState.Death:
-                    y = DeathRow * FrameHeight;
+                    y = DeathRow * frameSize;
                     break;
 
                 case AnimationState.Idle:
-                    y = IdleRow * FrameHeight;
+                    y = IdleRow * frameSize;
                     break;
 
                 default:
-                    y = IdleRow * FrameHeight;
+                    y = IdleRow * frameSize;
                     break;
             }
 
-            return new Rectangle(x, y, FrameWidth, FrameHeight);
+            if (IsEnraged)
+            {
+                y += BossEnragedRowOffset * frameSize;
+            }
+
+            return new Rectangle(x, y, frameSize, frameSize);
         }
 
         public void Draw(SpriteBatch spriteBatch)

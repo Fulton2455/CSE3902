@@ -28,7 +28,7 @@ namespace _3902sprint0 {
             MouseState state = Mouse.GetState();
             if (state.RightButton == ButtonState.Pressed)
             {
-                Vector2 MousePosition = new Vector2(state.X, state.Y);
+                Vector2 MousePosition = ScreenScaler.ToVirtual(state.X, state.Y);
                 return MousePosition;
             }
             else
@@ -46,7 +46,7 @@ namespace _3902sprint0 {
         {
             MouseState state = Mouse.GetState();
 
-            Vector2 mousePosition = new Vector2(state.X, state.Y);
+            Vector2 mousePosition = ScreenScaler.ToVirtual(state.X, state.Y);
             Vector2 playerCeneter = new Vector2(playerPosition.X + 64, playerPosition.Y + 64);
             AimDirection = mousePosition - playerCeneter;
 

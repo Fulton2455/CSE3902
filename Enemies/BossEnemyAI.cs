@@ -68,6 +68,9 @@ namespace _3902sprint0
                 state = BossState.Recover;
                 stateTimer = 1.25f;
                 attackCooldown = 0.5f;
+
+                enemy.FaceTowards(player.Location);
+                enemy.PlayTimedAnimation(BossAnimation.Summon, stateTimer);
             }
             switch (state)
             {
@@ -130,6 +133,8 @@ namespace _3902sprint0
                 stateTimer = 0.75f;
                 summonCooldown = phase2 ? 7f : 12f;
                 enemy.StopMovement();
+                enemy.FaceTowards(player.Location);
+                enemy.PlayTimedAnimation(BossAnimation.Summon, stateTimer);
                 return;
             }
 
@@ -145,6 +150,9 @@ namespace _3902sprint0
             {
                 state = BossState.Melee;
                 stateTimer = 0.45f;
+                enemy.StopMovement();
+                enemy.FaceTowards(player.Location);
+                enemy.PlayTimedAnimation(BossAnimation.Melee, stateTimer);
             }
             else if (roll < (phase2 ? 0.55f : 0.35f))
             {
@@ -152,13 +160,18 @@ namespace _3902sprint0
                 state = BossState.TelegraphLeap;
                 stateTimer = phase2 ? 0.55f : 0.8f;
                 enemy.StopMovement();
+                enemy.FaceTowards(leapTarget);
+                enemy.PlayTimedAnimation(BossAnimation.Telegraph, stateTimer);
 
-                
+
             }
             else
             {
                 state = BossState.AcidSpit;
                 stateTimer = 0.5f;
+                enemy.StopMovement();
+                enemy.FaceTowards(player.Location);
+                enemy.PlayTimedAnimation(BossAnimation.Spit, stateTimer);
             }
 
             enemy.StopMovement();
@@ -171,6 +184,8 @@ namespace _3902sprint0
             {
                 state = BossState.Leap;
                 stateTimer = phase2 ? 0.45f : 0.55f;
+                enemy.FaceTowards(leapTarget);
+                enemy.PlayTimedAnimation(BossAnimation.Leap, stateTimer);
             }
         }
         private void updateLeap(Enemy enemy, Player player, GameTime gameTime, float acceleration)
@@ -184,7 +199,7 @@ namespace _3902sprint0
             if (stateTimer <= 0f)
             {
                 enemy.StopMovement();
-
+                SoundManager.PlayExplosion();
                 enemyManager.CreateBossShockwave(
                 enemy.Position,
                 phase2 ? 420f : 300f,
@@ -192,8 +207,7 @@ namespace _3902sprint0
                 phase2 ? 3 : 2
                 );
 
-                state = BossState.Recover;
-                stateTimer = phase2 ? 0.35f : 0.7f;
+                EnterRecover(enemy, phase2 ? 0.35f : 0.7f);
             }
         }
         private void updateRecover(Enemy enemy)
@@ -202,9 +216,16 @@ namespace _3902sprint0
 
             if (stateTimer <= 0f)
             {
+                enemy.EndTimedAnimation();
                 state = BossState.Approach;
                 stateTimer = phase2 ? 0.2f : 0.5f;
             }
+        }
+        private void EnterRecover(Enemy enemy, float duration)
+        {
+            state = BossState.Recover;
+            stateTimer = duration;
+            enemy.PlayTimedAnimation(BossAnimation.Recover, duration);
         }
         private void updateMelee(Enemy enemy, Player player)
         {
@@ -221,8 +242,7 @@ namespace _3902sprint0
                     player.TakeDamage(phase2 ? 4 : 3);
                 }
 
-                state = BossState.Recover;
-                stateTimer = phase2 ? 0.35f : 0.65f;
+                EnterRecover(enemy, phase2 ? 0.35f : 0.65f);
             }
         }
         private void updateAcidSpit(Enemy enemy, Player player)
@@ -240,15 +260,14 @@ namespace _3902sprint0
 
                     Vector2 projectilePosition =
                     enemy.Position + direction * 45f;
-
+                    SoundManager.PlayFireballShoot();
                     fireballManager.CreateAcidProjectile(
                     projectilePosition,
                     direction
                     );
                 }
 
-                state = BossState.Recover;
-                stateTimer = phase2 ? 0.3f : 0.6f;
+                EnterRecover(enemy, phase2 ? 0.3f : 0.6f);
             }
         }
         private void updateSummon(Enemy enemy)
@@ -262,8 +281,7 @@ namespace _3902sprint0
                 phase2 ? 3 : 2
                 );
 
-                state = BossState.Recover;
-                stateTimer = phase2 ? 0.3f : 0.6f;
+                EnterRecover(enemy, phase2 ? 0.3f : 0.6f);
             }
         }
     }

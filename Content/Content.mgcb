@@ -91,6 +91,19 @@
 /processorParam:Version=3.8.5.1
 /build:enemySlime.png
 
+#begin enemyToad.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:enemyToad.png
+
 #begin enemyZombie.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -280,6 +293,9 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Pixel Heart Sprite Sheet 32x32.png
+
+#begin rooms/rooms1.csv
+/copy:rooms/rooms1.csv
 
 #begin sounds/EnemyHit.wav
 /importer:WavImporter

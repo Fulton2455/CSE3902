@@ -21,6 +21,8 @@ namespace _3902sprint0
         private GraphicsDeviceManager DeviceManager3902;
         private Texture2D knightTexture;
         private SpriteBatch spriteBatch;
+        private RenderTarget2D sceneTarget;
+        private bool applyingWindowSize;
         private Player player;
         private Mousecontroller Mouse;
         private KeyboardController Keyboard;
@@ -38,6 +40,7 @@ namespace _3902sprint0
         private Texture2D enemyZombieTexture;
         private Texture2D enemyMageTexture;
         private Texture2D enemyBatTexture;
+        private Texture2D enemyToadTexture;
         private List<Enemy> enemies;
 
         private EnemyManager enemyManager;
@@ -85,11 +88,30 @@ namespace _3902sprint0
         public Game1()
         {
             DeviceManager3902 = new GraphicsDeviceManager(this);
-
-            DeviceManager3902.PreferredBackBufferWidth = 1792;
-            DeviceManager3902.PreferredBackBufferHeight = 1280;
-
+            DisplayMode desktop = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+            Point startSize = ScreenScaler.FitWindowSize((int)(desktop.Width * 0.9f), (int)(desktop.Height * 0.9f));
+            DeviceManager3902.PreferredBackBufferWidth = startSize.X;
+            DeviceManager3902.PreferredBackBufferHeight = startSize.Y;
+            Window.AllowUserResizing = true;
+            Window.ClientSizeChanged += OnClientSizeChanged;
             Content.RootDirectory = "Content";
+
+        }
+        private void OnClientSizeChanged(object sender, EventArgs e)
+        {
+            if (applyingWindowSize)
+                return;
+            int width = Window.ClientBounds.Width;
+            int height = Window.ClientBounds.Height;
+            if (width <= 0 || height <= 0)
+                return;
+
+            applyingWindowSize = true;
+            DeviceManager3902.PreferredBackBufferWidth = width;
+            DeviceManager3902.PreferredBackBufferHeight = height;
+            DeviceManager3902.ApplyChanges();
+            ScreenScaler.Update(width, height);
+            applyingWindowSize = false;
 
         }
 
@@ -119,6 +141,10 @@ namespace _3902sprint0
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            sceneTarget = new RenderTarget2D(GraphicsDevice, ScreenScaler.VirtualWidth, ScreenScaler.VirtualHeight);
+            ScreenScaler.Update(GraphicsDevice.PresentationParameters.BackBufferWidth,
+                GraphicsDevice.PresentationParameters.BackBufferHeight);
+
             
             // in LoadContent, anywhere after spriteBatch is created:
             pixelTexture = new Texture2D(GraphicsDevice, 1, 1);
@@ -185,7 +211,7 @@ namespace _3902sprint0
             enemyZombieTexture = Content.Load<Texture2D>("enemyZombie");
             enemyMageTexture = Content.Load<Texture2D>("enemyMage");
             enemyBatTexture = Content.Load<Texture2D>("enemyBat");
-            Texture2D toadTexture = enemySlimeTexture;                          //change when texture created
+            enemyToadTexture = Content.Load<Texture2D>("enemyToad");                        
             Texture2D shockwavePixel = new Texture2D(GraphicsDevice, 1, 1);
             shockwavePixel.SetData(new[] { Color.White });
 
@@ -194,7 +220,7 @@ namespace _3902sprint0
                 enemyZombieTexture,
                 enemyMageTexture,
                 enemyBatTexture,
-                toadTexture,
+                enemyToadTexture,
                 shockwavePixel,
                 FireballManager);
             player.SetEnemyManager(enemyManager);
@@ -301,6 +327,7 @@ namespace _3902sprint0
         /// <param name="gameTime"></param>
         protected override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.SetRenderTarget(sceneTarget);
             GraphicsDevice.Clear(player.Terrain.terrainColor);
 
             spriteBatch.Begin(
@@ -325,6 +352,14 @@ namespace _3902sprint0
             ChestMessage.Draw(spriteBatch);
             rupee.Draw(spriteBatch);
             spriteBatch.End();
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.Black);
+
+            bool wholeNumberScale = ScreenScaler.Scale == (float)Math.Floor(ScreenScaler.Scale);
+            spriteBatch.Begin(samplerState: wholeNumberScale ? SamplerState.PointClamp : SamplerState.LinearClamp);
+            spriteBatch.Draw(sceneTarget, ScreenScaler.Destination, Color.White);
+            spriteBatch.End();
+
             base.Draw(gameTime);
         }
 
@@ -337,8 +372,8 @@ namespace _3902sprint0
 
         private Rectangle GetRoomBounds()
         {
-            int cols = DeviceManager3902.PreferredBackBufferWidth / 64;
-            int rows = DeviceManager3902.PreferredBackBufferHeight / 64;
+            int cols = ScreenScaler.VirtualWidth / 64;
+            int rows = ScreenScaler.VirtualHeight / 64;
             return new Rectangle(0, 0, cols * 64, rows * 64);
         }
 
