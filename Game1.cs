@@ -379,8 +379,6 @@ namespace _3902sprint0
 
         private Vector2 GridPosition(int col, int row) => new Vector2(32 + col * 64, 32 + row * 64);
 
-        private Texture2D environmentSpriteSheet;
-
         private void LoadRoom()
         {
             Rectangle roomBounds = GetRoomBounds();
