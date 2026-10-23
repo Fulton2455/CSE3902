@@ -1,0 +1,1 @@
+28x20 grid room
