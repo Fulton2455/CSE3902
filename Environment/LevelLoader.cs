@@ -14,53 +14,52 @@ namespace _3902sprint0.Environment
             
             for (int y = 0; y < lines.Length; y++)
             {
-                string[] columns = lines[y].Split(',');
+                // No longer split by commas. A string would just be an array of chars
+                string row = lines[y];
                 
-                for (int x = 0; x < columns.Length; x++)
+                for (int x = 0; x < row.Length; x++)
                 {
-                    if (string.IsNullOrWhiteSpace(columns[x])) continue;
-
-                    int objectID = int.Parse(columns[x].Trim());
+                    char tileChar = row[x];
                     
-                    // Add + 32 because your Tile.cs calculates bounds from the CENTER of the tile!
+                    // Add + 32 because Tile.cs calculates bounds from the center of the tile
                     Vector2 position = new Vector2(x * 64 + 32, y * 64 + 32); 
 
-                    switch (objectID)
+                    switch (tileChar)
                     {
-                        case 1:
+                        case '#': // Wall
                             room.AddTile(TileFactory.CreateTile(TileType.Wall, spriteSheet, position));
                             break;
-                        case 2:
-                            // Floor: Do nothing (empty space)
+                        case '.': // Floor
+                            // Do nothing (empty space)
                             break;
-                        case 3:
+                        case 'B': // SquareBlock
                             room.AddTile(TileFactory.CreateTile(TileType.SquareBlock, spriteSheet, position));
                             break;
-                        case 4:
+                        case 'S': // Statue
                             room.AddTile(TileFactory.CreateTile(TileType.Statue, spriteSheet, position));
                             break;
-                        case 5:
+                        case 'P': // PushableBlock
                             room.AddTile(TileFactory.CreateTile(TileType.PushableBlock, spriteSheet, position));
                             break;
-                        case 6:
+                        case 'F': // Fire
                             room.AddTile(TileFactory.CreateTile(TileType.Fire, spriteSheet, position));
                             break;
-                        case 7:
+                        case 'G': // BlueGap
                             room.AddTile(TileFactory.CreateTile(TileType.BlueGap, spriteSheet, position));
                             break;
-                        case 8:
+                        case 'X': // Stairs
                             room.AddTile(TileFactory.CreateTile(TileType.Stairs, spriteSheet, position));
                             break;
-                        case 9:
+                        case 'D': // OpenDoor
                             room.AddTile(TileFactory.CreateTile(TileType.OpenDoor, spriteSheet, position));
                             break;
-                        case 10:
+                        case 'O': // BombedWallOpening
                             room.AddTile(new BombedWallOpeningTile(spriteSheet, position));
                             break;
-                        case 11:
+                        case 'K': // KeyholeLockedDoor
                             room.AddTile(new KeyholeLockedDoorTile(spriteSheet, position));
                             break;
-                        case 12:
+                        case 'L': // DiamondLockedDoor
                             room.AddTile(new DiamondLockedDoorTile(spriteSheet, position));
                             break;
                     }
