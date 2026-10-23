@@ -390,18 +390,18 @@ namespace _3902sprint0
             LevelLoader loader = new LevelLoader();
             try 
             {
-                loader.LoadRoom("rooms1.csv", room, environmentSpriteSheet);
+                // CHANGED FROM .csv TO .txt
+                loader.LoadRoom("exampleRoom.txt", room, environmentSpriteSheet); 
             }
             catch (Exception)
             {
                 try 
                 {
-                    // Fallback to checking Content folder
-                    loader.LoadRoom("Content/rooms/rooms1.csv", room, environmentSpriteSheet);
+                    // CHANGED FROM .csv TO .txt
+                    loader.LoadRoom("Content/rooms/exampleRoom.txt", room, environmentSpriteSheet);
                 }
                 catch (Exception)
                 {
-                    // If CSV completely fails to load, generate the hardcoded room
                     FallbackRoomGeneration(environmentSpriteSheet, roomBounds);
                 }
             }
