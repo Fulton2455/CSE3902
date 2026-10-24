@@ -409,6 +409,8 @@ namespace _3902sprint0
                 if (tile is StairsTile stairs)
                     stairs.Traversed += OnStairsTraversed;
             }
+            System.Diagnostics.Debug.WriteLine(
+    $"Room loaded: {room.Tiles.Count} tiles");
         }
 
         private void FallbackRoomGeneration(Texture2D envSheet, Rectangle bounds)

@@ -294,8 +294,11 @@
 /processorParam:Version=3.8.5.1
 /build:Pixel Heart Sprite Sheet 32x32.png
 
-#begin rooms/rooms1.csv
-/copy:rooms/rooms1.csv
+#begin rooms/exampleRoom.txt
+/copy:rooms/exampleRoom.txt
+
+#begin rooms/exampleRoomREADME.md
+/copy:rooms/exampleRoomREADME.md
 
 #begin sounds/EnemyHit.wav
 /importer:WavImporter

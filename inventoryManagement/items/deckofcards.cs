@@ -154,7 +154,10 @@ namespace _3902sprint0
         public void Use(Player player, GameTime gameTime)
         {
             if (!IsOffCooldown || player.mana < ManaCost)
+            {
+                EffectMessage.Show("Out of Mana!", Color.LightGray);
                 return;
+            }
 
             player.mana -= ManaCost;
             ApplyEffect(player);

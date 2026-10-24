@@ -63,7 +63,10 @@ namespace _3902sprint0
             if (toggleOff)
             {
                 if (player.mana <= 1)
+                {
+                    EffectMessage.Show("Out of Mana!", Color.LightGray);
                     return;
+                }
 
                 player.Speed += 300;
                 player.Acceleration += 2500;
