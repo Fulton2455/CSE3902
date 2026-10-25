@@ -37,7 +37,7 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
-/build:enemyBasicIdle.png
+/build:enemyBasicIdle.png;enemies/enemyBasicIdle
 
 #begin enemyBasicRunning.png
 /importer:TextureImporter
@@ -50,7 +50,7 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
-/build:enemyBasicRunning.png
+/build:enemyBasicRunning.png;enemies/enemyBasicRunning
 
 #begin enemyBat.png
 /importer:TextureImporter
@@ -63,7 +63,7 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
-/build:enemyBat.png
+/build:enemyBat.png;enemies/enemyBat
 
 #begin enemyMage.png
 /importer:TextureImporter
@@ -76,7 +76,7 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
-/build:enemyMage.png
+/build:enemyMage.png;enemies/enemyMage
 
 #begin enemySlime.png
 /importer:TextureImporter
@@ -89,7 +89,7 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
-/build:enemySlime.png
+/build:enemySlime.png;enemies/enemySlime
 
 #begin enemyToad.png
 /importer:TextureImporter
@@ -102,7 +102,7 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
-/build:enemyToad.png
+/build:enemyToad.png;enemies/enemyToad
 
 #begin enemyZombie.png
 /importer:TextureImporter
@@ -115,7 +115,7 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
-/build:enemyZombie.png
+/build:enemyZombie.png;enemies/enemyZombie
 
 #begin environment/environment_spritesheet.png
 /importer:TextureImporter

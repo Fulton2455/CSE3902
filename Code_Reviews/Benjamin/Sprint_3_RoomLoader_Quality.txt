@@ -1,0 +1,32 @@
+Author: Benjamin Wisecup
+Date: October 25, 2026
+Sprint: 3
+RoomLoader.cs
+Author of .cs file being reviewed: Connor Fulton
+Number of minutes spent on review.
+
+Code quality comments:
+
+- RoomLoader has good cohesion. GetRoomBounds calculates bounds, LoadRoom coordinates room loading,
+and GenerateFallbackRoom creates a basic room if file loading fails. These responsibilities are all 
+related to room creation.
+
+- The class is coupled to LevelLoader, TileFactory, TileType, the environment sprite sheet, and the 
+hard-coded exampleRoom.txt file path. Some coupling to the level-loading and tile-creation classes 
+is expected, but the hard-coded path makes it less convenient to choose different room files or load 
+multiple levels.
+
+- A potential correctness issue is that LevelLoader adds tiles to the Room as it reads the file. 
+If an exception occurs after some tiles have already been added, GenerateFallbackRoom adds boundary 
+walls to that same Room rather than clearing the partially loaded tiles first. The result could be a 
+mixture of partial level data and fallback walls. Loading into a temporary collection/room and 
+committing only after success, or clearing the room before fallback generation, would fix this.
+
+Hypothetical game change:
+Suppose the game adds several distinct rooms and advances between them, with each room loaded from its 
+own text file. The current implementation could generate rooms, but LoadRoom always tries the same two 
+hard-coded paths, so callers cannot select which room file to load. The class would need to be modified 
+to accept a room file path (and potentially expose a room configuration) as a parameter.
+
+Overall, the class is cohesive and the fallback behavior is useful, but broad exception handling, 
+partial-load recovery, and the fixed room path are the main maintainability concerns.
