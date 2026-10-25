@@ -63,7 +63,10 @@ namespace _3902sprint0
             if (toggleOff)
             {
                 if (player.mana <= 1)
+                {
+                    EffectMessage.Show("Out of Mana!", Color.LightGray);
                     return;
+                }
 
                 player.Speed += 300;
                 player.Acceleration += 2500;
@@ -82,8 +85,8 @@ namespace _3902sprint0
         {
             if (!toggleOff && swordPlayer != null)
             {
-                swordPlayer.Speed -= 300;
-                swordPlayer.Acceleration -= 2500;
+                swordPlayer.Speed =swordPlayer.getTerrainspeed();
+                swordPlayer.Acceleration = 500;
             }
 
             toggleOff = true;

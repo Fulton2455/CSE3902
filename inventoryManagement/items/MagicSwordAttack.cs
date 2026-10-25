@@ -54,7 +54,10 @@ namespace _3902sprint0
             if (toggleOff)
             {
                 if (player.mana < ManaDrainAmount)
+                     {
+                    EffectMessage.Show("Out of Mana!", Color.LightGray);
                     return;
+                }
 
                 player.damage += 1;
                 toggleOff = false;
