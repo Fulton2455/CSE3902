@@ -78,6 +78,8 @@ namespace _3902sprint0
             else
             {
                 Deactivate();
+                
+
             }
         }
 
@@ -85,6 +87,10 @@ namespace _3902sprint0
         {
             if (!toggleOff && swordPlayer != null)
             {
+                if (swordPlayer.Speed == 400f ||
+                swordPlayer.Speed == 500f ||
+                swordPlayer.Speed == 900f)
+                    swordPlayer.Speed -= 300;   
                 swordPlayer.Speed =swordPlayer.getTerrainspeed();
                 swordPlayer.Acceleration = 500;
             }
