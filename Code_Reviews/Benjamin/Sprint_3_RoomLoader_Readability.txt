@@ -1,0 +1,35 @@
+Author: Benjamin Wisecup
+Date: October 25, 2026
+Sprint: 3
+RoomLoader.cs
+Author of .cs file being reviewed: Connor Fulton
+Number of minutes taken to complete the review: 20
+
+Readability comments:
+
+- The class has a clear, narrow purpose: creating room bounds and loading a room. The 
+names GetRoomBounds, LoadRoom, and GenerateFallbackRoom communicate what each method 
+does without requiring extra explanation.
+
+- TileSize is a named constant, which is easier to understand and maintain than 
+repeating the value 64 throughout the class.
+
+- The fallback-room logic is separated from LoadRoom, so the main method is not 
+cluttered with the loops that generate boundary walls. This helps the overall flow 
+remain understandable.
+
+- The nested try/catch blocks make the loading flow a little harder to follow. A reader 
+has to infer why two different file paths are attempted and what happens if both fail. 
+
+- The catch blocks catch every Exception without naming or logging the failure. This makes 
+it difficult to tell whether loading failed because a file was missing, its contents were 
+invalid, or some other problem occurred. Even if fallback generation is intended, recording 
+the exception or using narrower exception handling would make debugging clearer.
+
+- The GridPosition method uses 32 as the tile-center offset while TileSize is 64. The 
+relationship is correct, but expressing the offset as TileSize / 2 would make the intent 
+clearer and avoid another magic number.
+
+Overall, RoomLoader is reasonably readable because the methods and constant are well named 
+and the fallback logic is separated. The main readability improvements would be documenting 
+the two file paths and making the failure-handling behavior more explicit.

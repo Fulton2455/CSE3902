@@ -81,7 +81,7 @@ namespace _3902sprint0
                         enemyManager,
                         fireballManager);
                     tileInteraction= new GroundEnemyTileInteraction();
-                    health = 20;
+                    health = 12;
                     damage = 3;
                     movementSpeed = 100f;
                     acceleration = 500f;

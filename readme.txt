@@ -50,3 +50,19 @@ Fleeing enemies can launch fireballs at player when within 950 units.
 Hold F1 for collision detection debugging
 hold g when chest is in room to fill inventory with items for testing
 
+Room creation and level loading:
+The room is created to fit the game's virtual screen using 64-by-64 tiles. RoomLoader first tries to load Content/rooms/exampleRoom.txt 
+(or exampleRoom.txt, depending on the working directory). The text file defines the room as a grid of characters, with each supported 
+character representing a tile type. If loading fails, the game generates a fallback room with boundary walls. There is an issue where content
+sometimes needs to have the room added back as a copy in order to accept it.
+
+Sprint 3 includes room/level progression through stairs, a rupee counter and HUD, collision-debugging overlays, and an autoomatically 
+adjusting window with a constant resolution.
+
+There is now a boss enemy that exists only in swamp terrain, it has multiple moves and phases. All enemies have there own sprites now,
+all of which share the same format, the boss has extra sprites added on top of this format. Boss sprite is 128-by-128 pixels while normal
+enemies are 64-by-64 pixels.
+
+There are now 6 new items in the game, the robe of invisibilty, magic armor, panacea bottle, deck of cards, boomerang, and magic attack buff.
+
+There is a known issue in which a pushable block can be pushed into an enemy trapping them inside the block.
