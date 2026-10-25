@@ -1,0 +1,50 @@
+Author: Connor Fulton
+October 24, 2026
+Sprint 3
+Boomerang.cs, deckofcards.cs, firescroll(2).cs, magicArmor.cs, MagicSword.cs, MagicSwordAttack.cs,
+panaceaBottle.cs, robeOfinvisibility.cs, shieldOfInvulnerability.cs
+Author of .cs Files: Benjamin Wisecup
+Number of Minutes Spent on Review: 35
+
+Readability Comments:
+- One note off first glance is that the type names are of inconsistent naming convention. Classes
+like Boomerang, MagicSword, and MagicSwordAttack all use SnakeCase while classes like fireScroll,
+shieldOfInvulnerability, and panaceaBottle use camelCase. We should attempt to stick to one naming
+convention to increase the readability of our code. Additionally, robeOfinvisibility makes use of
+neither convention.
+
+- My assumption is that the Boomerang class is in an unfinished state and that is why the actual 
+class being implemented is fireScroll4. If this is not a temporary solution, this should be 
+refactored so that the class and file names match.
+
+- For all items the cooldownReset hardcodes the useTime to be equal to the same magic number as
+the useSpeed. It should be updated to say useTime=useSpeed for both readability so the intent
+behind the code is clearer and code quality so there are fewer dependencies if someone wanted
+to change the useSpeed. 
+
+- In fireScroll.use and magicArmor.applyEffect, the player.mana subtraction is done using 
+hardcoded values of the mana cost instead of the field that is defined. This is a similar issue
+to the one mentioned above, simply swap the magic numbers out for the manaCost field you already 
+have defined and the readability of the file and code quality will both improve for the same
+reasons they improve with the cooldownReset fix. 
+
+
+
+Code Quality Comments: 
+- The fireScroll, fireScroll2, and Boomerang(fireScroll4?) class are all nearly identical. I would 
+place the duplicate code into a shared abstract class so that there is less repetition. 
+
+- It could be beneficial to add abstract classes for CooldownItems and ManaItems. Since the only
+way the items differ are in their useSpeed, manaCost, and applyEffect the abstract classes could
+implement isOffCooldown, Update, cooldownReset, and then the specific classes could implement use, 
+applyEffect and define the two constants. 
+
+- Within the Boomerang and fireScroll classes, there is a field fireEffect that is set to false
+and then never referenced again within the files. If there is no plan for these fields, it should
+be removed. Within several classes, there is a bool titled firstUse that is never referenced within
+the files again. It should be removed also. 
+
+
+Additional Comments: I just want to point out this line within the deckOfCards.cooldownReset. 
+// Undo any active timed effects here once you add them. Just to make sure it is not an
+implementation detail that has been forgotten. 
