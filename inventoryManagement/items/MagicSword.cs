@@ -85,8 +85,8 @@ namespace _3902sprint0
         {
             if (!toggleOff && swordPlayer != null)
             {
-                swordPlayer.Speed -= 300;
-                swordPlayer.Acceleration -= 2500;
+                swordPlayer.Speed =swordPlayer.getTerrainspeed();
+                swordPlayer.Acceleration = 500;
             }
 
             toggleOff = true;

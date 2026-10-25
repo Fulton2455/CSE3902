@@ -217,6 +217,8 @@ namespace _3902sprint0
         { combat.FireballHitCheck(); }
         public float GetTerrainAcceleration()
         { return movement.GetTerrainAcceleration(); }
+        public float getTerrainspeed()
+        { return Speed; }
 
         public Vector2 getPosition()
         {
