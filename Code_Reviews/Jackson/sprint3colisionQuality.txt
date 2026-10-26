@@ -1,0 +1,28 @@
+﻿Author: Jackson Wisecup
+October 26, 2026
+Sprint 3
+TileCollisionResolver.cs, QuadTree.cs
+Author of .cs Files: Connor Fulton
+Code Quality Comments:
+
+In TileCollisionResolver.cs the CanEnter method combines multiple collision responsibilities into one method. 
+This means tighter coupling between enemy interactions, door unlocking, block pushing, and solid-tile detection.
+A change to one of these systems could unintentionally affect another because all of the behaviors are evaluated in the same sequence. 
+Separating these responsibilities would make the collision system easier to test and maintain.
+
+The constructor for TileCollisionResolver does not validate its arguments. For example, passing a null queryNearby function would cause a runtime exception 
+when a collision method attempts to invoke it. An invalid tileSize could also result in incorrect collision bounds.
+Validating these values would help catch configuration errors before they cause problems during gameplay.
+(probaly wont be a problem since i dont think were gonna change the blocks but worth remembering for if you do end up wanting to)
+
+In QuadTree.cs the implementation supports inserting and querying objects but does not provide functionality to remove an object or update its position after insertion.
+This is not really a problem if the tree is remade whenever the room changes but it limits its use for moving entities. 
+If the game starts using the QuadTree to track enemies or projectiles it would need to rebuild the structure frequently or add support for updating objects, unless i missed where it does already.
+(if i misunderstood and the quadtree is not used on projectiloes and enemies this is not a problem however it looks like there would be problems if something left its original quadrant)
+
+The Insert method silently ignores objects that do not intersect the root boundary.
+Although this prevents objects outside the defined area from being stored, it also means an object with incorrectly calculated bounds
+could be discarded without the caller knowing that insertion failed. Returning a success value would make this behavior easier to detect and handle.
+
+
+

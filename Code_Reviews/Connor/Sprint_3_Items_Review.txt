@@ -3,7 +3,7 @@ October 24, 2026
 Sprint 3
 Boomerang.cs, deckofcards.cs, firescroll(2).cs, magicArmor.cs, MagicSword.cs, MagicSwordAttack.cs,
 panaceaBottle.cs, robeOfinvisibility.cs, shieldOfInvulnerability.cs
-Author of .cs Files: Benjamin Wisecup
+Author of .cs Files: Jackson Wisecup
 Number of Minutes Spent on Review: 35
 
 Readability Comments:

@@ -1,0 +1,28 @@
+﻿Author: Jackson Wisecup
+October 26, 2026
+Sprint 3
+TileCollisionResolver.cs, QuadTree.cs
+Author of .cs Files: Connor Fulton
+Number of Minutes Spent on Review: 20
+
+Readability Comments:
+
+In TileCollisionResolver.cs the CanEnter method handles several different collision cases like enemy interactions locked doors pushable blocks and solid tiles.
+Having all of these in one method makes it harder to follow the logic. Especially because the order affects how collisions are resolved.
+Splitting some of these cases into separate helper methods would make the code easier to understand and modify.
+
+The CanEnter method also contains nested conditions when handling pushable blocks. It checks whether an enemy can push the block, attempts to move it and then checks whether the destination is blocked.
+Separating the block-pushing logic from the rest of the collision checks would make it easier to understand what happens when a push succeeds or fails.
+
+In TileCollisionResolver.cs the calculation of targetBounds inside the pushableblock logic relies on tileSize to determine both the width and height of the block. 
+This makes the code harder to adapt to blocks of different sizes because the dimensions are not taken directly from the block itself.
+(ignore this if you dont intend to have blacks of differnt sizes)
+
+In QuadTree.cs the Subdivide method performs several operations: calculating the child boundaries, creating the four child nodes, redistributing existing items,
+and retaining items that cannot fit entirely within a child. Separating the redistribution logic into another method could make the subdivision process easier to follow.
+
+In QuadTree.cs the Insert method has separate paths for inserting into an existing child, keeping an item at the current level and subdividing the current node. 
+The method becomes more difficult to follow because the decision making and insertion operations are mixed together.
+Extracting the child selection logic could make the method more readable without changing its behavior.
+
+In QuadTree.cs you have a list called items this is exactly the same as the list used in the inventory system a renameing could lessen potential confusion.
