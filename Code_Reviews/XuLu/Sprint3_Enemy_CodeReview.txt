@@ -1,0 +1,22 @@
+﻿Author:Xu Lu
+October 26, 2026
+Sprint 3
+Enemy.cs
+Number of Minutes Spent on Review: 40 
+
+Readability Comments:
+
+Overall, the Enemy class is fairly easy to follow because the different parts of enemy behavior are separated into EnemySprite, IEnemyAI, and IEnemyTileInteraction. This makes it easier to understand which class is responsible for animation, AI, and environment interaction instead of putting all of that logic directly into Enemy.
+One naming inconsistency I noticed is the bounds property. Most of the other public properties such as Health, MaxHealth, Damage, Position, and Velocity use PascalCase, while bounds starts with a lowercase letter. I would rename this to Bounds so that the public properties follow the same naming convention.
+The Enemy constructor has a large number of parameters including enemy type, AI, tile interaction, sprite sheet, position, size, health, damage, speed, acceleration, movement bounds, and room. The names are clear, but having this many parameters makes the constructor harder to read and makes it easier to accidentally place values in the wrong order. 
+Since we already have an EnemyCreator, it may be better to keep most enemy setup inside the creator or eventually group the enemy statistics into another object.
+SetDirectionFromVector works correctly, but there are many hardcoded angle values such as 337.5f, 22.5f, 67.5f, and the other direction boundaries. These values make sense because the code divides movement into eight directions, but constants with descriptive names could make the purpose of the numbers more clear.
+There are several repeated checks using IsDying || IsDead throughout the class. This is understandable, but if more states are added later it may become harder to read. A helper property or method such as CanAct could potentially make some of these checks shorter and easier to understand.
+
+Code Quality Comments:
+One issue I noticed is that Enemy directly accesses Game1.currentPlayer in both Update and StartAttack. This creates a dependency between Enemy and Game1. It may be better to pass the Player reference into the Enemy or its AI instead. This would make Enemy easier to test independently and reduce the amount of global game state that the class depends on.
+There appears to be an inconsistency between the rectangle used for movement collision and the rectangle used as the Enemy's public bounds. In MoveAxis, attemptedBounds is created using size by size, with the position offset by size / 2. However, UpdateDestinationRectangle creates a rectangle using size * 2 by size * 2, with the position offset by size. These should be checked to make sure they are intentionally different. If not, an enemy could visually overlap a wall while its movement collision still thinks that the position is valid.
+TakeDamage is currently short and easy to follow. It reduces health, registers the hit animation, plays the enemy hit sound, and starts the death animation if health reaches zero. However, this method may become larger as more combat features are added. For example, knockback, status effects, armor, or temporary invulnerability could all eventually be added here. If that happens, it may be better to split some of the hit-response behavior into separate methods.
+The movement logic is structured well because MoveInDirection prevents normal movement while the enemy is dying, dead, attacking, or playing a timed animation. This helps prevent the AI movement from interfering with important animations.
+The separation between Enemy, EnemySprite, IEnemyAI, and IEnemyTileInteraction is a strong part of the design. This should make it easier to create enemies with different movement or AI behavior without making large changes to the Enemy class itself.
+maxHealth and damage appear to only be assigned in the constructor in this file. If there is no plan to change these values during gameplay, they could potentially be made readonly like several of the other Enemy fields. This would make it clearer which enemy properties are permanent after construction.
