@@ -1,0 +1,259 @@
+﻿# Sprint 3 Final Report
+
+## 1. Sprint Overview
+
+The main goals of Sprint 3 were level loading, room segmentation, and collision handling. During this sprint, our team moved away from placing all game objects into one test screen and began building a system that can represent individual dungeon rooms.
+
+We also continued improving systems from previous sprints, including combat, enemies, items, HUD elements, and environmental interactions.
+
+By the end of the sprint, the team had working room creation based on external room data, improved collision handling, additional player and enemy interactions, and several completed HUD features.
+
+Overall, Sprint 3 moved the project closer to the structure of an actual dungeon instead of a single test environment.
+
+## 2. Room Creation and Level Loading
+
+One of the largest features developed during Sprint 3 was the room and level loading system.
+
+The room creation system reads room information from a CSV file. The numbers stored in the CSV correspond to different tile and object types, and the game uses this information to create the visual layout of the room.
+
+This allows room layouts to be stored outside of `Game1.cs` instead of manually placing every object through code.
+
+The first implementation of the level loading system used a test room containing many of the available environmental objects. This gave the team a way to verify that the different tiles and room objects were being created correctly before expanding the system to more complete dungeon layouts.
+
+The room representation was also improved visually during the sprint. Tile names and cases were made clearer so that the room data would be easier to understand and maintain.
+
+This system is still something that can be expanded in future sprints, but Sprint 3 established the basic structure needed to load different dungeon rooms from external data.
+
+## 3. Environmental Objects
+
+A large number of the environmental features required for the dungeon were already implemented or completed during this sprint.
+
+These included objects such as:
+
+- Statues
+- Square blocks
+- Pushable blocks
+- Fire
+- Blue gaps
+- Stairs
+- Walls and room borders
+- Open doors
+- Bombed wall openings
+- Keyhole locked doors
+- Diamond locked doors
+- White brick
+- Ladders
+- Blue floor
+- Blue sand
+
+The tile system allows different objects to behave differently while still being managed through the Room class.
+
+For example, walls and locked doors can block movement, pushable blocks can move when the player pushes them, fire can damage the player, and stairs can trigger transitions.
+
+This reduced the need for Game1 to manually handle the behavior of every object.
+
+## 4. Collision Handling
+
+Collision handling was another major focus of Sprint 3.
+
+The team implemented and tested collisions between the player and different environmental objects.
+
+The Room class helps determine whether the player or enemy is allowed to enter a new position. Solid objects such as walls and locked doors prevent movement, while other objects have special behavior.
+
+Pushable blocks can move when the player pushes them if there is available space.
+
+Fire works as a hazard and damages the player when their bounds intersect.
+
+Stairs detect player interaction and are used as part of the room and level transition system.
+
+Enemies also use room collision so that their movement is affected by environmental objects rather than allowing them to move freely through the room.
+
+During testing, the team continued adjusting collision behavior and asked team members to report any collisions that did not behave correctly.
+
+## 5. Player Combat and Enemy Hit Detection
+
+Player combat was also improved during Sprint 3.
+
+The sword attack now checks an attack area against enemy bounds. The sword collision area was adjusted so that the actual hit detection better matches the visual attack.
+
+One issue with sword collision is that the attack animation lasts for multiple frames. Without additional handling, the same enemy could receive damage multiple times during a single sword swing.
+
+To prevent this, enemies that have already been hit during the current attack are tracked so that each enemy can only receive damage once from one sword swing.
+
+This made sword combat more consistent and easier for the player to understand.
+
+## 6. Enemy Hit Feedback
+
+Enemy feedback was another improvement completed during the sprint.
+
+Previously, the player could damage enemies, but there was limited feedback showing that an attack had successfully connected.
+
+When an enemy takes damage now, the enemy briefly changes color to provide visual hit feedback.
+
+A hit sound is also played when damage is successfully applied.
+
+If the enemy reaches zero health, its movement stops and the enemy begins its death behavior.
+
+The general flow is:
+
+Player sword attack  
+→ Enemy collision detected  
+→ Enemy takes damage  
+→ Visual hit feedback and sound  
+→ Enemy death if health reaches zero
+
+This gives the player much clearer feedback during combat.
+
+## 7. Rupee System
+
+The Rupee system was also implemented and merged during Sprint 3.
+
+Rupees exist as objects inside the game world and can be collected by the player.
+
+When the player collides with a Rupee, the Rupee is marked as collected and the player's Rupee count increases.
+
+The Rupee is then removed from the visible game state so that it cannot be collected repeatedly.
+
+The player's current Rupee amount can also be displayed through the HUD.
+
+This system connects several parts of the game together:
+
+Rupee object  
+→ Collision with Player  
+→ Rupee collected  
+→ Player Rupee count increases  
+→ HUD updates
+
+## 8. HUD Improvements
+
+Several gameplay HUD elements were completed or improved.
+
+The Health HUD displays the player's current health using heart sprites. Full, half, and empty heart states are used so that the player can easily see the current amount of health.
+
+The Level HUD displays the player's current dungeon level.
+
+The Current Sword HUD displays the player's current sword based on the Inventory state instead of displaying a hard-coded sword image.
+
+The Inventory HUD also displays icons for obtained items and includes an item selection indicator.
+
+These systems make the game state easier for the player to understand and keep the visual display separate from the main gameplay logic.
+
+## 9. Window and Display Improvements
+
+The game window dimensions caused some issues during development because different team members were testing on different devices.
+
+One version of the level loading system used dimensions that worked correctly on one laptop but were not ideal for the rest of the team.
+
+The window and room dimensions were adjusted so that the game looked correct on both Windows desktops and MacBooks used by team members.
+
+The current implementation works more consistently, although automatic scaling based on screen size or aspect ratio could be considered as a future improvement.
+
+## 10. Code Quality and Code Reviews
+
+Code readability and maintainability were important parts of Sprint 3.
+
+Team members completed code reviews and identified several areas where the project could be improved.
+
+Some examples included:
+
+- Inconsistent naming conventions
+- Repeated item code
+- Hard-coded values instead of existing fields
+- Unused variables
+- Dependencies between gameplay classes
+- Collision bounds that should be checked for consistency
+- Large constructors with many parameters
+
+One example from the Enemy class is that AI, sprite behavior, and tile interaction are already separated into different components. This is a good design because new enemy behavior can be added without placing every feature directly into the Enemy class.
+
+However, Enemy still has some dependencies on global game state that could be reduced in future refactoring.
+
+The team should continue using code reviews in future sprints to identify these issues before classes become more complicated.
+
+## 11. Testing and Integration
+
+A large amount of Sprint 3 involved integrating features created by different team members.
+
+Testing included:
+
+- Player movement
+- Environmental collisions
+- Pushable blocks
+- Fire hazards
+- Door interactions
+- Enemy collision
+- Sword collision
+- Enemy damage
+- Enemy death behavior
+- Rupee collection
+- Health HUD
+- Current Sword HUD
+- Level HUD
+- Room creation
+- Level loading
+
+Several features were merged into the master branch during the sprint, including the Rupee system and enemy hit feedback.
+
+The team also continued testing room creation and collision handling after these features were merged.
+
+Some integration issues were related to asset loading and MonoGame Content Pipeline configuration rather than the gameplay code itself.
+
+These issues were fixed during testing so that the project could build and run correctly.
+
+## 12. Sprint Performance
+
+The team made progress across several different systems during Sprint 3 rather than having every team member work on the same feature.
+
+This helped reduce conflicts between branches and allowed room loading, collision, combat, HUD systems, items, and enemies to be developed at the same time.
+
+The room and level loading system required additional iteration during the sprint because the first version was mainly a testing room used to verify the available tiles.
+
+Collision handling also required repeated testing because different environmental objects needed different collision behavior.
+
+Despite these integration challenges, major features such as Rupees, enemy hit feedback, room loading, HUD improvements, and collision handling were integrated into the project.
+
+The team also communicated about testing problems and made adjustments after features were merged.
+
+## 13. What Went Well
+
+One thing that went well during this sprint was the separation of different game systems.
+
+Room handles much of the environmental behavior.
+
+Enemy behavior is divided between Enemy, AI, sprite, and tile interaction classes.
+
+Player data is separated from HUD drawing logic.
+
+Inventory stores item information while HUD classes display that information.
+
+The team also successfully integrated features developed by different team members without requiring every feature to be implemented directly in Game1.
+
+Another improvement was player feedback. Health, level, sword, Rupee information, and enemy hit feedback make it easier for the player to understand what is happening during gameplay.
+
+## 14. Areas for Improvement
+
+One area that could be improved is completing core functionality earlier in the sprint.
+
+Some systems, especially room creation and level loading, were still being adjusted relatively close to the final submission.
+
+Finishing these systems earlier would give the team more time to test transitions between rooms and find integration bugs.
+
+Another area for improvement is reducing hard-coded values and repeated code.
+
+As more enemies, items, and room types are added, repeated logic will become harder to maintain.
+
+The team should also continue testing the game on different computers because differences in window dimensions and content configuration caused problems during this sprint.
+
+## 15. Plan for the Next Sprint
+
+For the next sprint, the team should continue building on the room and collision systems created during Sprint 3.
+
+The level loading system can be expanded to support more complete dungeon layouts and smoother movement between rooms.
+
+The remaining map-related functionality can also be connected to actual player movement through the dungeon.
+
+Enemy combat can continue to be improved with features such as additional enemy types, knockback, and more detailed combat behavior.
+
+The team should also continue refactoring code identified during Sprint 3 code reviews.
+
+Overall, Sprint 3 created the foundation needed for a more complete dungeon structure. The next sprint should focus on expanding these systems while improving integration, testing, and maintainability.
