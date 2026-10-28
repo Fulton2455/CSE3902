@@ -23,7 +23,7 @@
 
         public void Draw(SpriteBatch spriteBatch, Player player)
         {
-            int totalHearts = 3;
+            int totalHearts = player.Health /2;
 
             for (int i = 0; i < totalHearts; i++)
             {

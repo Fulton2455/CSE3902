@@ -30,7 +30,7 @@ namespace _3902sprint0
         public int MaxShieldHealth = 6;
         public int ShieldHealth { get; internal set; } = 0;
         public float Acceleration = 500f;
-        public int Health { get; internal set; } = 6;
+        public int Health { get; internal set; } = 12;
 
         internal KeyboardController Keyboard;
         internal Inventory inventory;
