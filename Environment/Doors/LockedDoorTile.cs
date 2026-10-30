@@ -40,7 +40,7 @@ namespace _3902sprint0.Environment.Doors
             return true;
         }
 
-        /// <summary>Opens the door without spending a key (the player came through from the other side).</summary>
+        //Opens the door without spending a key (the player came through from the other side).
         public void ForceOpen()
         {
             Unlock();
