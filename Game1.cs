@@ -2,8 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using _3902sprint0.Environment;
+using _3902sprint0.Environment.Rooms;
 using _3902sprint0.Environment.Tiles;
 
 namespace _3902sprint0
@@ -13,6 +16,8 @@ namespace _3902sprint0
     /// </summary>
     public class Game1 : Game
     {
+        private const string StartRoomId = "d1_blocks";
+
         private fireballManager FireballManager;
         private GraphicsDeviceManager DeviceManager3902;
         private SpriteBatch spriteBatch;
@@ -32,6 +37,11 @@ namespace _3902sprint0
         private DebugOverlay debugOverlay;
         private CombatResolver combatResolver;
         private LevelProgression levelProgression;
+
+        private RoomManager roomManager;
+        private RoomPopulator roomPopulator;
+        private ShutterController shutterController;
+        private ExplosionWallBreaker explosionWallBreaker;
 
         public static Player currentPlayer { get; private set; }
 
@@ -121,13 +131,20 @@ namespace _3902sprint0
                 assets.ShieldOfInvulnerabilityTexture, assets.RobeOfInvisibilityTexture, assets.PanaceaTexture,
                 assets.MagicArmorTexture, assets.DeckOfCardsTexture);
 
-            Rectangle roomBounds = RoomLoader.GetRoomBounds(ScreenScaler.VirtualWidth, ScreenScaler.VirtualHeight);
-            room = RoomLoader.LoadRoom(roomBounds, assets.EnvironmentSpriteSheet);
-            foreach (var tile in room.Tiles)
-            {
-                if (tile is StairsTile stairs)
-                    stairs.Traversed += levelProgression.OnStairsTraversed;
-            }
+            Rectangle roomBounds = ScreenScaler.GetRoomBounds();
+
+            // Rooms come from Content/rooms/*.txt. Step 1: build the first room.
+            DungeonMap dungeon = DungeonMap.LoadFromDirectory(
+                Path.Combine(AppContext.BaseDirectory, "Content", "rooms"));
+            var roomTextures = new RoomTextures(
+                assets.EnvironmentSpriteSheet,
+                Content.Load<Texture2D>("environment/doors"),
+                Content.Load<Texture2D>("items/smallKey"));
+            roomManager = new RoomManager(dungeon, new RoomBuilder(roomTextures, roomBounds));
+            roomManager.RoomCreated += OnRoomCreated;
+            roomManager.RoomEntered += OnRoomEntered;
+            room = roomManager.Preload(StartRoomId);
+
             floorRenderer = new FloorRenderer(
             Content.Load<Texture2D>("environment/floor_tiles"),
             roomBounds);
@@ -154,21 +171,46 @@ namespace _3902sprint0
             enemyManager.SetMovementBounds(roomBounds);
             ChestManager.SetMovementBounds(roomBounds);
 
-            player.SetRoom(room);
-            FireballManager.SetRoom(room);
             FireballManager.SetAcidTexture(assets.AcidTexture);
-            enemyManager.SetRoom(room);
-            enemyManager.RespawnEnemies(
-                EnemyType.Basic,
-                EnemyType.Basic,
-                EnemyType.Chaser,
-                EnemyType.Fleeing,
-                EnemyType.Erratic);
+
+            // Per-room behaviour that reacts to RoomEntered / the current room.
+            roomPopulator = new RoomPopulator(roomManager, enemyManager);
+            shutterController = new ShutterController(roomManager, HasLivingEnemies, () => player.Bounds);
+            explosionWallBreaker = new ExplosionWallBreaker(roomManager, FireballManager);
 
             combatResolver = new CombatResolver(player, enemyManager);
 
+            // Step 2: place the player, hand the room to player/enemies/fireballs, spawn enemies.
+            roomManager.Begin(player, inventory);
+
             base.LoadContent();
         }
+
+        private void OnRoomCreated(RoomInstance instance)
+        {
+            foreach (var tile in instance.Room.Tiles)
+            {
+                if (tile is StairsTile stairs)
+                    stairs.Traversed += levelProgression.OnStairsTraversed;
+            }
+        }
+
+        private void OnRoomEntered(RoomInstance instance)
+        {
+            room = instance.Room;
+            player.SetRoom(instance.Room);
+            FireballManager.SetRoom(instance.Room);
+            // TODO: clear in-flight fireballs here if fireballManager has a method for it.
+        }
+
+        // TODO: confirm these member names against Enemy / EnemyManager.
+        private bool HasLivingEnemies()
+        {
+            return enemyManager.Enemies.Any(e => !e.IsDying && !e.IsDead);
+        }
+
+        // The chest still belongs to the first room until chests are made per-room.
+        private bool IsInChestRoom => roomManager.Current.Data.Id == StartRoomId;
 
         protected override void Update(GameTime gameTime)
         {
@@ -178,10 +220,15 @@ namespace _3902sprint0
 
             if (player.IsQuit())
                 Exit();
-            room.Update(gameTime);
-            ChestManager.Update(gameTime);
+            roomManager.CurrentRoom.Update(gameTime);
+            if (IsInChestRoom)
+                ChestManager.Update(gameTime);
 
             player.Update(gameTime);
+
+            roomManager.Update();
+            shutterController.Update();
+            explosionWallBreaker.Update();
 
             rupee.Update(gameTime, player);
 
@@ -201,13 +248,13 @@ namespace _3902sprint0
 
             spriteBatch.Begin(samplerState: SamplerState.PointClamp);
             floorRenderer.Draw(spriteBatch, player.Terrain.currentState);
-            room.Draw(spriteBatch);
-            player.Draw(spriteBatch);
-            room.Draw(spriteBatch);
+            roomManager.CurrentRoom.Draw(spriteBatch);
+            roomManager.DrawPickups(spriteBatch);
             player.Draw(spriteBatch);
 
             FireballManager.Draw(spriteBatch);
-            ChestManager.Draw(spriteBatch);
+            if (IsInChestRoom)
+                ChestManager.Draw(spriteBatch);
             enemyManager.draw(spriteBatch);
             inventoryHUD.Draw(spriteBatch, GraphicsDevice, inventory, gameTime);
             healthHUD.Draw(spriteBatch, player);
@@ -216,7 +263,7 @@ namespace _3902sprint0
             currentSwordHUD.Draw(spriteBatch, inventory);
             rupeeHUD.Draw(spriteBatch, player.RupeeCount);
 
-            debugOverlay.Draw(spriteBatch, player, room, enemyManager, FireballManager, ChestManager);
+            debugOverlay.Draw(spriteBatch, player, roomManager.CurrentRoom, enemyManager, FireballManager, ChestManager);
             EffectMessage.Draw(spriteBatch, player.getPosition() - new Vector2(0, 90));
             ChestMessage.Draw(spriteBatch);
             rupee.Draw(spriteBatch);
