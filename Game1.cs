@@ -47,6 +47,8 @@ namespace _3902sprint0
         private Rupee rupee;
         private RupeeHUD rupeeHUD;
 
+        private FloorRenderer floorRenderer;
+
         public readonly static bool IsDesktop = OperatingSystem.IsMacOS() || OperatingSystem.IsLinux() || OperatingSystem.IsWindows();
 
         public Game1()
@@ -126,6 +128,9 @@ namespace _3902sprint0
                 if (tile is StairsTile stairs)
                     stairs.Traversed += levelProgression.OnStairsTraversed;
             }
+            floorRenderer = new FloorRenderer(
+            Content.Load<Texture2D>("environment/floor_tiles"),
+            roomBounds);
 
             ChestManager = new chestManager(assets.ChestTexture, inventory, database, room, roomBounds);
 
@@ -195,7 +200,9 @@ namespace _3902sprint0
             GraphicsDevice.Clear(player.Terrain.terrainColor);
 
             spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-
+            floorRenderer.Draw(spriteBatch, player.Terrain.currentState);
+            room.Draw(spriteBatch);
+            player.Draw(spriteBatch);
             room.Draw(spriteBatch);
             player.Draw(spriteBatch);
 
