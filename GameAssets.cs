@@ -40,7 +40,7 @@ namespace _3902sprint0
             KnightTexture = content.Load<Texture2D>("Knight");
             MagicSwordTexture = content.Load<Texture2D>("items/MagicSword");
             FireScrollTexture = content.Load<Texture2D>("items/fireScroll");
-            ChestTexture = content.Load<Texture2D>("Chest");
+            ChestTexture = content.Load<Texture2D>("chest");
             FireballTexture = content.Load<Texture2D>("Fireball");
             AcidTexture = FireballTexture; // change when a dedicated acid texture exists
             DetonateTexture = content.Load<Texture2D>("Explosion");
@@ -53,11 +53,11 @@ namespace _3902sprint0
             HeartTexture = content.Load<Texture2D>("Pixel Heart Sprite Sheet 32x32");
             EnvironmentSpriteSheet = content.Load<Texture2D>("environment/environment_spritesheet");
 
-            EnemySlimeTexture = content.Load<Texture2D>("enemySlime");
-            EnemyZombieTexture = content.Load<Texture2D>("enemyZombie");
-            EnemyMageTexture = content.Load<Texture2D>("enemyMage");
-            EnemyBatTexture = content.Load<Texture2D>("enemyBat");
-            EnemyToadTexture = content.Load<Texture2D>("enemyToad");
+            EnemySlimeTexture = content.Load<Texture2D>("enemies/enemySlime");
+            EnemyZombieTexture = content.Load<Texture2D>("enemies/enemyZombie");
+            EnemyMageTexture = content.Load<Texture2D>("enemies/enemyMage");
+            EnemyBatTexture = content.Load<Texture2D>("enemies/enemyBat");
+            EnemyToadTexture = content.Load<Texture2D>("enemies/enemyToad");
 
             ShockwavePixel = new Texture2D(graphicsDevice, 1, 1);
             ShockwavePixel.SetData(new[] { Color.White });
