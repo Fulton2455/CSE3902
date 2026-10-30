@@ -1,0 +1,8 @@
+System.IO.InvalidDataException: Room 'd1_f2': missing '---' line before the grid
+   at _3902sprint0.Environment.Rooms.RoomFileParser.Parse(String id, IEnumerable`1 lines) in C:\Users\conno\OneDrive\Documents\GitHub\CSE3902\Environment\Rooms\RoomFileParser.cs:line 36
+   at _3902sprint0.Environment.Rooms.DungeonMap.LoadFromDirectory(String directory) in C:\Users\conno\OneDrive\Documents\GitHub\CSE3902\Environment\Rooms\DungeonMap.cs:line 34
+   at _3902sprint0.Game1.LoadContent() in C:\Users\conno\OneDrive\Documents\GitHub\CSE3902\Game1.cs:line 138
+   at _3902sprint0.Game1.Initialize() in C:\Users\conno\OneDrive\Documents\GitHub\CSE3902\Game1.cs:line 101
+   at Microsoft.Xna.Framework.Game.DoInitialize()
+   at Microsoft.Xna.Framework.Game.Run(GameRunBehavior runBehavior)
+   at _3902sprint0.Program.Main() in C:\Users\conno\OneDrive\Documents\GitHub\CSE3902\Program.cs:line 13

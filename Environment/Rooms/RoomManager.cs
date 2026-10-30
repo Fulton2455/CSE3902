@@ -1,4 +1,5 @@
 // Connor Fulton
+using _3902sprint0.Environment.Doors;
 using _3902sprint0.Environment.Pickups;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace _3902sprint0.Environment.Rooms
 {
     
-    // Owns the rooms of a dungeon: builds each one the first time it is entered, keeps it 
+    // Owns the rooms of a dungeon. builds each one the first time it is entered, keeps it 
     public class RoomManager
     {
         private const int EntryMargin = 8;
@@ -106,6 +107,7 @@ namespace _3902sprint0.Environment.Rooms
         {
             RoomExit arrival = instance.Exits.FirstOrDefaultOnSide(entrySide);
             Rectangle doorBounds = arrival != null ? arrival.Door.Bounds : FallbackDoor(instance, entrySide);
+            (arrival?.Door as IOpenable)?.ForceOpen();
 
             Rectangle hitbox = player.Bounds;
             Vector2 inset = new Vector2(hitbox.X - player.Location.X, hitbox.Y - player.Location.Y);

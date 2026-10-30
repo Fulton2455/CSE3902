@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace _3902sprint0.Environment.Rooms
 {
-    //A door found on a room border: which wall, what kind, and the index of its first cell.
+    //A door found on a room border
     public class DoorRun
     {
         public RoomSide Side { get; }
@@ -43,12 +43,15 @@ namespace _3902sprint0.Environment.Rooms
         public IReadOnlyList<DoorRun> Doors { get; }
         public IReadOnlyList<KeySpawn> KeySpawns { get; }
         public Point? PlayerSpawn { get; }
+        /// <summary>Terrain applied when the player enters this room; null keeps the current terrain.</summary>
+        public terrain.terrainState? Terrain { get; }
 
         public int Columns => Rows.Count == 0 ? 0 : Rows[0].Length;
 
         public RoomData(string id, IReadOnlyList<string> rows,
             IReadOnlyDictionary<RoomSide, string> links, IReadOnlyList<EnemyType> enemies,
-            IReadOnlyList<DoorRun> doors, IReadOnlyList<KeySpawn> keySpawns, Point? playerSpawn)
+            IReadOnlyList<DoorRun> doors, IReadOnlyList<KeySpawn> keySpawns, Point? playerSpawn,
+            terrain.terrainState? terrainState)
         {
             Id = id;
             Rows = rows;
@@ -57,6 +60,7 @@ namespace _3902sprint0.Environment.Rooms
             Doors = doors;
             KeySpawns = keySpawns;
             PlayerSpawn = playerSpawn;
+            Terrain = terrainState;
         }
 
         public bool HasDoorOn(RoomSide side)

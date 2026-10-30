@@ -1,6 +1,6 @@
-// Dungeon 1 - raised-block room (recreated from the NES layout, 2x2 cells per NES tile)
-south: d1_testbed
-east: none
+// d1_f2
+west: d1_e2
+terrain: swamp
 ---
 ############################
 #..........................#
@@ -10,15 +10,15 @@ east: none
 #...BBBBBBBBBBBBBBBBBBBB...#
 #...BBBBBBBBBBBBBBBBBBBB...#
 #...BB....SS....SS....BB...#
-#...BB....SS....SS....BB...O
-#...BB..SS........SS..BB...O
-#...BB..SS........SS..BB...O
-#...BB................BB...O
+D...BB....SS....SS....BB...#
+D...BB..SS........SS..BB...#
+D...BB..SS...X....SS..BB...#
+D...BB................BB...#
 #...BB................BB...#
 #...BBBBBBBB....BBBBBBBB...#
 #...BBBBBBBB....BBBBBBBB...#
 #..........................#
 #..........................#
-#............@.............#
 #..........................#
-############DDDD############
+#..........................#
+############################

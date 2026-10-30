@@ -16,7 +16,7 @@ namespace _3902sprint0
     /// </summary>
     public class Game1 : Game
     {
-        private const string StartRoomId = "d1_blocks";
+        private const string StartRoomId = "d1_c6";
 
         private fireballManager FireballManager;
         private GraphicsDeviceManager DeviceManager3902;
@@ -40,6 +40,7 @@ namespace _3902sprint0
 
         private RoomManager roomManager;
         private RoomPopulator roomPopulator;
+        private RoomTerrainApplier roomTerrainApplier;
         private ShutterController shutterController;
         private ExplosionWallBreaker explosionWallBreaker;
 
@@ -180,6 +181,7 @@ namespace _3902sprint0
 
             combatResolver = new CombatResolver(player, enemyManager);
 
+            roomTerrainApplier = new RoomTerrainApplier(roomManager, player);
             // Step 2: place the player, hand the room to player/enemies/fireballs, spawn enemies.
             roomManager.Begin(player, inventory);
 
