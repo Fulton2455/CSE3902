@@ -1,0 +1,26 @@
+// d1_c2
+north: d1_c1
+south: d1_c3
+terrain: ice
+enemies: Chaser, Chaser, Chaser
+---
+############ZZZZ############
+#..........................#
+#..........................#
+#.GGGGGGGG........GGGGGGGG.#
+#.GGGGGGGG........GGGGGGGG.#
+#.GG....GG..GGGG..GG....GG.#
+#.GG....GG..GGGG..GG....GG.#
+#.GG..GGGG..GGGG..GGGG..GG.#
+#.GG..GGGG..GGGG..GGGG..GG.#
+#.GG........GGGG........GG.#
+#.GG........GGGG........GG.#
+#.GG..GGGG..GGGG..GGGG..GG.#
+#.GG..GGGG..GGGG..GGGG..GG.#
+#.GG....GG..GGGG..GG....GG.#
+#.GG....GG..GGGG..GG....GG.#
+#.GGGGGGGG........GGGGGGGG.#
+#.GGGGGGGG........GGGGGGGG.#
+#..........................#
+#..........................#
+############ZZZZ############

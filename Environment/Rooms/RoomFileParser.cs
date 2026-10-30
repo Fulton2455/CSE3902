@@ -1,4 +1,3 @@
-// Connor Fulton
 using _3902sprint0.Environment.Doors;
 using System;
 using System.Collections.Generic;
@@ -43,19 +42,20 @@ namespace _3902sprint0.Environment.Rooms
 
             var links = new Dictionary<RoomSide, string>();
             var enemies = new List<EnemyType>();
-            ParseHeader(id, header, links, enemies);
+            terrain.terrainState? roomTerrain = ParseHeader(id, header, links, enemies);
 
             var keys = new List<KeySpawn>();
             Point? spawn = null;
             ScanInterior(id, rows, keys, ref spawn);
             List<DoorRun> doors = ScanDoors(id, rows);
 
-            return new RoomData(id, rows, links, enemies, doors, keys, spawn);
+            return new RoomData(id, rows, links, enemies, doors, keys, spawn, roomTerrain);
         }
 
-        private static void ParseHeader(string id, List<KeyValuePair<string, string>> header,
+        private static terrain.terrainState? ParseHeader(string id, List<KeyValuePair<string, string>> header,
             Dictionary<RoomSide, string> links, List<EnemyType> enemies)
         {
+            terrain.terrainState? roomTerrain = null;
             foreach (var pair in header)
             {
                 if (pair.Key == "enemies")
@@ -66,6 +66,12 @@ namespace _3902sprint0.Environment.Rooms
                             throw Error(id, $"unknown enemy '{name.Trim()}'");
                         enemies.Add(type);
                     }
+                }
+                else if (pair.Key == "terrain")
+                {
+                    if (!Enum.TryParse(pair.Value, true, out terrain.terrainState parsed))
+                        throw Error(id, $"unknown terrain '{pair.Value}' (use stone, ice or swamp)");
+                    roomTerrain = parsed;
                 }
                 else if (Enum.TryParse(pair.Key, true, out RoomSide side))
                 {
@@ -78,6 +84,7 @@ namespace _3902sprint0.Environment.Rooms
                     throw Error(id, $"unknown header key '{pair.Key}'");
                 }
             }
+            return roomTerrain;
         }
 
         private static void ScanInterior(string id, List<string> rows, List<KeySpawn> keys, ref Point? spawn)

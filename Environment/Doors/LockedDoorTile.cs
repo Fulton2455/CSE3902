@@ -1,13 +1,11 @@
-// Connor Fulton
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using _3902sprint0.Environment.Doors;
 namespace _3902sprint0.Environment.Doors
 {
-  
+   
     // A door that stays solid until unlocked with the matching key type.
-    
-    public abstract class LockedDoorTile : Tile
+    public abstract class LockedDoorTile : Tile, IOpenable
     {
         private readonly Rectangle? unlockedSource;
 
@@ -38,12 +36,22 @@ namespace _3902sprint0.Environment.Doors
                 return false;
 
             keyHolder.ConsumeKey(RequiredLock);
+            Unlock();
+            return true;
+        }
+
+        /// <summary>Opens the door without spending a key (the player came through from the other side).</summary>
+        public void ForceOpen()
+        {
+            Unlock();
+        }
+
+        private void Unlock()
+        {
             IsUnlocked = true;
 
             if (unlockedSource.HasValue)
                 sourceRectangle = unlockedSource.Value;
-
-            return true;
         }
     }
 }
