@@ -32,18 +32,18 @@ namespace _3902sprint0.Environment.Rooms
         }
     }
 
-    /// <summary>Everything a room file says, as plain data. Knows nothing about textures or tiles.</summary>
+    //Everything a room file says, as plain data. Knows nothing about textures or tiles.
     public class RoomData
     {
         public string Id { get; }
         public IReadOnlyList<string> Rows { get; }
-        /// <summary>Target room id per side. A null value means the door is a dead end ("none").</summary>
+        //Target room id per side. A null value means the door is a dead end.
         public IReadOnlyDictionary<RoomSide, string> Links { get; }
         public IReadOnlyList<EnemyType> Enemies { get; }
         public IReadOnlyList<DoorRun> Doors { get; }
         public IReadOnlyList<KeySpawn> KeySpawns { get; }
         public Point? PlayerSpawn { get; }
-        /// <summary>Terrain applied when the player enters this room; null keeps the current terrain.</summary>
+        //Terrain applied when the player enters this room; null keeps the current terrain.
         public terrain.terrainState? Terrain { get; }
 
         public int Columns => Rows.Count == 0 ? 0 : Rows[0].Length;

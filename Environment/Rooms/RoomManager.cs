@@ -24,9 +24,9 @@ namespace _3902sprint0.Environment.Rooms
         public RoomInstance Current { get; private set; }
         public Room CurrentRoom => Current.Room;
 
-        /// <summary>Raised once per room, the first time it is built.</summary>
+        //Raised once per room, the first time it is built.
         public event Action<RoomInstance> RoomCreated;
-        /// <summary>Raised every time the player arrives in a room (including the first).</summary>
+        //Raised every time the player arrives in a room 
         public event Action<RoomInstance> RoomEntered;
 
         public RoomManager(DungeonMap dungeon, RoomBuilder builder)
@@ -35,17 +35,16 @@ namespace _3902sprint0.Environment.Rooms
             this.builder = builder;
         }
 
-        /// <summary>
-        /// Step 1 of startup: builds the first room so objects that need a Room (chests, player)
-        /// can be created. Step 2 is Begin.
-        /// </summary>
+      
+        // Step 1 of startup: builds the first room so objects that need a Room 
+        
         public Room Preload(string startRoomId)
         {
             Current = GetOrBuild(startRoomId);
             return Current.Room;
         }
 
-        /// <summary>Step 2 of startup: places the player in the preloaded room and announces it.</summary>
+        //Step 2 of startup: places the player in the preloaded room and announces it.
         public void Begin(Player player, IKeyHolder keyHolder)
         {
             this.player = player;
@@ -102,7 +101,7 @@ namespace _3902sprint0.Environment.Rooms
             player.Velocity = Vector2.Zero;
         }
 
-        /// <summary>Puts the player just inside the door on 'entrySide', keeping their position along the wall.</summary>
+        //Puts the player just inside the door on 'entrySide', keeping their position along the wall.
         private void PlaceAtEntrance(RoomInstance instance, RoomSide entrySide)
         {
             RoomExit arrival = instance.Exits.FirstOrDefaultOnSide(entrySide);

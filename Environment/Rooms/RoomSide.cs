@@ -19,7 +19,7 @@ namespace _3902sprint0.Environment.Rooms
             }
         }
 
-        /// <summary>East and west walls run top to bottom, so their doors are vertical.</summary>
+        //East and west walls run top to bottom, so their doors are vertical.
         public static bool RunsVertically(this RoomSide side)
         {
             return side == RoomSide.East || side == RoomSide.West;
