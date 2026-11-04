@@ -30,7 +30,8 @@ namespace _3902sprint0
         public int MaxShieldHealth = 6;
         public int ShieldHealth { get; internal set; } = 0;
         public float Acceleration = 500f;
-        public int Health { get; internal set; } = 12;
+        public readonly int playerMaxHealth = 12;
+        public int Health { get; internal set; }
 
         internal KeyboardController Keyboard;
         internal Inventory inventory;
@@ -77,6 +78,7 @@ namespace _3902sprint0
             combat = new PlayerCombat(this);
             items = new PlayerItems(this);
             terrainHandler = new SwitchTerrain(this);
+            Health = playerMaxHealth;
 
             Terrain = new terrain();
             Terrain.currentState = terrain.terrainState.Stone;
