@@ -18,9 +18,9 @@ namespace _3902sprint0
         {
             if (p.PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death))
                 return;
-            if (amount > 6)
-                amount = 6;
-            p.Health = Math.Min(p.Health + amount, 6);
+            if (amount > p.playerMaxHealth)
+                amount = p.playerMaxHealth;
+            p.Health = Math.Min(p.Health + amount, p.playerMaxHealth);
 
         }
 
@@ -143,7 +143,7 @@ namespace _3902sprint0
         {
 
             p.PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Walk);
-            p.Health = 6;
+            p.Health = p.playerMaxHealth;
             p.RemoveShield();
 
         }
