@@ -4,29 +4,44 @@
 
 namespace _3902sprint0 {
     /// <summary>
-    /// Controller class that handles mouse input for aiming and actions. It implements the IController interface and provides methods to update the player's aim direction based on mouse position and check for left click actions.
+    /// Controller class that handles mouse input for aiming and actions. It implements the IController interface and provides methods to update the player's aim direction based on mouse position and check for attack (left click by default) actions.
+    /// Which physical buttons count as "attack" and "secondary" comes from ControlBindings.
     /// </summary>
     public class Mousecontroller : IController
     {
+        private readonly ControlBindings bindings;
+
         /// <summary>
         /// Gets the current aim direction based on the mouse position relative to the player's position. The aim direction is normalized to ensure consistent aiming behavior.
         /// </summary>
         public Vector2 AimDirection { get; private set; }
 
+        public Mousecontroller() : this(new ControlBindings())
+        {
+        }
+
+        public Mousecontroller(ControlBindings bindings)
+        {
+            this.bindings = bindings;
+        }
+
         /// <summary>
-        /// Checks if the left mouse button is currently pressed. This method can be used to trigger actions such as shooting or interacting with objects in the game.
+        /// Checks if the attack button (left mouse button by default) is currently pressed. This method can be used to trigger actions such as shooting or interacting with objects in the game.
         /// </summary>
         /// <returns></returns>
         public bool IsLeftClickPressed()
         {
-            MouseState state = Mouse.GetState();
-
-            return state.LeftButton == ButtonState.Pressed;
+            return IsPressed(Mouse.GetState(), bindings.AttackButton);
         }
+
+        /// <summary>
+        /// While the secondary button (right mouse button by default) is held, returns the mouse position in
+        /// virtual screen coordinates; otherwise returns Vector2.Zero.
+        /// </summary>
         public Vector2 RightClickPressed()
         {
             MouseState state = Mouse.GetState();
-            if (state.RightButton == ButtonState.Pressed)
+            if (IsPressed(state, bindings.SecondaryButton))
             {
                 Vector2 MousePosition = ScreenScaler.ToVirtual(state.X, state.Y);
                 return MousePosition;
@@ -35,7 +50,7 @@ namespace _3902sprint0 {
             {
                 return Vector2.Zero;
             }
-            
+
         }
 
         /// <summary>
@@ -53,6 +68,16 @@ namespace _3902sprint0 {
             //gives a unit vector for the direction of the mouse from the player
             if (AimDirection != Vector2.Zero)
                 AimDirection.Normalize();
+        }
+
+        private static bool IsPressed(MouseState state, MouseButton button)
+        {
+            switch (button)
+            {
+                case MouseButton.Left: return state.LeftButton == ButtonState.Pressed;
+                case MouseButton.Right: return state.RightButton == ButtonState.Pressed;
+                default: return state.MiddleButton == ButtonState.Pressed;
+            }
         }
     }
 
