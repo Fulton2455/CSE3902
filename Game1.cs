@@ -62,6 +62,12 @@ namespace _3902sprint0
 
         public readonly static bool IsDesktop = OperatingSystem.IsMacOS() || OperatingSystem.IsLinux() || OperatingSystem.IsWindows();
 
+        private GameScreenState gameScreenState = GameScreenState.Start;
+        private GameScreenState settingsReturnState = GameScreenState.Start;
+        private GameScreenHUD gameScreenHUD;
+        private KeyboardState previousScreenKeyboardState;
+        private bool gameAssetsLoaded = false;
+
         public Game1()
         {
             DeviceManager3902 = new GraphicsDeviceManager(this);
@@ -107,10 +113,16 @@ namespace _3902sprint0
             sceneTarget = new RenderTarget2D(GraphicsDevice, ScreenScaler.VirtualWidth, ScreenScaler.VirtualHeight);
             ScreenScaler.Update(GraphicsDevice.PresentationParameters.BackBufferWidth,
                 GraphicsDevice.PresentationParameters.BackBufferHeight);
-
-            debugOverlay = new DebugOverlay(GraphicsDevice);
-
             SoundManager.LoadContent(Content);
+            SpriteFont menuFont = Content.Load<SpriteFont>("GameFont");
+            gameScreenHUD = new GameScreenHUD(GraphicsDevice, menuFont);
+
+            base.LoadContent();
+        }
+
+        private void CreateNewGame()
+        {
+            debugOverlay = new DebugOverlay(GraphicsDevice);
 
             assets = new GameAssets();
             assets.Load(Content, GraphicsDevice);
@@ -120,6 +132,9 @@ namespace _3902sprint0
 
             EffectMessage.Load(assets.GameFont);
             ChestMessage.Load(assets.GameFont);
+
+            //game screens
+            gameScreenHUD = new GameScreenHUD(GraphicsDevice, assets.GameFont);
 
             currentSwordHUD = new CurrentSwordHUD(GraphicsDevice, assets.GameFont);
             levelHUD = new LevelHUD(assets.GameFont);
@@ -184,8 +199,6 @@ namespace _3902sprint0
             roomTerrainApplier = new RoomTerrainApplier(roomManager, player);
             // Step 2: place the player, hand the room to player/enemies/fireballs, spawn enemies.
             roomManager.Begin(player, inventory);
-
-            base.LoadContent();
         }
 
         private void OnRoomCreated(RoomInstance instance)
@@ -216,12 +229,64 @@ namespace _3902sprint0
 
         protected override void Update(GameTime gameTime)
         {
+            //mainmenu state
+            MenuAction action = gameScreenHUD.Update(gameScreenState, GraphicsDevice);
+            if (action == MenuAction.StartGame)
+            {
+                CreateNewGame();
+                gameScreenState = GameScreenState.Playing;
+            }
+            else if (action == MenuAction.Settings)
+            {
+                settingsReturnState = gameScreenState;
+                gameScreenState = GameScreenState.Settings;
+            }
+            else if (action == MenuAction.Back)
+            {
+                gameScreenState = settingsReturnState;
+            }
+            else if (action == MenuAction.Restart)
+            {
+                CreateNewGame();
+                gameScreenState = GameScreenState.Playing;
+            }
+            else if (action == MenuAction.MainMenu)
+            {
+                gameScreenState = GameScreenState.Start;
+            }
+            else if (action == MenuAction.Quit)
+            {
+                Exit();
+                return;
+            }
+            KeyboardState keyboard = Microsoft.Xna.Framework.Input.Keyboard.GetState();
+            //Pause state
+            bool escapePressed = keyboard.IsKeyDown(Keys.Escape) && previousScreenKeyboardState.IsKeyUp(Keys.Escape);
+            if (gameScreenState == GameScreenState.Playing && escapePressed)
+            {
+                gameScreenState = GameScreenState.Paused;
+                previousScreenKeyboardState = keyboard;
+                return;
+            }
+
+            if (gameScreenState == GameScreenState.Paused && escapePressed)
+            {
+                gameScreenState = GameScreenState.Playing;
+                previousScreenKeyboardState = keyboard;
+                return;
+            }
+            //play stat
+            if (gameScreenState != GameScreenState.Playing)
+            {
+                previousScreenKeyboardState = keyboard;
+                base.Update(gameTime);
+                return;
+            }
+            //same code as before but exit() method no longer needed
             levelProgression.Update(gameTime);
             EffectMessage.Update(gameTime);
             ChestMessage.Update(gameTime);
 
-            if (player.IsQuit())
-                Exit();
             roomManager.CurrentRoom.Update(gameTime);
             if (IsInChestRoom)
                 ChestManager.Update(gameTime);
@@ -239,12 +304,44 @@ namespace _3902sprint0
             enemyManager.update(gameTime, player.GetTerrainAcceleration());
 
             combatResolver.Update();
-
+            if (player.Health <= 0)
+            {
+                gameScreenState = GameScreenState.Death;
+            }
+            //update keyboard state for pause screen
+            previousScreenKeyboardState = keyboard;
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
+
+            // If the game is currently on the Start or Settings screen,
+            // only draw the menu and do not draw the game world.
+            if (gameScreenState == GameScreenState.Start || gameScreenState == GameScreenState.Settings)
+            {
+                // Draw directly to the main screen.
+                GraphicsDevice.SetRenderTarget(null);
+
+                // Use a black background for menu screens.
+                GraphicsDevice.Clear(Color.Black);
+
+                spriteBatch.Begin();
+
+                // Draw the current menu screen and its buttons.
+                gameScreenHUD.Draw(
+                    spriteBatch,
+                    GraphicsDevice,
+                    gameScreenState);
+
+                spriteBatch.End();
+
+                base.Draw(gameTime);
+
+                // Stop here so gameplay is not drawn behind the menu.
+                return;
+            }
+
             GraphicsDevice.SetRenderTarget(sceneTarget);
             GraphicsDevice.Clear(player.Terrain.terrainColor);
 
@@ -276,6 +373,8 @@ namespace _3902sprint0
             bool wholeNumberScale = ScreenScaler.Scale == (float)Math.Floor(ScreenScaler.Scale);
             spriteBatch.Begin(samplerState: wholeNumberScale ? SamplerState.PointClamp : SamplerState.LinearClamp);
             spriteBatch.Draw(sceneTarget, ScreenScaler.Destination, Color.White);
+
+            gameScreenHUD.Draw(spriteBatch, GraphicsDevice, gameScreenState);
             spriteBatch.End();
 
             base.Draw(gameTime);
