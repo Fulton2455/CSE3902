@@ -1,0 +1,51 @@
+Author: Connor Fulton
+October 24, 2026
+Sprint 3
+GameScreenHUD.cs, GameScreenState.cs, MenuAction.cs
+Author of .cs Files: Xu Lu
+Number of Minutes Spent on Review: 30
+
+Readability Comments: 
+- The two enums have clear names and are easy to expand upon in the future.
+
+- The name GameScreenHUD I believe is misleading. My understanding is that the HUD is what is 
+displayed during the game and the better name for this might just be GameMenu.
+
+- The update method in GameScreenHUD is somewhere along the lines of 40 lines long. I would
+extract some of that logic out to helper methods.
+
+- Similar issue in the draw method, I would create a helper method for each state to improve
+readability.
+
+Code Quality Comments:
+- Overall, the CameScreenHUD has too many responsibilities. It detects clicks, defines what each
+screen contains and contains the implementation details for drawing the title and buttons. This
+creates a class with low cohesion.
+
+- The if/else structure of the state management will not scale with the addition of the Settings
+menu that is to come within the end of sprint 4 or 5. Every new row within setting will require
+another branch within both the update and draw functions. The same could be said if we added 
+any more buttons. This implementation is not scalable.
+
+- There are several magicc numbers within the file. The 320, 70 and 20 in GetButton are named 
+constants, but the + 70 vertical offset in GetButton and the - 180 in DrawTitle aren’t, and the 
+(0, 3), (1, 3) index and count pairs are everywhere. Something like ButtonWidth and TitleOffsetY 
+would explain intent and make a redesign a one-line change.
+
+- There is an example of tight coupling in that this class directly calls Mouse.GetState() instead
+of using the button from the ControlBindings class. If someone wanted to change their primary 
+button, this hardcoded value would not change with it. 
+
+- Another example where tighter coupling could be avoided is the passing of the entire 
+graphicsDevice. You could possibly rework the class to simply take in rectangles for the screen
+size and not depend on the graphicsDevice at all.
+
+- This implementation also relies too much on Game1 to generate states and for logically returning
+to the previous state after hitting back within settings.
+
+Additional Comments: 
+- The color styles (Color.Black * .75f, Color.DarkGray/Gray) should be named constants to make them
+easier to change later.
+
+
+
