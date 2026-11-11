@@ -4,7 +4,7 @@
     {
         None,
         StartGame,
-        Settings,
+        OpenSettings,
         Back,
         Resume,
         Restart,

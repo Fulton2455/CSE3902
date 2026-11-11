@@ -16,10 +16,11 @@ namespace _3902sprint0
     public class ControlBindings
     {
         // General/Testing Purposes
-        public Keys QuitKey { get; set; } = Keys.Escape;
+        public Keys PauseKey { get; set; } = Keys.Escape;
         public Keys DieKey { get; set; } = Keys.K;
         public Keys ReviveKey { get; set; } = Keys.Q;
         public Keys ForceItemKey { get; set; } = Keys.G;
+        public Keys QuitKey { get; set; } = Keys.Escape;
 
         // Movement: each direction has a primary and an alternate key
         public Keys MoveUpKey { get; set; } = Keys.W;
