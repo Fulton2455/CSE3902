@@ -34,6 +34,9 @@ namespace _3902sprint0
         public Texture2D ShockwavePixel { get; private set; }
 
         public SpriteFont GameFont { get; private set; }
+        public Texture2D WhitePixel { get; private set; }
+
+
 
         public void Load(ContentManager content, GraphicsDevice graphicsDevice)
         {
@@ -63,6 +66,9 @@ namespace _3902sprint0
             ShockwavePixel.SetData(new[] { Color.White });
 
             GameFont = content.Load<SpriteFont>("GameFont");
+            
+            WhitePixel = new Texture2D(graphicsDevice, 1, 1);
+            WhitePixel.SetData(new[] { Color.White });
         }
     }
 }

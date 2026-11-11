@@ -64,6 +64,8 @@ namespace _3902sprint0
         public Rectangle Bounds => GetBoundsAt(Location);
 
         public bool IsDead => Health <= 0;
+        public bool HasFinishedDying =>
+            PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death) && PlayerSprite1.IsAnimationFinished();
         public Player(Vector2 startingLocation, Inventory inventory, InventoryHUD inventoryHUD, fireballManager fireballManager, chestManager chestManager)
         {
             Location = startingLocation;
