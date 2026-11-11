@@ -14,15 +14,35 @@ namespace _3902sprint0.Environment.Doors
         BombableOpen
     }
 
-    // Knows where each door picture sits on Content/environment/doors.png and which pictures
-    // each DoorKind uses.
-    public static class DoorArt
+    // The two pictures a door can show
+    public readonly struct DoorArt
     {
         public const int Cell = 64;
         public const int Span = 4;                 // every door is 4 cells long
         public const int Length = Cell * Span;     // 256px
 
-        public static Rectangle Source(DoorArtType type, bool vertical)
+        public Rectangle Closed { get; }
+        public Rectangle Open { get; }
+
+        private DoorArt(Rectangle closed, Rectangle open)
+        {
+            Closed = closed;
+            Open = open;
+        }
+
+        public static DoorArt For(DoorKind kind, bool vertical)
+        {
+            return new DoorArt(
+                Source(ClosedArt(kind), vertical),
+                Source(OpenArt(kind), vertical));
+        }
+
+        public static DoorArt Always(Rectangle picture)
+        {
+            return new DoorArt(picture, picture);
+        }
+
+        private static Rectangle Source(DoorArtType type, bool vertical)
         {
             int index = (int)type;
             return vertical
@@ -30,7 +50,7 @@ namespace _3902sprint0.Environment.Doors
                 : new Rectangle(0, index * Cell, Length, Cell);
         }
 
-        public static DoorArtType ClosedArt(DoorKind kind)
+        private static DoorArtType ClosedArt(DoorKind kind)
         {
             switch (kind)
             {
@@ -42,7 +62,7 @@ namespace _3902sprint0.Environment.Doors
             }
         }
 
-        public static DoorArtType OpenArt(DoorKind kind)
+        private static DoorArtType OpenArt(DoorKind kind)
         {
             return kind == DoorKind.Bombable ? DoorArtType.BombableOpen : DoorArtType.Doorway;
         }
