@@ -7,11 +7,9 @@ using _3902sprint0.Environment.Doors;
 
 namespace _3902sprint0.Environment.Collision
 {
-    
-    // Pure collision-resolution rules for tiles: blocking, pushing, door unlocking,
-    // hazards, stairs, detonation. Room owns the tiles and
-    // the QuadTree and delegates resolution here.
-   
+
+    // Pure collision-resolution rules for tiles
+
     public class TileCollisionResolver
     {
         private readonly Func<Rectangle, List<ITile>> queryNearby;
@@ -42,37 +40,10 @@ namespace _3902sprint0.Environment.Collision
                 if (!tile.Bounds.Intersects(bounds))
                     continue;
 
-                if (enemyInteraction != null && !enemyInteraction.InteractWith(tile))
+                if (EnemyIgnores(tile, enemyInteraction))
                     continue;
 
-                if (tile is LockedDoorTile door && !door.IsUnlocked)
-                {
-                    if (keyHolder != null && door.TryUnlock(keyHolder))
-                        continue;
-                    return false;
-                }
-
-                if (tile is PushableBlockTile pushable)
-                {
-                    if (enemyInteraction != null && !enemyInteraction.CanPush(pushable))
-                        return false;
-
-                    bool moved = pushable.TryPush(direction, tileSize, target =>
-                    {
-                        Rectangle targetBounds = new Rectangle(
-                            (int)(target.X - tileSize / 2),
-                            (int)(target.Y - tileSize / 2),
-                            (int)tileSize,
-                            (int)tileSize);
-                        return !IsBlocked(targetBounds, pushable);
-                    });
-
-                    if (moved)
-                        continue;
-                    return false;
-                }
-
-                if (tile.IsSolid)
+                if (!CanPassThrough(tile, direction, keyHolder, enemyInteraction))
                     return false;
             }
             return true;
@@ -80,28 +51,66 @@ namespace _3902sprint0.Environment.Collision
 
         public void ApplyHazards(Rectangle bounds, IDamageable target)
         {
-            foreach (var tile in queryNearby(bounds))
-            {
-                if (tile is IHazard hazard && tile.Bounds.Intersects(bounds))
-                    hazard.ApplyEffect(target);
-            }
+            ForEachTouching<IHazard>(bounds, hazard => hazard.ApplyEffect(target));
         }
 
         public void CheckStairs(Rectangle bounds)
         {
-            foreach (var tile in queryNearby(bounds))
-            {
-                if (tile is StairsTile stairs && stairs.Bounds.Intersects(bounds))
-                    stairs.NotifyTraversed();
-            }
+            ForEachTouching<StairsTile>(bounds, stairs => stairs.NotifyTraversed());
         }
 
         public void Detonate(Rectangle bounds)
         {
+            ForEachTouching<BombedWallOpeningTile>(bounds, wall => wall.Detonate());
+        }
+
+        // An enemy that has declared it does not interact with this kind of tile walks straight through it.
+        private static bool EnemyIgnores(ITile tile, IEnemyTileInteraction enemyInteraction)
+        {
+            return enemyInteraction != null && !enemyInteraction.InteractWith(tile);
+        }
+
+        // Decides whether the mover may occupy a tile it overlaps. Locked doors and pushable blocks
+        // have special rules; any other tile just follows its IsSolid flag.
+        private bool CanPassThrough(ITile tile, Vector2 direction, IKeyHolder keyHolder, IEnemyTileInteraction enemyInteraction)
+        {
+            if (tile is LockedDoorTile door && !door.IsUnlocked)
+                return TryUnlockDoor(door, keyHolder);
+
+            if (tile is PushableBlockTile block)
+                return TryPushBlock(block, direction, enemyInteraction);
+
+            return !tile.IsSolid;
+        }
+
+        private static bool TryUnlockDoor(LockedDoorTile door, IKeyHolder keyHolder)
+        {
+            return keyHolder != null && door.TryUnlock(keyHolder);
+        }
+
+        private bool TryPushBlock(PushableBlockTile block, Vector2 direction, IEnemyTileInteraction enemyInteraction)
+        {
+            if (enemyInteraction != null && !enemyInteraction.CanPush(block))
+                return false;
+
+            return block.TryPush(direction, tileSize, target => !IsBlocked(CellBoundsAt(target), block));
+        }
+
+        private Rectangle CellBoundsAt(Vector2 center)
+        {
+            return new Rectangle(
+                (int)(center.X - tileSize / 2),
+                (int)(center.Y - tileSize / 2),
+                (int)tileSize,
+                (int)tileSize);
+        }
+
+        private void ForEachTouching<T>(Rectangle bounds, Action<T> action) where T : class
+        {
             foreach (var tile in queryNearby(bounds))
             {
-                if (tile is BombedWallOpeningTile bombed && bombed.Bounds.Intersects(bounds))
-                    bombed.Detonate();
+                if (tile is T match && tile.Bounds.Intersects(bounds))
+                    action(match);
             }
         }
     }

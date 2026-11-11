@@ -1,30 +1,20 @@
+// Connor Fulton
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using _3902sprint0.Environment.Doors;
+
 namespace _3902sprint0.Environment.Doors
 {
-   
     // A door that stays solid until unlocked with the matching key type.
-    public abstract class LockedDoorTile : Tile, IOpenable
+    public abstract class LockedDoorTile : DoorTile, IOpenable
     {
-        private readonly Rectangle? unlockedSource;
-
         public LockType RequiredLock { get; }
         public bool IsUnlocked { get; private set; }
         public override bool IsSolid => !IsUnlocked;
 
-        protected LockedDoorTile(
-            Texture2D texture,
-            Vector2 position,
-            LockType requiredLock,
-            Rectangle sourceRectangle,
-            int width = 64,
-            int height = 64,
-            Rectangle? unlockedSource = null)
-            : base(texture, position, sourceRectangle, width, height)
+        protected LockedDoorTile(Texture2D spriteSheet, Rectangle bounds, DoorArt art, LockType requiredLock)
+            : base(spriteSheet, bounds, art)
         {
             RequiredLock = requiredLock;
-            this.unlockedSource = unlockedSource;
         }
 
         public bool TryUnlock(IKeyHolder keyHolder)
@@ -40,7 +30,7 @@ namespace _3902sprint0.Environment.Doors
             return true;
         }
 
-        //Opens the door without spending a key (the player came through from the other side).
+        // If the player came through the other side.
         public void ForceOpen()
         {
             Unlock();
@@ -49,9 +39,7 @@ namespace _3902sprint0.Environment.Doors
         private void Unlock()
         {
             IsUnlocked = true;
-
-            if (unlockedSource.HasValue)
-                sourceRectangle = unlockedSource.Value;
+            ShowOpen();
         }
     }
 }
