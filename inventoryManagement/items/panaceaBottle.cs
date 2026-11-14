@@ -30,7 +30,7 @@ namespace _3902sprint0
         public void cooldownReset()
         {
 
-            useTime = 30f;
+            useTime = useSpeed;
         }
 
 

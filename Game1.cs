@@ -177,7 +177,6 @@ namespace _3902sprint0
             bombManager.SetPlayer(player);
             player.SetBombManager(bombManager);
 
-            ChestManager.CreateChest(new Vector2(600, 300));
 
             enemyManager = new EnemyManager(player,
                 assets.EnemySlimeTexture,
@@ -222,11 +221,16 @@ namespace _3902sprint0
         {
             room = instance.Room;
             player.SetRoom(instance.Room);
+
+            ChestManager.SetRoom(instance.Room, instance.Data.Id);
+
             if (player.HasCompass)
                 compassDir = compassPointer.DirectionFrom(instance.Data.Id);
 
             FireballManager.SetRoom(instance.Room);
-            // TODO: clear in-flight fireballs here if fireballManager has a method for it.
+            inventory.ResetItems();
+            FireballManager.clearFireballs();
+            bombManager.Clear();
         }
 
         // TODO: confirm these member names against Enemy / EnemyManager.
@@ -247,7 +251,6 @@ namespace _3902sprint0
             if (player.IsQuit())
                 Exit();
             roomManager.CurrentRoom.Update(gameTime);
-            if (IsInChestRoom)
                 ChestManager.Update(gameTime);
 
             player.Update(gameTime);
@@ -282,7 +285,6 @@ namespace _3902sprint0
             player.Draw(spriteBatch);
 
             FireballManager.Draw(spriteBatch);
-            if (IsInChestRoom)
                 ChestManager.Draw(spriteBatch);
             enemyManager.draw(spriteBatch);
             inventoryHUD.Draw(spriteBatch, GraphicsDevice, inventory, gameTime);

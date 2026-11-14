@@ -30,7 +30,7 @@ namespace _3902sprint0
         public void cooldownReset()
         {
 
-            useTime = 10f;
+            useTime = useSpeed;
         }
 
 
@@ -38,7 +38,7 @@ namespace _3902sprint0
         {
 
             player.becomeInvisible();
-            player.mana -= 10;
+            player.mana -= ManaCost;
 
         }
 

@@ -59,6 +59,10 @@ namespace _3902sprint0
                     activeBombs.Remove(bomb);
             }
         }
+        public void Clear()
+        {
+            activeBombs.Clear();
+        }
 
         public void Draw(SpriteBatch spriteBatch)
         {

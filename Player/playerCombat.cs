@@ -20,7 +20,7 @@ namespace _3902sprint0
                 return;
             if (amount > 6)
                 amount = 6;
-            p.Health = Math.Min(p.Health + amount, 6);
+            p.Health = Math.Min(p.Health + amount, 12);
 
         }
 

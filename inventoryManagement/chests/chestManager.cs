@@ -11,6 +11,10 @@ namespace _3902sprint0
 {
     public class chestManager
     {
+        private Dictionary<string, List<Chest>> roomChests =
+        new Dictionary<string, List<Chest>>();
+
+        private string currentRoomId;
         public List<Chest> chests;
         public IReadOnlyList<Chest> Chests => chests;
         private Texture2D chestTexture;
@@ -42,6 +46,26 @@ namespace _3902sprint0
         public void SetPlayer(Player player)
         {
             this.player = player;
+        }
+        public void SetRoom(Room room)
+        {
+            this.room = room;
+        }
+        public void SetRoom(Room room, string roomId)
+        {
+            this.room = room;
+            currentRoomId = roomId;
+
+            if (roomChests.ContainsKey(roomId))
+            {
+                chests = roomChests[roomId];
+            }
+            else
+            {
+                chests = new List<Chest>();
+                roomChests[roomId] = chests;
+                CreateRandomChest();
+            }
         }
         public void SetMovementBounds(Rectangle movementBounds)
         {

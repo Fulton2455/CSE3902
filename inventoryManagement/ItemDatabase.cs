@@ -16,10 +16,10 @@ namespace _3902sprint0
             Texture2D panaceaTexture, Texture2D magicArmorTexture, Texture2D deckOfcardsTexture)
         {
             items.Add(new MagicSword(magicSwordTexture));
-            items.Add(new fireScroll(fireScrollTexture, fireballManager));
-            items.Add(new shieldOfInvulnerability(shieldOfInvulnerabilityTexture));
-            items.Add(new fireScroll2(fireScrollTexture, fireballManager));
-            items.Add(new MagicSword2(magicSwordTexture));
+            items.Add(new FireScroll(fireScrollTexture, fireballManager));
+            items.Add(new ShieldOfInvulnerability(shieldOfInvulnerabilityTexture));
+            items.Add(new FireScroll2(fireScrollTexture, fireballManager));
+            items.Add(new magicAttackSword(magicSwordTexture));
             items.Add(new RobeOfInvisibility(robeOfInvisibilityTexture));
             items.Add(new PanaceaBottle(panaceaTexture));
             items.Add(new magicArmor(magicArmorTexture));

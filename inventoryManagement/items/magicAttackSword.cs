@@ -4,7 +4,7 @@ using System;
 
 namespace _3902sprint0
 {
-    internal class MagicSword2 : Iitem
+    internal class magicAttackSword : Iitem
     {
         public bool IsOffCooldown => true;
 
@@ -18,7 +18,7 @@ namespace _3902sprint0
         public bool toggleOff = true;
         public Texture2D Texture { get; }
 
-        public MagicSword2(Texture2D texture)
+        public magicAttackSword(Texture2D texture)
         {
             Name = "Magic Attack Sword";
             Texture = texture;
