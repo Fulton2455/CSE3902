@@ -10,6 +10,7 @@ namespace _3902sprint0
     
     public class GameAssets
     {
+        public Texture2D BombTexture { get; private set; }
         public Texture2D KnightTexture { get; private set; }
         public Texture2D MagicSwordTexture { get; private set; }
         public Texture2D FireScrollTexture { get; private set; }
@@ -37,6 +38,7 @@ namespace _3902sprint0
 
         public void Load(ContentManager content, GraphicsDevice graphicsDevice)
         {
+            BombTexture = content.Load<Texture2D>("Bomb");
             KnightTexture = content.Load<Texture2D>("Knight");
             MagicSwordTexture = content.Load<Texture2D>("items/MagicSword");
             FireScrollTexture = content.Load<Texture2D>("items/fireScroll");

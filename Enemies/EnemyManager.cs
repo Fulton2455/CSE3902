@@ -20,6 +20,7 @@ namespace _3902sprint0
         private readonly Texture2D zombieTexture;
         private readonly Texture2D mageTexture;
         private readonly Texture2D batTexture;
+        private BombManager bombManager;
 
         private readonly Player player;
 
@@ -59,8 +60,11 @@ namespace _3902sprint0
 		{
 			this.room = room;
 		}
-		
-		public void CreateBossShockwave(
+        public void SetBombManager(BombManager bombManager)
+        {
+            this.bombManager = bombManager;
+        }
+        public void CreateBossShockwave(
 			Vector2 position,
 			float radius,
 			float duration,
@@ -249,6 +253,7 @@ out Vector2 spawnPosition)
         		}
 
         		CheckFireballHits(enemy);
+				CheckBombHits(enemy);
 				UpdateBossShockwave(gameTime);
     		}
 		}
@@ -304,6 +309,22 @@ out Vector2 spawnPosition)
 				shockwave.draw(spriteBatch);
 			}
 		}
+        private void CheckBombHits(Enemy enemy)
+        {
+            if (bombManager == null || enemy.IsDying || enemy.IsDead)
+                return;
+
+            foreach (Bomb bomb in bombManager.Bombs)
+            {
+                if (bomb.IsExplosionActive &&
+                    !bomb.HasExplosionDamaged(enemy) &&
+                    bomb.ExplosionBounds.Intersects(enemy.bounds))
+                {
+                    bomb.MarkExplosionDamage(enemy);
+                    enemy.TakeDamage(bomb.ExplosionDamage);
+                }
+            }
+        }
     }
 	
 }

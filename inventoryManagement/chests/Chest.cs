@@ -60,7 +60,10 @@ namespace _3902sprint0
             if (database.items.Count == 0)
             {
                 chestManager.deleteChest(this);
+                inventory.addCompass();
+                inventory.addCompass();
                 return;
+                
             }
             Vector2 mousePosition = Mouse.RightClickPressed();
 
@@ -81,18 +84,27 @@ namespace _3902sprint0
         public bool ForceGenerateItem()
         {
             if (database.items.Count == 0)
-                return false;
+            {
+                player.BombCount++;
+                inventory.addCompass();
+                return false; 
+            }
 
             GiveItem();
             return true;
         }
 
+
         private void GiveItem()
         {
+            player.BombCount++;
+
             Iitem item = database.RandomItem();
             inventory.AddItem(item);
             database.items.Remove(item);
-            ChestMessage.Show(item.Name, Color.Gold, new Vector2(Location.X + 24, Location.Y - 10));
+
+            ChestMessage.Show(item.Name, Color.Gold,
+                new Vector2(Location.X + 24, Location.Y - 10));
 
             if (!isOpen)
             {
@@ -100,5 +112,6 @@ namespace _3902sprint0
                 ChestSprite1.Open();
             }
         }
+
     }
 }

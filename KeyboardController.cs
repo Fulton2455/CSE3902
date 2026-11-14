@@ -110,6 +110,13 @@ namespace _3902sprint0
 
             return -1;
         }
+        public bool Bomb()
+        {
+            if (currentState.IsKeyDown(Keys.B) &&
+                previousState.IsKeyUp(Keys.B))
+                return true;
+            return false;
+        }
         /// <summary>
         /// Updates the controller's state based on keyboard input.
         /// </summary>

@@ -1,23 +1,26 @@
+
 namespace _3902sprint0.Environment.Rooms
 {
-    //Lets active fireball explosions blow open bombable walls in the current room.
     public class ExplosionWallBreaker
     {
         private readonly RoomManager rooms;
-        private readonly fireballManager fireballs;
+        private readonly BombManager bombs;
 
-        public ExplosionWallBreaker(RoomManager rooms, fireballManager fireballs)
+        public ExplosionWallBreaker(RoomManager rooms, BombManager bombs)
         {
             this.rooms = rooms;
-            this.fireballs = fireballs;
+            this.bombs = bombs;
         }
 
         public void Update()
         {
-            foreach (var fireball in fireballs.Fireballs)
+            foreach (var bomb in bombs.Bombs)
             {
-                if (fireball.IsExplosionActive)
-                    rooms.CurrentRoom.Detonate(fireball.ExplosionBounds);
+                if (bomb.IsExplosionActive && !bomb.HasBrokenWalls)
+                {
+                    rooms.CurrentRoom.Detonate(bomb.ExplosionBounds);
+                    bomb.HasBrokenWalls = true;
+                }
             }
         }
     }

@@ -16,9 +16,16 @@ namespace _3902sprint0
     /// </summary>
     public class Game1 : Game
     {
+        private CompassPointer compassPointer;
+        private RoomSide? compassDir;
+        private Compass compass;
+        private CompassHUD compassHUD;
+
         private const string StartRoomId = "d1_c6";
 
         private fireballManager FireballManager;
+
+        private BombManager bombManager;
         private GraphicsDeviceManager DeviceManager3902;
         private SpriteBatch spriteBatch;
         private RenderTarget2D sceneTarget;
@@ -117,6 +124,9 @@ namespace _3902sprint0
 
             rupee = new Rupee(new Vector2(500, 300), assets.RupeeTexture);
             rupeeHUD = new RupeeHUD(assets.GameFont, assets.RupeeTexture);
+            Texture2D compassTexture = Content.Load<Texture2D>("chest"); //will add to game assest later
+            compass = new Compass(compassTexture);
+            compassHUD = new CompassHUD(assets.GameFont, compassTexture);
 
             EffectMessage.Load(assets.GameFont);
             ChestMessage.Load(assets.GameFont);
@@ -137,6 +147,7 @@ namespace _3902sprint0
             // Rooms come from Content/rooms/*.txt. Step 1: build the first room.
             DungeonMap dungeon = DungeonMap.LoadFromDirectory(
                 Path.Combine(AppContext.BaseDirectory, "Content", "rooms"));
+            compassPointer = new CompassPointer(dungeon, StartRoomId);
             var roomTextures = new RoomTextures(
                 assets.EnvironmentSpriteSheet,
                 Content.Load<Texture2D>("environment/doors"),
@@ -156,6 +167,15 @@ namespace _3902sprint0
             player.InitializeSprite(assets.KnightTexture);
             ChestManager.SetPlayer(player);
             currentPlayer = player;
+            bombManager = new BombManager(
+                assets.BombTexture,
+                assets.DetonateTexture,
+                inventory,
+                database,
+                room,
+                roomBounds);
+            bombManager.SetPlayer(player);
+            player.SetBombManager(bombManager);
 
             ChestManager.CreateChest(new Vector2(600, 300));
 
@@ -168,16 +188,17 @@ namespace _3902sprint0
                 assets.ShockwavePixel,
                 FireballManager);
             player.SetEnemyManager(enemyManager);
-
+            compassDir = compassPointer.DirectionFrom(StartRoomId);
             enemyManager.SetMovementBounds(roomBounds);
             ChestManager.SetMovementBounds(roomBounds);
-
+            enemyManager.SetBombManager(bombManager);
             FireballManager.SetAcidTexture(assets.AcidTexture);
 
             // Per-room behaviour that reacts to RoomEntered / the current room.
             roomPopulator = new RoomPopulator(roomManager, enemyManager);
             shutterController = new ShutterController(roomManager, HasLivingEnemies, () => player.Bounds);
-            explosionWallBreaker = new ExplosionWallBreaker(roomManager, FireballManager);
+            explosionWallBreaker = new ExplosionWallBreaker(roomManager, bombManager);
+            // change this to bomb texture later
 
             combatResolver = new CombatResolver(player, enemyManager);
 
@@ -201,6 +222,9 @@ namespace _3902sprint0
         {
             room = instance.Room;
             player.SetRoom(instance.Room);
+            if (player.HasCompass)
+                compassDir = compassPointer.DirectionFrom(instance.Data.Id);
+
             FireballManager.SetRoom(instance.Room);
             // TODO: clear in-flight fireballs here if fireballManager has a method for it.
         }
@@ -230,10 +254,13 @@ namespace _3902sprint0
 
             roomManager.Update();
             shutterController.Update();
+            bombManager.Update(gameTime);
             explosionWallBreaker.Update();
 
             rupee.Update(gameTime, player);
-
+            if (IsInChestRoom) 
+                if (inventory.haveCompass) 
+                    compass.Update(player);
             FireballManager.Update(gameTime);
 
             enemyManager.update(gameTime, player.GetTerrainAcceleration());
@@ -264,7 +291,11 @@ namespace _3902sprint0
             levelHUD.Draw(spriteBatch, levelProgression.CurrentLevel);
             currentSwordHUD.Draw(spriteBatch, inventory);
             rupeeHUD.Draw(spriteBatch, player.RupeeCount);
-
+            if (IsInChestRoom) 
+                if (inventory.haveCompass)
+                    compass.Draw(spriteBatch);
+            if (player.HasCompass) compassHUD.Draw(spriteBatch, compassDir);
+            bombManager.Draw(spriteBatch);
             debugOverlay.Draw(spriteBatch, player, roomManager.CurrentRoom, enemyManager, FireballManager, ChestManager);
             EffectMessage.Draw(spriteBatch, player.getPosition() - new Vector2(0, 90));
             ChestMessage.Draw(spriteBatch);

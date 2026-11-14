@@ -14,6 +14,7 @@ namespace _3902sprint0
         public const int MaxMana = 100;
 
         public int RupeeCount { get; set; } = 0;
+        public int BombCount { get; set; } = 0;
 
         public const float ManaRegenerationRate = 4f;
 
@@ -35,6 +36,7 @@ namespace _3902sprint0
         internal KeyboardController Keyboard;
         internal Inventory inventory;
         internal Mousecontroller Mouse;
+        public bool HasCompass => inventory.haveCompass;
         internal Room currentRoom;
         public Vector2 AimDirection;
         internal bool invulnerable = false;
@@ -55,6 +57,7 @@ namespace _3902sprint0
         private const int InsetTop = 16;
         private const int InsetBottom = 0;
         internal chestManager chestManager;
+        private BombManager bombManager;
         private readonly PlayerMovement movement;
         private readonly PlayerCombat combat;
         private readonly PlayerItems items;
@@ -136,6 +139,12 @@ namespace _3902sprint0
             UpdateInvisibility(gameTime);
             fireballHitCheck();
             Keyboard.update();
+
+            if (Keyboard.Bomb())
+            {
+                bombManager?.SpawnActiveBomb();
+            }
+
             Vector2 movementDirection = Keyboard.direction;
             Mouse.update(Location);
             AimDirection = Mouse.AimDirection;
@@ -240,10 +249,19 @@ namespace _3902sprint0
         {
             return Keyboard.isQuit();
         }
+
+        public void SetBombManager(BombManager bombManager)
+        {
+            this.bombManager = bombManager;
+        }
+
         internal void Attack()
         { combat.Attack(); }
         internal void useItem(GameTime gameTime)
         { items.UseItem(gameTime); }
+
+        internal void SpawnActiveBomb()
+        { bombManager.SpawnActiveBomb(); }
         internal void Die()
         { combat.Die(); }
         internal void Revive()
