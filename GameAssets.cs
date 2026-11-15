@@ -38,6 +38,7 @@ namespace _3902sprint0
         public SpriteFont GameFont { get; private set; }
         public Texture2D WhitePixel { get; private set; }
 
+        public Texture2D OldManTexture { get; private set; }
 
 
         public void Load(ContentManager content, GraphicsDevice graphicsDevice)
@@ -65,6 +66,7 @@ namespace _3902sprint0
             EnemyBatTexture = content.Load<Texture2D>("enemies/enemyBat");
             EnemyToadTexture = content.Load<Texture2D>("enemies/enemyToad");
             CompassTexture = content.Load<Texture2D>("compass");
+            OldManTexture = content.Load <Texture2D> ("oldMan");
             ShockwavePixel = new Texture2D(graphicsDevice, 1, 1);
             ShockwavePixel.SetData(new[] { Color.White });
 

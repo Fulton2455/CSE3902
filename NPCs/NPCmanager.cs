@@ -38,6 +38,7 @@ namespace _3902sprint0.NPCs
         private readonly Inventory inventory;
         private readonly RoomManager rooms;
         private readonly Texture2D pixel;
+        private readonly Texture2D oldManTexture;
         private readonly SpriteFont font;
         private readonly Action<int> updateBombHud;
         private readonly OldMan oldMan = new OldMan(new Vector2(900, 480));
@@ -53,7 +54,7 @@ namespace _3902sprint0.NPCs
 
         public NPCmanager(Player player, Inventory inventory, RoomManager rooms,
             Texture2D pixel, SpriteFont font, Texture2D panaceaTexture,
-            Texture2D fireScrollTexture, fireballManager fireballs,
+            Texture2D fireScrollTexture, fireballManager fireballs, Texture2D oldManTexture,
             Action<int> updateBombHud = null)
         {
             this.player = player;
@@ -62,7 +63,7 @@ namespace _3902sprint0.NPCs
             this.pixel = pixel;
             this.font = font;
             this.updateBombHud = updateBombHud;
-
+            this.oldManTexture = oldManTexture;
             // Items are created only after a successful purchase, so each purchase gets
             // its own cooldown/state instead of sharing an item instance with the shop.
             offers = new[]
@@ -71,8 +72,8 @@ namespace _3902sprint0.NPCs
                     () => new PanaceaBottle(panaceaTexture)),
                 new ShopOffer("Bomb", 1,
                     (Action)(() => player.BombCount++)),
-                new ShopOffer("Fire Scroll", 3,
-                    () => new FireScroll(fireScrollTexture, fireballs))
+                new ShopOffer("Compass", 3,
+                    (Action)(() => inventory.haveCompass = true))
             };
         }
 
@@ -144,8 +145,8 @@ namespace _3902sprint0.NPCs
         {
             if (rooms.Current.Data.Id != "d1_c6") return;
 
-            oldMan.Draw(spriteBatch, pixel);
-          
+            oldMan.Draw(spriteBatch, oldManTexture);
+
 
             bool nearby = Vector2.Distance(player.getPosition(), oldMan.Position) <= InteractionDistance;
             if (nearby && !shopOpen)
