@@ -265,7 +265,9 @@ namespace _3902sprint0
         { items.UseItem(gameTime); }
 
         internal void SpawnActiveBomb()
-        { bombManager.SpawnActiveBomb(); }
+        {
+            bombManager?.SpawnActiveBomb();
+        }
         internal void Die()
         { combat.Die(); }
         internal void Revive()
