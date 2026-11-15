@@ -10,6 +10,10 @@ namespace _3902sprint0
     public class Inventory : IKeyHolder
     {
         public List<Iitem> items = new List<Iitem>();
+
+        public bool haveCompass = false;
+
+        public List<Bomb> bombs = new List<Bomb>();
         public Iitem CurrentSword { get; private set; }
         private readonly Dictionary<LockType, int> keys = new Dictionary<LockType, int>();
 
@@ -25,7 +29,10 @@ namespace _3902sprint0
             }
         }
 
-
+        public void addCompass()
+        {
+            haveCompass = true;
+        }  
         public void ResetItems()
         {
             foreach (Iitem item in items)

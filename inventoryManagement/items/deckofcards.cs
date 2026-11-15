@@ -29,7 +29,6 @@ namespace _3902sprint0
         public void cooldownReset()
         {
             useTime = useSpeed;
-            // Undo any active timed effects here once you add them.
         }
 
         public void Update(GameTime gameTime)
@@ -41,7 +40,6 @@ namespace _3902sprint0
                 useTime = useSpeed;
             }
 
-            // Tick timers for timed effects here.
         }
 
         private void ShootRandom(int count, int fireballType, bool hostile, Vector2 origin)

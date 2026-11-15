@@ -30,14 +30,14 @@ namespace _3902sprint0
         public void cooldownReset()
         {
 
-            useTime = 30f;
+            useTime = useSpeed;
         }
 
 
         public void ApplyEffect(Player player)
         {
 
-            player.heal(6);
+            player.heal(10);
             player.mana = 100;
 
         }

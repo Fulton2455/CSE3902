@@ -10,6 +10,7 @@ namespace _3902sprint0
     
     public class GameAssets
     {
+        public Texture2D BombTexture { get; private set; }
         public Texture2D KnightTexture { get; private set; }
         public Texture2D MagicSwordTexture { get; private set; }
         public Texture2D FireScrollTexture { get; private set; }
@@ -25,6 +26,7 @@ namespace _3902sprint0
         public Texture2D RupeeTexture { get; private set; }
         public Texture2D HeartTexture { get; private set; }
         public Texture2D EnvironmentSpriteSheet { get; private set; }
+        public Texture2D CompassTexture { get; private set; }
 
         public Texture2D EnemySlimeTexture { get; private set; }
         public Texture2D EnemyZombieTexture { get; private set; }
@@ -40,6 +42,7 @@ namespace _3902sprint0
 
         public void Load(ContentManager content, GraphicsDevice graphicsDevice)
         {
+            BombTexture = content.Load<Texture2D>("Bomb");
             KnightTexture = content.Load<Texture2D>("Knight");
             MagicSwordTexture = content.Load<Texture2D>("items/MagicSword");
             FireScrollTexture = content.Load<Texture2D>("items/fireScroll");
@@ -61,7 +64,7 @@ namespace _3902sprint0
             EnemyMageTexture = content.Load<Texture2D>("enemies/enemyMage");
             EnemyBatTexture = content.Load<Texture2D>("enemies/enemyBat");
             EnemyToadTexture = content.Load<Texture2D>("enemies/enemyToad");
-
+            CompassTexture = content.Load<Texture2D>("compass");
             ShockwavePixel = new Texture2D(graphicsDevice, 1, 1);
             ShockwavePixel.SetData(new[] { Color.White });
 

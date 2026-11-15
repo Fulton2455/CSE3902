@@ -1,76 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using Microsoft.Xna.Framework.Graphics;
 
 namespace _3902sprint0
 {
-    internal class fireScroll2 : Iitem
+    internal class FireScroll2 : FireScrollBase
     {
-        private float useTime = 3f;
-        private float useSpeed = 3f;
-
         private const int ManaCost = 8;
+        private const int FireballType = 2;
 
-        bool fireEffect = false;
-        private fireballManager fireballManager;
-
-        public string Name { get; set; }
-
-        public bool firstUse = true;
-        public Texture2D Texture { get; }
-        public bool IsOffCooldown => useTime >= useSpeed;
-        public fireScroll2(Texture2D texture, fireballManager fireballManager)
+        public FireScroll2(
+            Texture2D texture,
+            fireballManager fireballManager)
+            : base(
+                texture,
+                fireballManager,
+                ManaCost,
+                FireballType,2f,
+                "Fire Scroll 2")
         {
-            Name = "Fire Scroll 2";
-            Texture = texture;
-            this.fireballManager = fireballManager;
         }
-        public void cooldownReset()
-        {
-
-            useTime = 3f;
-        }
-
-
-        public void ApplyEffect(Player player)
-        {
-            Vector2 playerCeneter = new Vector2(player.Location.X, player.Location.Y + 40);
-            
-
-            fireballManager.createFireball(2, playerCeneter, player.AimDirection, false);
-
-
-        }
-
-
-        public void Update(GameTime gameTime)
-        {
-            useTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (useTime > useSpeed)
-            {
-                useTime = useSpeed;
-            }
-        }
-
-        public void Use(Player player, GameTime gameTime)
-        {
-            if (!IsOffCooldown || player.mana < ManaCost)
-            {
-                EffectMessage.Show("Out of Mana!", Color.LightGray);
-                return;
-            }
-            
-            if (useTime >= useSpeed)
-            {
-                ApplyEffect(player);
-                useTime = 0f;
-                player.mana -= 8;
-            }
-        }
-
     }
 }
