@@ -6,12 +6,7 @@ namespace _3902sprint0.Environment.Doors
 {
     public class DiamondLockedDoorTile : LockedDoorTile
     {
-        // Single-cell door using the environment spritesheet.
-        public DiamondLockedDoorTile(Texture2D spriteSheet, Vector2 position, int width = 64, int height = 64)
-            : base(spriteSheet, position, LockType.Diamond, TileSpriteSheet.GetSourceRect(TileType.DiamondLockedDoor), width, height) { }
-
-        // Sized door with its own closed and unlocked pictures (used for room border doors).
-        public DiamondLockedDoorTile(Texture2D spriteSheet, Vector2 position, Rectangle closedSource, Rectangle unlockedSource, int width, int height)
-            : base(spriteSheet, position, LockType.Diamond, closedSource, width, height, unlockedSource) { }
+        public DiamondLockedDoorTile(Texture2D spriteSheet, Rectangle bounds, DoorArt art)
+            : base(spriteSheet, bounds, art, LockType.Diamond) { }
     }
 }

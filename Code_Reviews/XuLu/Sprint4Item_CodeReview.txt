@@ -1,0 +1,47 @@
+﻿Author: [Your Name]  
+November 11, 2026  
+Sprint 4  
+Iitem.cs, itemDatabase.cs, PlayerItems.cs, Inventory.cs, Chest.cs, chestManager.cs, MagicSword.cs, fireScroll.cs  
+Author of .cs Files: [Author Name]  
+Number of Minutes Spent on Review: 30  
+
+**Readability Comments:**  
+- The Iitem interface makes it clear what behavior every item is expected to implement. Methods such as Use, Update, ApplyEffect, and cooldownReset make the overall item structure easy to understand.
+
+
+- The variable name `p` in PlayerItems is very short and makes the code slightly harder to understand. Renaming it to `player` would make statements such as `player.inventory.items` and `player.mana` more self-explanatory.
+
+- There are several unused using statements throughout these files. Removing them would make the top of each file cleaner and make it easier to see the actual dependencies of each class.
+
+- The itemDatabase constructor is beginning to become long because every new item must be manually created and added there. As more items are added, this method will become harder to scan.
+
+**Code Quality Comments:**  
+- Inventory.AddItem does not indicate whether an item was successfully added. If the inventory already contains eight items, the item is not added, but Chest.GiveItem still removes it from the itemDatabase and opens the chest. This could cause 
+an item to permanently disappear when the player's inventory is full. AddItem could return a bool so Chest only removes the item when the addition succeeds.
+
+- There is also a related issue in Inventory.AddItem where CurrentSword can be assigned even when the inventory is already full. The check for `item is MagicSword` occurs outside of the inventory capacity check, meaning the player could 
+technically have a CurrentSword that is not actually stored in the inventory.
+
+- Every Iitem defines an Update method, but PlayerItems.Update currently only calls RegenerateMana. If item.Update is not being called elsewhere, cooldowns such as the Fire Scroll cooldown and continuous effects such as the Magic Sword 
+mana drain will not update correctly. It may be better for PlayerItems to update every item currently stored in the inventory.
+
+- MagicSword is tightly coupled to specific Player movement values. When activated it directly adds 300 to Speed and 2500 to Acceleration, and when deactivated it resets Acceleration to 500 and replaces Speed with getTerrainspeed(). 
+This could conflict with terrain effects or future items that also modify movement. A safer design would store the player's previous values or use a modifier system instead of resetting them to hardcoded values.
+
+- fireScroll combines the cooldown check and mana check into the same branch but always displays "Out of Mana!" when either condition fails. This means the player could receive an incorrect message when the item is simply still on cooldown. 
+These checks should be separated.
+
+- Chest directly creates its own Mousecontroller and checks mouse coordinates itself. This creates tight coupling between the chest and the input system. It would be more maintainable for another interaction/controller class to determine 
+when the player interacts with a chest and then tell the Chest to open.
+
+- PlayerItems directly accesses several Player internals including inventory, inventoryHUD, Keyboard, mana, and chestManager. In particular, ForceChestItem directly accesses `chests[0]`, which assumes the first chest is always the correct chest. 
+This would not scale well if multiple chests were present in the same room.
+
+- itemDatabase exposes its item list publicly. This allows classes such as Chest to directly remove objects from the list. Encapsulating the list and providing methods such as GetRandomItem or RemoveItem would reduce coupling and prevent unrelated classes from modifying the database directly.
+
+**Additional Comments:**  
+- A useful hypothetical change would be adding multiple chests to the same room. The current ForceChestItem implementation always selects `chests[0]`, so it would not know which chest the player intends to interact with. Moving this behavior into 
+chestManager and selecting a chest based on the player's interaction or position would make this change easier to support.
+
+- Another likely future change is adding more items that modify Player stats. The current MagicSword implementation directly changes and restores Player values, so multiple active effects could overwrite one another. A shared stat modifier 
+system would make future item effects easier and safer to implement.

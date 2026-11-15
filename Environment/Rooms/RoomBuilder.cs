@@ -1,4 +1,3 @@
-// Connor Fulton
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
@@ -7,7 +6,7 @@ using _3902sprint0.Environment.Pickups;
 
 namespace _3902sprint0.Environment.Rooms
 {
-    //Builds a RoomInstance (tiles, doors, key pickups) from parsed RoomData.
+    /// <summary>Builds a RoomInstance (tiles, doors, key pickups) from parsed RoomData.</summary>
     public class RoomBuilder
     {
         private const int Cell = 64;
@@ -56,14 +55,8 @@ namespace _3902sprint0.Environment.Rooms
 
         private void AddDoor(RoomData data, DoorRun run, Room room, List<RoomExit> exits, List<ShutterDoorTile> shutters)
         {
-            bool vertical = run.Side.RunsVertically();
-            Rectangle closed = DoorArt.Source(DoorArt.ClosedArt(run.Kind), vertical);
-            Rectangle open = DoorArt.Source(DoorArt.OpenArt(run.Kind), vertical);
-            Vector2 center = DoorCenter(data, run);
-            int width = vertical ? Cell : DoorArt.Length;
-            int height = vertical ? DoorArt.Length : Cell;
-
-            Tile door = CreateDoor(run.Kind, center, closed, open, width, height);
+            DoorArt art = DoorArt.For(run.Kind, run.Side.RunsVertically());
+            DoorTile door = CreateDoor(run.Kind, DoorBounds(data, run), art);
             room.AddTile(door);
 
             if (door is ShutterDoorTile shutter) shutters.Add(shutter);
@@ -72,15 +65,15 @@ namespace _3902sprint0.Environment.Rooms
             if (target != null) exits.Add(new RoomExit(door, run.Side, target));
         }
 
-        private Tile CreateDoor(DoorKind kind, Vector2 center, Rectangle closed, Rectangle open, int w, int h)
+        private DoorTile CreateDoor(DoorKind kind, Rectangle bounds, DoorArt art)
         {
             switch (kind)
             {
-                case DoorKind.Keyhole: return new KeyholeLockedDoorTile(textures.Doors, center, closed, open, w, h);
-                case DoorKind.Diamond: return new DiamondLockedDoorTile(textures.Doors, center, closed, open, w, h);
-                case DoorKind.Bombable: return new BombedWallOpeningTile(textures.Doors, center, closed, open, w, h);
-                case DoorKind.Shutter: return new ShutterDoorTile(textures.Doors, center, closed, open, w, h);
-                default: return new OpenDoorTile(textures.Doors, center, closed, w, h);
+                case DoorKind.Keyhole: return new KeyholeLockedDoorTile(textures.Doors, bounds, art);
+                case DoorKind.Diamond: return new DiamondLockedDoorTile(textures.Doors, bounds, art);
+                case DoorKind.Bombable: return new BombedWallOpeningTile(textures.Doors, bounds, art);
+                case DoorKind.Shutter: return new ShutterDoorTile(textures.Doors, bounds, art);
+                default: return new OpenDoorTile(textures.Doors, bounds, art);
             }
         }
 
@@ -89,15 +82,19 @@ namespace _3902sprint0.Environment.Rooms
             return new Vector2(col * Cell + Cell / 2f, row * Cell + Cell / 2f);
         }
 
-        private static Vector2 DoorCenter(RoomData data, DoorRun run)
+        // The rectangle a door covers on its wall: 4 cells long, 1 cell thick.
+        private static Rectangle DoorBounds(RoomData data, DoorRun run)
         {
-            float along = (run.StartIndex + DoorArt.Span / 2f) * Cell;
+            int along = run.StartIndex * Cell;
+            int lastCol = (data.Columns - 1) * Cell;
+            int lastRow = (data.Rows.Count - 1) * Cell;
+
             switch (run.Side)
             {
-                case RoomSide.North: return new Vector2(along, Cell / 2f);
-                case RoomSide.South: return new Vector2(along, (data.Rows.Count - 1) * Cell + Cell / 2f);
-                case RoomSide.West: return new Vector2(Cell / 2f, along);
-                default: return new Vector2((data.Columns - 1) * Cell + Cell / 2f, along);
+                case RoomSide.North: return new Rectangle(along, 0, DoorArt.Length, Cell);
+                case RoomSide.South: return new Rectangle(along, lastRow, DoorArt.Length, Cell);
+                case RoomSide.West: return new Rectangle(0, along, Cell, DoorArt.Length);
+                default: return new Rectangle(lastCol, along, Cell, DoorArt.Length);
             }
         }
     }

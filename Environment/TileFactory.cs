@@ -35,7 +35,11 @@ namespace _3902sprint0.Environment
                     return new StairsTile(spriteSheet, position, sourceRect, width, height);
 
                 case TileType.OpenDoor:
-                    return new OpenDoorTile(spriteSheet, position, sourceRect, width, height);
+                {
+                    var doorBounds = new Rectangle(
+                    (int)(position.X - width / 2), (int)(position.Y - height / 2), width, height);
+                    return new OpenDoorTile(spriteSheet, doorBounds, DoorArt.Always(sourceRect));
+                }
 
                 default:
                     throw new ArgumentException(

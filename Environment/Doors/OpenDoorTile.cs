@@ -4,13 +4,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace _3902sprint0.Environment.Doors
 {
-    //An open doorway
-    public class OpenDoorTile : Tile
+    
+    public class OpenDoorTile : DoorTile
     {
         public override bool IsSolid => false;
 
-        // Single-cell doorway from the environment spritesheet.
-        public OpenDoorTile(Texture2D spriteSheet, Vector2 position, Rectangle sourceRectangle, int width = 64, int height = 64)
-            : base(spriteSheet, position, sourceRectangle, width, height) { }
+        public OpenDoorTile(Texture2D spriteSheet, Rectangle bounds, DoorArt art)
+            : base(spriteSheet, bounds, art) { }
     }
 }
