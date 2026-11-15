@@ -46,7 +46,7 @@ namespace _3902sprint0.NeutralProjectiles
             bool candle = keys.IsKeyDown(Keys.C);
 
             if (candle && !previousCandle)
-                FireCandle();
+                //FireCandle();
             previousCandle = candle;
 
             for (int i = flames.Count - 1; i >= 0; i--)

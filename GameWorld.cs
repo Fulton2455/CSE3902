@@ -205,8 +205,7 @@ namespace _3902sprint0
             combatResolver = new CombatResolver(Player, enemyManager);
 
             npcManager = new NPCmanager(Player, inventory, roomManager, assets.WhitePixel, assets.GameFont,
-                assets.PanaceaTexture, assets.ShieldOfInvulnerabilityTexture,
-                assets.FireScrollTexture, fireballs);
+                assets.PanaceaTexture, assets.FireScrollTexture, fireballs);
             neutralProjectiles = new NeutralProjectileManager(Player, roomManager, assets.FireballTexture);
 
             // Step 2: place the player, hand the room to player/enemies/fireballs, spawn enemies.

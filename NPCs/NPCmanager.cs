@@ -6,7 +6,7 @@ using _3902sprint0.Environment.Rooms;
 
 namespace _3902sprint0.NPCs
 {
-    
+    /// <summary>Owns the friendly shopkeeper and the rupee-based shop interface.</summary>
     public sealed class NPCmanager
     {
         private sealed class ShopOffer
@@ -14,12 +14,23 @@ namespace _3902sprint0.NPCs
             public string Name { get; }
             public int Price { get; }
             public Func<Iitem> CreateItem { get; }
+            public Action PurchaseAction { get; }
 
+            // Use this constructor when the purchase creates an inventory item.
             public ShopOffer(string name, int price, Func<Iitem> createItem)
             {
                 Name = name;
                 Price = price;
                 CreateItem = createItem;
+            }
+
+            // Use this constructor when the purchase performs an action directly,
+            // such as increasing the player's bomb count.
+            public ShopOffer(string name, int price, Action purchaseAction)
+            {
+                Name = name;
+                Price = price;
+                PurchaseAction = purchaseAction;
             }
         }
 
@@ -28,6 +39,7 @@ namespace _3902sprint0.NPCs
         private readonly RoomManager rooms;
         private readonly Texture2D pixel;
         private readonly SpriteFont font;
+        private readonly Action<int> updateBombHud;
         private readonly OldMan oldMan = new OldMan(new Vector2(900, 480));
         private readonly ShopOffer[] offers;
         private bool previousInteract;
@@ -41,23 +53,26 @@ namespace _3902sprint0.NPCs
 
         public NPCmanager(Player player, Inventory inventory, RoomManager rooms,
             Texture2D pixel, SpriteFont font, Texture2D panaceaTexture,
-            Texture2D shieldTexture, Texture2D fireScrollTexture, fireballManager fireballs)
+            Texture2D fireScrollTexture, fireballManager fireballs,
+            Action<int> updateBombHud = null)
         {
             this.player = player;
             this.inventory = inventory;
             this.rooms = rooms;
             this.pixel = pixel;
             this.font = font;
+            this.updateBombHud = updateBombHud;
 
- 
+            // Items are created only after a successful purchase, so each purchase gets
+            // its own cooldown/state instead of sharing an item instance with the shop.
             offers = new[]
             {
-                new ShopOffer("option 1)", 1,
+                new ShopOffer("Panacea Bottle (restores health and mana)", 1,
                     () => new PanaceaBottle(panaceaTexture)),
-                new ShopOffer("option 2", 2,
-                    () => new shieldOfInvulnerability(shieldTexture)),
-                new ShopOffer("option 3", 3,
-                    () => new fireScroll(fireScrollTexture, fireballs))
+                new ShopOffer("Bomb", 1,
+                    (Action)(() => player.BombCount++)),
+                new ShopOffer("Fire Scroll", 3,
+                    () => new FireScroll(fireScrollTexture, fireballs))
             };
         }
 
@@ -95,16 +110,25 @@ namespace _3902sprint0.NPCs
         private void Purchase(int offerIndex)
         {
             ShopOffer offer = offers[offerIndex];
-            
-            
+          
             if (player.RupeeCount < offer.Price)
             {
                 ShowStatus("Not enough rupees! This costs " + offer.Price + ".");
                 return;
             }
 
-            Iitem item = offer.CreateItem();
-            inventory.AddItem(item);
+            if (offer.CreateItem != null)
+            {
+                Iitem item = offer.CreateItem();
+                inventory.AddItem(item);
+            }
+            else
+            {
+                offer.PurchaseAction();
+                
+               
+                updateBombHud?.Invoke(player.BombCount);
+            }
 
             player.RupeeCount -= offer.Price;
             ShowStatus("Purchased " + offer.Name + "!");
@@ -121,7 +145,7 @@ namespace _3902sprint0.NPCs
             if (rooms.Current.Data.Id != "d1_c6") return;
 
             oldMan.Draw(spriteBatch, pixel);
-           
+          
 
             bool nearby = Vector2.Distance(player.getPosition(), oldMan.Position) <= InteractionDistance;
             if (nearby && !shopOpen)

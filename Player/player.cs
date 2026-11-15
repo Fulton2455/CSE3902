@@ -13,7 +13,7 @@ namespace _3902sprint0
 
         public const int MaxMana = 100;
 
-        public int RupeeCount { get; set; } = 0;
+        public int RupeeCount { get; set; } = 3;
         public int BombCount { get; set; } = 0;
 
         public const float ManaRegenerationRate = 4f;
