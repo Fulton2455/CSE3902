@@ -15,6 +15,7 @@ namespace _3902sprint0
         private readonly itemDatabase database;
         private readonly Room room;
         private readonly Rectangle movementBounds;
+        private BombHUD bombHUD;
         private Player player;
 
         public List<Bomb> Bombs => activeBombs;
@@ -29,7 +30,10 @@ namespace _3902sprint0
             this.room = room;
             this.movementBounds = movementBounds;
         }
-
+        public void SetBombHUD(BombHUD bombHUD)
+        {
+            this.bombHUD = bombHUD;
+        }
         public void SetPlayer(Player player)
         {
             this.player = player;
@@ -46,6 +50,8 @@ namespace _3902sprint0
                 return;
 
             player.BombCount--;
+            bombHUD?.UpdateCount(player.BombCount);
+
             activeBombs.Add(new Bomb(player.Location, bombTexture, detonateTexture, true));
         }
 

@@ -20,7 +20,7 @@ namespace _3902sprint0
         private RoomSide? compassDir;
         private Compass compass;
         private CompassHUD compassHUD;
-
+        private BombHUD bombHUD;
         private const string StartRoomId = "d1_c6";
 
         private fireballManager FireballManager;
@@ -124,7 +124,7 @@ namespace _3902sprint0
 
             rupee = new Rupee(new Vector2(500, 300), assets.RupeeTexture);
             rupeeHUD = new RupeeHUD(assets.GameFont, assets.RupeeTexture);
-            Texture2D compassTexture = Content.Load<Texture2D>("chest"); //will add to game assest later
+            Texture2D compassTexture =assets.CompassTexture;
             compass = new Compass(compassTexture);
             compassHUD = new CompassHUD(assets.GameFont, compassTexture);
 
@@ -133,7 +133,8 @@ namespace _3902sprint0
 
             currentSwordHUD = new CurrentSwordHUD(GraphicsDevice, assets.GameFont);
             levelHUD = new LevelHUD(assets.GameFont);
-
+            bombHUD = new BombHUD(assets.GameFont, assets.BombTexture,0);
+            
             inventory = new Inventory();
             inventoryHUD = new InventoryHUD(GraphicsDevice);
             healthHUD = new HealthHUD(assets.HeartTexture);
@@ -176,7 +177,7 @@ namespace _3902sprint0
                 roomBounds);
             bombManager.SetPlayer(player);
             player.SetBombManager(bombManager);
-
+            bombManager.SetBombHUD(bombHUD);
 
             enemyManager = new EnemyManager(player,
                 assets.EnemySlimeTexture,
@@ -259,7 +260,7 @@ namespace _3902sprint0
             shutterController.Update();
             bombManager.Update(gameTime);
             explosionWallBreaker.Update();
-
+            bombHUD?.UpdateCount(player.BombCount);
             rupee.Update(gameTime, player);
             if (IsInChestRoom) 
                 if (inventory.haveCompass) 
@@ -293,9 +294,7 @@ namespace _3902sprint0
             levelHUD.Draw(spriteBatch, levelProgression.CurrentLevel);
             currentSwordHUD.Draw(spriteBatch, inventory);
             rupeeHUD.Draw(spriteBatch, player.RupeeCount);
-            if (IsInChestRoom) 
-                if (inventory.haveCompass)
-                    compass.Draw(spriteBatch);
+            bombHUD.Draw(spriteBatch);
             if (player.HasCompass) compassHUD.Draw(spriteBatch, compassDir);
             bombManager.Draw(spriteBatch);
             debugOverlay.Draw(spriteBatch, player, roomManager.CurrentRoom, enemyManager, FireballManager, ChestManager);

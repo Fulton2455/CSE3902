@@ -3,28 +3,33 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace _3902sprint0
 {
-    internal class BombHUD
+    public class BombHUD
     {
         private SpriteFont font;
         private Texture2D texture;
+        private int count;
 
-        public BombHUD(SpriteFont font, Texture2D texture)
+        public BombHUD(SpriteFont font, Texture2D texture, int initialCount)
         {
             this.font = font;
             this.texture = texture;
+            this.count = initialCount;
         }
 
-        public void Draw(SpriteBatch spriteBatch, int count)
+        public void UpdateCount(int newCount)
         {
-            Rectangle source = new Rectangle(0, 0, 16, 16);
-            Rectangle destination = new Rectangle(15, 95, 32, 32);
+            count = newCount;
+        }
 
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            Rectangle destination = new Rectangle(127, 95, 32, 32);
             spriteBatch.Draw(texture, destination, Color.White);
 
             spriteBatch.DrawString(
                 font,
                 "x " + count,
-                new Vector2(55, 95),
+                new Vector2(167, 95),
                 Color.White);
         }
     }

@@ -86,6 +86,7 @@ namespace _3902sprint0
             if (database.items.Count == 0)
             {
                 player.BombCount++;
+
                 inventory.addCompass();
                 return false; 
             }

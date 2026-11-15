@@ -17,8 +17,8 @@ namespace _3902sprint0
 
         public void Draw(SpriteBatch spriteBatch, RoomSide? direction)
         {
-            spriteBatch.Draw(texture, new Rectangle(15, 256, 32, 32),
-                new Rectangle(0, 0, 16, 16), Color.White);
+            spriteBatch.Draw(texture, new Rectangle(15, 256, 63, 64),
+         new Rectangle(48, 37, 660, 682), Color.White);
 
             if (direction == null) return;
 
