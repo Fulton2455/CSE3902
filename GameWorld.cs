@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework.Graphics;
 using _3902sprint0.Environment;
 using _3902sprint0.Environment.Rooms;
 using _3902sprint0.Environment.Tiles;
+using _3902sprint0.NPCs;
+using _3902sprint0.NeutralProjectiles;
 
 namespace _3902sprint0
 {
@@ -36,6 +38,8 @@ namespace _3902sprint0
         private readonly ShutterController shutterController;
         private readonly ExplosionWallBreaker explosionWallBreaker;
         private readonly CombatResolver combatResolver;
+        private readonly NPCmanager npcManager;
+        private readonly NeutralProjectileManager neutralProjectiles;
 
         public Player Player { get; }
 
@@ -117,6 +121,11 @@ namespace _3902sprint0
 
             combatResolver = new CombatResolver(Player, enemyManager);
 
+            npcManager = new NPCmanager(Player, inventory, roomManager, assets.WhitePixel, assets.GameFont,
+                assets.PanaceaTexture, assets.ShieldOfInvulnerabilityTexture,
+                assets.FireScrollTexture, fireballs);
+            neutralProjectiles = new NeutralProjectileManager(Player, roomManager, assets.FireballTexture);
+
             // Step 2: place the player, hand the room to player/enemies/fireballs, spawn enemies.
             roomManager.Begin(Player, inventory);
         }
@@ -134,6 +143,8 @@ namespace _3902sprint0
             Player.Update(gameTime);
 
             roomManager.Update();
+            npcManager.Update(gameTime);
+            neutralProjectiles.Update(gameTime);
             shutterController.Update();
             explosionWallBreaker.Update();
 
@@ -154,6 +165,8 @@ namespace _3902sprint0
             roomManager.DrawPickups(spriteBatch);
             Player.Draw(spriteBatch);
 
+            npcManager.Draw(spriteBatch);
+            neutralProjectiles.Draw(spriteBatch);
             fireballs.Draw(spriteBatch);
             if (IsInChestRoom)
                 chests.Draw(spriteBatch);

@@ -11,6 +11,9 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Content\bin\DesktopGL\rooms\exampleRoom.txt" />
+    <None Remove="Content\bin\DesktopGL\rooms\exampleRoomREADME.md" />
+    <None Remove="Content\bin\DesktopGL\rooms\rooms1.csv" />
     <None Remove="Content\items\MagicSword.png" />
     <None Remove="Icon.ico" />
     <None Remove="Icon.bmp" />

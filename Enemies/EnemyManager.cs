@@ -249,9 +249,10 @@ out Vector2 spawnPosition)
         		}
 
         		CheckFireballHits(enemy);
-				UpdateBossShockwave(gameTime);
+				
     		}
-		}
+            UpdateBossShockwave(gameTime);
+        }
 
 
         private void CheckFireballHits(Enemy enemy)

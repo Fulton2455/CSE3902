@@ -117,6 +117,19 @@
 /processorParam:Version=3.8.5.1
 /build:enemyZombie.png;enemies/enemyZombie
 
+#begin environment/doors.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:environment/doors.png
+
 #begin environment/environment_spritesheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -129,6 +142,19 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:environment/environment_spritesheet.png
+
+#begin environment/floor_tiles.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:environment/floor_tiles.png
 
 #begin Explosion.png
 /importer:TextureImporter
@@ -268,6 +294,19 @@
 /processorParam:Version=3.8.5.1
 /build:items/shieldOfInvulnerability.png
 
+#begin items/smallKey.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:items/smallKey.png
+
 #begin Knight.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -294,6 +333,59 @@
 /processorParam:Version=3.8.5.1
 /build:Pixel Heart Sprite Sheet 32x32.png
 
+#begin rooms/d1_a3.txt
+/copy:rooms/d1_a3.txt
+
+#begin rooms/d1_b1.txt
+/copy:rooms/d1_b1.txt
+
+#begin rooms/d1_b2.txt
+/copy:rooms/d1_b2.txt
+
+#begin rooms/d1_b3.txt
+/copy:rooms/d1_b3.txt
+
+#begin rooms/d1_b4.txt
+/copy:rooms/d1_b4.txt
+
+#begin rooms/d1_b6.txt
+/copy:rooms/d1_b6.txt
+
+#begin rooms/d1_c1.txt
+/copy:rooms/d1_c1.txt
+
+#begin rooms/d1_c2.txt
+/copy:rooms/d1_c2.txt
+
+#begin rooms/d1_c3.txt
+/copy:rooms/d1_c3.txt
+
+#begin rooms/d1_c4.txt
+/copy:rooms/d1_c4.txt
+
+#begin rooms/d1_c5.txt
+/copy:rooms/d1_c5.txt
+
+#begin rooms/d1_c6.txt
+/copy:rooms/d1_c6.txt
+
+#begin rooms/d1_d3.txt
+/copy:rooms/d1_d3.txt
+
+#begin rooms/d1_d4.txt
+/copy:rooms/d1_d4.txt
+
+#begin rooms/d1_d6.txt
+/copy:rooms/d1_d6.txt
+
+#begin rooms/d1_e2.txt
+/copy:rooms/d1_e2.txt
+
+#begin rooms/d1_e3.txt
+/copy:rooms/d1_e3.txt
+
+#begin rooms/d1_f2.txt
+/copy:rooms/d1_f2.txt
 
 #begin sounds/EnemyHit.wav
 /importer:WavImporter
@@ -337,39 +429,3 @@
 /processorParam:Version=3.8.5.1
 /build:sounds/SwordSwing.wav
 
-#begin environment/floor_tiles.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/processorParam:Version=3.8.5.1
-/build:environment/floor_tiles.png
-
-#begin environment/doors.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:environment/doors.png
-
-#begin items/smallKey.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:items/smallKey.png
