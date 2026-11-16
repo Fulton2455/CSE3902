@@ -38,6 +38,19 @@ namespace _3902sprint0.Environment.Rooms
             map.Validate();
             return map;
         }
+        public string FindDiamondKeyRoom()
+        {
+            foreach (RoomData room in rooms.Values)
+            {
+                foreach (KeySpawn key in room.KeySpawns)
+                {
+                    if (key.Lock == LockType.Diamond)
+                        return room.Id;
+                }
+            }
+
+            return null;
+        }
 
         /// <summary>Checks every link in both directions and reports all problems at once.</summary>
         private void Validate()

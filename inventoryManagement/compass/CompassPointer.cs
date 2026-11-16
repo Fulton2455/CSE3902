@@ -11,7 +11,7 @@ namespace _3902sprint0.Environment.Rooms
         public CompassPointer(DungeonMap dungeon, string startRoomId)
         {
             this.dungeon = dungeon;
-            TargetRoomId = FarthestFrom(startRoomId);
+            TargetRoomId = dungeon.FindDiamondKeyRoom();
         }
 
         // Which door to take from 'currentId' to head toward the target. Null if already there.
