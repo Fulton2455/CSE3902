@@ -1,0 +1,27 @@
+﻿Author: Jackson Wisecup
+november 16, 2026
+Sprint 3
+NPCmanager.cs, OldMan.cs
+Author of .cs Files: benjamin wisecup
+Number of Minutes Spent on Review: 20
+
+OldMan.cs has no issues of cohesion or coupling and is completely readable.
+
+NPCmanager readability comments:
+-there are two ShopOffer constructors.
+-most methods are very long and could be split into smaller methods to improve readability.
+-specifically update and draw are very long.
+
+Code quality:
+-this has low cohesion and high coupling. The NPCmanager handles all the logic for the NPCs and the shop, and also handles the drawing of the NPCs and shop. 
+
+-this would struggle to scale with multiple npcs or additional old mans
+
+-there are some magic numbers but it is not too bad.
+
+-directly calls mouse.isKeyDown(key) instead of using the control bindings class. unless this is done to make it so items wont be activated this should be addressed.
+
+additional comments:
+
+This should be split into multiple classes This would improve cohesion and reduce coupling. for instance the shop, npc logic, npc drawing, shop drawing, and the npcs should all be in separate classes.
+right now its the first 4 and the npcs.

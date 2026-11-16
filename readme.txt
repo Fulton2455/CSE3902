@@ -66,3 +66,21 @@ enemies are 64-by-64 pixels.
 There are now 6 new items in the game, the robe of invisibilty, magic armor, panacea bottle, deck of cards, boomerang, and magic attack buff.
 
 There is a known issue in which a pushable block can be pushed into an enemy trapping them inside the block.
+
+##SPRINT_4
+press b when you have a bomb in your inventory to place a bomb.
+when close to the old man npc in the spawn room press e to open the shop then the coorresponding num key to buy an item if you have enough rupees.
+
+a menu has been added that you can access by pressing escape, or when you load into the game, there are currently no options in the settings menu however 
+there is start, quit, restart, exit to main menu, and resume options.
+
+there is now a dungeon layout that has multiple rooms each with there own tiles terrains and enemies. some doors need keys or diamond keys to open. some you need to kill all enemies in the room. 
+some are secret doors that bombs can open.
+
+there is a shopkeeper in the starting room that sells objects for rupees.
+
+there is a compass object that appears in the hud that you can aquire from the shopkeeper, it will point to a diamond key needed to open the door behind the boss.
+
+when you place a bomb near the correct wall (unmarked) it will open a secret door. (at the top of the room whith the diamond key in the middle of the wall place a bomb)
+
+HUDS have been updated to show the number of bombs and new health you have. 
