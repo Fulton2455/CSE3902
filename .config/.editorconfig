@@ -1,5 +1,5 @@
 [*.cs]
-# Flag methods with Cyclomatic Complexity over 10 (adjust number as needed)
+# Flag methods with Cyclomatic Complexity over 10 
 dotnet_diagnostic.CA1502.severity = warning
 dotnet_code_quality.CA1502.threshold = 10
 
