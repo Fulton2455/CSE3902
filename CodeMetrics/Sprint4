@@ -1,0 +1,9 @@
+Code Metrics Warnings generated using the .config\.editorconfig contents:
+C:\Users\conno\OneDrive\Documents\GitHub\CSE3902\terrain.cs(10,18): warning CS8981: The type name 'terrain' only contains lower-cased ascii characters. Such names may become reserved for the language.
+    C:\Users\conno\OneDrive\Documents\GitHub\CSE3902\terrain.cs(48,21): warning CS1717: Assignment made to same variable; did you mean to assign something else?
+    C:\Users\conno\OneDrive\Documents\GitHub\CSE3902\Enemies\EnemyAIs\ErraticEnemyAI.cs(12,22): warning CS0169: The field 'ErraticEnemyAI.isPaused' is never used
+    C:\Users\conno\OneDrive\Documents\GitHub\CSE3902\Enemies\EnemyAIs\ErraticEnemyAI.cs(10,23): warning CS0169: The field 'ErraticEnemyAI.directionTime' is never used
+    C:\Users\conno\OneDrive\Documents\GitHub\CSE3902\inventoryManagement\Bomb\Bomb.cs(17,23): warning CS0414: The field 'Bomb.explosionTimer' is assigned but its value is never used
+    C:\Users\conno\OneDrive\Documents\GitHub\CSE3902\Enemies\BossShockwave.cs(18,23): warning CS0414: The field 'BossShockwave.previousRadius' is assigned but its value is never used
+    C:\Users\conno\OneDrive\Documents\GitHub\CSE3902\inventoryManagement\items\Boomerang.cs(15,14): warning CS0414: The field 'fireScroll4.fireEffect' is assigned but its value is never used
+    C:\Users\conno\OneDrive\Documents\GitHub\CSE3902\GameWorld.cs(66,16): warning CA1506: '.ctor' is coupled with '50' different types from '10' different namespaces. Rewrite or refactor the code to decrease its class coupling below '41'. (https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1506)
