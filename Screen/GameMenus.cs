@@ -10,7 +10,7 @@ namespace _3902sprint0
         private static readonly Dictionary<GameScreenState, MenuDefinition> menus =
             new Dictionary<GameScreenState, MenuDefinition>
             {
-                [GameScreenState.Start] = new MenuDefinition("THE LEGEND OF ZELDA", true,
+                [GameScreenState.Start] = new MenuDefinition("A KNIGHT'S QUEST", true,
                     new MenuButton("START", MenuAction.StartGame),
                     new MenuButton("SETTINGS", MenuAction.OpenSettings),
                     new MenuButton("QUIT", MenuAction.Quit)),
