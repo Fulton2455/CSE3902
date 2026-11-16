@@ -72,9 +72,9 @@ press b when you have a bomb in your inventory to place a bomb.
 when close to the old man npc in the spawn room press e to open the shop then the coorresponding num key to buy an item if you have enough rupees.
 
 a menu has been added that you can access by pressing escape, or when you load into the game, there are currently no options in the settings menu however 
-there is start, quit, restart, exit to main menu, and resume options.
+there is start, quit, restart, exit to main menu, and resume options depending where you access it from.
 
-there is now a dungeon layout that has multiple rooms each with there own tiles terrains and enemies. some doors need keys or diamond keys to open. some you need to kill all enemies in the room. 
+there is now a dungeon layout that has multiple rooms each with their own tiles, terrains, and enemies. some doors need keys or diamond keys to open. some you need to kill all enemies in the room. 
 some are secret doors that bombs can open.
 
 there is a shopkeeper in the starting room that sells objects for rupees.
