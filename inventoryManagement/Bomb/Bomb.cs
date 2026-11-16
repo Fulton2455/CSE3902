@@ -61,8 +61,8 @@ namespace _3902sprint0
             new Rectangle(
                 Bounds.Center.X - 64,
                 Bounds.Center.Y - 64,
-                128,
-                128);
+                256,
+                256);
 
         public Bomb(Vector2 location, Texture2D texture, bool activated)
         {
