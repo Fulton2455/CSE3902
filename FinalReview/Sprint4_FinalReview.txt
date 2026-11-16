@@ -1,0 +1,123 @@
+﻿# Sprint 4 Final Review
+
+## Sprint 4 Overview
+
+During Sprint 4, our team focused on completing more of the major gameplay systems and bringing the project closer to the requirements of the original game. 
+
+Some of the major completed work included creating the individual rooms, adding floor tiles, implementing game screens, developing NPCs and neutral projectiles, 
+
+and expanding the item system with required items such as the compass, map, key, and bomb. Compared with earlier sprints, Sprint 4 involved more integration between systems.
+
+Instead of only implementing individual objects, many of the tasks affected the overall gameplay flow and how the player moves through and interacts with the dungeon.
+
+## Individual Rooms
+
+One major Sprint 4 task was creating the individual rooms used throughout the dungeon.
+
+This expanded the room-loading work from previous sprints by providing the actual room layouts needed for gameplay. The room system allows the player to move through different areas while keeping the level organized into separate room definitions.
+
+Having the rooms represented separately also makes the dungeon easier to modify because the layout of an individual room can be changed without redesigning the entire level.
+
+## Floor Tiles
+
+Floor tiles were also completed during Sprint 4.
+
+This improved the visual presentation of the rooms and helped distinguish the playable floor area from walls and other environmental objects. 
+
+Floor rendering works together with the existing room and terrain systems so each room can be displayed consistently.
+
+This task was also important for making the dungeon look closer to a finished game instead of a collection of placeholder collision objects.
+
+## Game Screens
+
+The game screen system was completed during Sprint 4 and added states for the major parts of the game flow.
+
+The current screen states include:
+
+- Start
+- Playing
+- Paused
+- Settings
+- Death
+
+The Start screen contains Start, Settings, and Quit options.
+
+The Pause screen contains Restart, Settings, and Return to Main Menu options. ESC can also be used to pause and resume gameplay.
+
+The Death screen contains Restart and Return to Main Menu options.
+
+Adding these screens also required changes to `Game1` so gameplay does not continue updating while the player is in a menu, paused, or dead.
+
+The game initialization flow was also changed so gameplay objects can be created when the player chooses Start instead of immediately when the application opens.
+
+## NPCs and Neutral Projectiles
+
+Another completed Sprint 4 task was NPCs and neutral projectiles.
+
+This work expanded the types of objects that can exist in the dungeon beyond the player and standard enemies. 
+
+It helps support additional interactions and projectile behavior required by the game.
+
+This system also increases the importance of maintaining clear separation between player projectiles, enemy projectiles, 
+
+and neutral objects because each may require different collision and interaction rules.
+
+## Items
+
+The item system was expanded during Sprint 4 to support more of the required game items. 
+
+The existing item architecture uses the `Iitem` interface to provide shared behavior such as:
+
+`Use()`  
+`ApplyEffect()`  
+`Update()`  
+`cooldownReset()`
+
+The system also includes Inventory, itemDatabase, Chest, chestManager, and PlayerItems to handle storing, generating, using, and updating items.
+
+
+## Sprint 4 Progress
+
+The Sprint 4 Jira board shows eight tasks in the Done column.
+
+Visible completed tasks include:
+
+- Create all individual Rooms
+- Floor Tiles
+- Game Screens (Paused, Start, Death, etc.)
+- NPCs and Neutral Projectiles
+- Items (Compass, Map, Key, Bomb, etc. from the sheet)
+
+This shows that Sprint 4 covered several different parts of the project rather than focusing on only one system. The sprint included level design, visual improvements, user interface work, gameplay objects, and item functionality.
+
+## What Went Well
+
+One thing that went well during Sprint 4 was that the team completed work across several major areas of the game.
+
+The creation of individual rooms and floor tiles improved the dungeon itself, while the item and NPC work added more gameplay functionality. The game screen system helped connect these features into a more complete game flow.
+
+The team also continued using code reviews to identify problems that may not immediately cause errors but could become difficult to maintain in later development.
+
+## What Could Be Improved
+
+One area that could still be improved is the maintainability of some of the larger systems.
+
+For example, the current `GameScreenHUD` handles button input, menu layout, drawing, and state-specific behavior within one class. As the Settings screen becomes more complicated, separating these responsibilities could make the code easier to extend.
+
+The item system also has several classes that directly access each other's internal data, such as public item lists and chest lists. Increasing encapsulation would reduce coupling and make future items easier to implement.
+
+Another improvement would be to continue integration testing as features are merged. Sprint 4 introduced systems that interact with many existing components, so testing combinations of features is increasingly important.
+
+## Sprint Performance and Burndown Reflection
+
+Game Screens, individual rooms, and floor tiles were completed before the functionality check-in. Items and NPCs were also completed around three days before the final due date. Because most of the major Sprint 4 tasks were completed ahead of the deadline, 
+
+our group had enough time to focus on code reviews, bug fixing, integration testing, and improving code quality instead of rushing to finish features at the last minute.
+
+This was an improvement in our sprint management because completing the major functionality earlier reduced the risk of discovering serious integration problems immediately before submission. 
+
+During the remaining time, we were able to test how the newly added systems worked with existing features and identify maintainability issues through code review. For example, we reviewed the Game Screen and Item systems and found areas where coupling, 
+
+class responsibilities, naming, and scalability could be improved.
+
+Overall, Sprint 4 was more organized because the work was completed with enough time left for refinement. For the next sprint, we should continue trying to finish the main functionality several days before the deadline so that the final part of the sprint can be used for testing, refactoring, and fixing unexpected problems.
