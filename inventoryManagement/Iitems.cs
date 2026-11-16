@@ -13,7 +13,7 @@ namespace _3902sprint0
         Texture2D Texture { get; }
         void ApplyEffect(Player player);
         void Use(Player player, GameTime gameTime);
-
+        void resetToggle();
         void cooldownReset();
         void Update(GameTime gameTime);
         bool IsOffCooldown { get; }

@@ -336,7 +336,7 @@ namespace _3902sprint0
             // Update fireballs and clear old room objects
             fireballs.SetRoom(instance.Room);
 
-            inventory.ResetItems();
+            inventory.ResetItemToggle();
             fireballs.clearFireballs();
             bombManager.Clear();
         }

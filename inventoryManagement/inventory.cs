@@ -40,6 +40,13 @@ namespace _3902sprint0
                 item.cooldownReset();
             }
         }
+        public void ResetItemToggle()
+        {
+            foreach (Iitem item in items)
+            {
+                item.resetToggle();
+            }
+        }
 
         // Call this when the player picks up a keyhole or diamond key.
         public void AddKey(LockType lockType)

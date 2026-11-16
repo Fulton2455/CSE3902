@@ -40,6 +40,10 @@ namespace _3902sprint0
         {
             useTime = useSpeed;
         }
+        public void resetToggle()
+        {
+
+        }
 
         public void ApplyEffect(Player player)
         {

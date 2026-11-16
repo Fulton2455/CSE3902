@@ -26,6 +26,10 @@ namespace _3902sprint0
             Texture = texture;
             this.fireballManager = fireballManager;
         }
+        public void resetToggle()
+        {
+
+        }
         public void cooldownReset()
         {
 

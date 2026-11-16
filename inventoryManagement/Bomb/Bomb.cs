@@ -19,7 +19,7 @@ namespace _3902sprint0
         public bool IsExplosionActive { get; private set; }
 
 
-        private readonly detonateSprite explosionSprite;
+        private readonly detonateSpriteBomb explosionSprite;
         private float fuseTimer = 3f;
         public bool HasBrokenWalls { get; set; }
         public int ExplosionDamage { get; set; } = 1;
@@ -49,7 +49,7 @@ namespace _3902sprint0
             else
                 sprite = new BombSprite(texture);
 
-            explosionSprite = new detonateSprite();
+            explosionSprite = new detonateSpriteBomb();
             explosionSprite.Initialize(detonateTexture);
             explosionSprite.SetLocation(location);
         }

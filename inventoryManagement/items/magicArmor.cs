@@ -44,7 +44,10 @@ namespace _3902sprint0
             useTime = 0f;
             player.mana -= ManaCost;
         }
+        public void resetToggle()
+        {
 
+        }
         public void Update(GameTime gameTime)
         {
             if (shieldActive)

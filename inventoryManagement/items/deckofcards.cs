@@ -148,7 +148,10 @@ namespace _3902sprint0
                     break;
             }
         }
-
+        public void resetToggle()
+        {
+           
+        }
         public void Use(Player player, GameTime gameTime)
         {
             if (!IsOffCooldown || player.mana < ManaCost)

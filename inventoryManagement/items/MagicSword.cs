@@ -30,6 +30,10 @@ namespace _3902sprint0
         {
             Deactivate();
         }
+        public void resetToggle()
+        {
+            Deactivate();
+        }
 
         public void Update(GameTime gameTime)
         {
