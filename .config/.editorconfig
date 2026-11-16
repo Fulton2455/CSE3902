@@ -1,0 +1,11 @@
+[*.cs]
+# Flag methods with Cyclomatic Complexity over 10 
+dotnet_diagnostic.CA1502.severity = warning
+dotnet_code_quality.CA1502.threshold = 10
+
+# Flag classes with Maintainability Index under 20
+dotnet_diagnostic.CA1505.severity = warning
+dotnet_code_quality.CA1505.threshold = 20
+
+# Flag classes coupled to too many other types
+dotnet_diagnostic.CA1506.severity = warning
