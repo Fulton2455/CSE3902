@@ -1,0 +1,75 @@
+Erik Zhang
+11-16-2026
+Sprint number: 4
+Name of the .cs file being reviewed: FloorRenderer.cs (Environment/FloorRenderer.cs)
+Author of the .cs file being reviewed: Connor Fulton
+Number of minutes taken to complete the review: 20 minutes
+
+Specific comments on what is readable:
+    - The class has one job (draw the floor for the current terrain) and the one-line comment at the top
+      says exactly that. The whole file fits on a single screen, so it is easy to understand in one pass.
+
+    - The private helper names `ColumnFor` and `VariantRow` describe what they return, and the comment on
+      `VariantRow` ("Deterministic per-cell pick, so the accents stay put instead of flickering each frame")
+      explains *why* the math is there, which is the kind of comment that is actually useful.
+
+    - `AccentChance` has a comment explaining that it means "roughly 1 in 5 cells gets the accent variant",
+      so the reader does not have to work out what the constant controls.
+
+    - The `Draw` method builds a clearly named `source` and `destination` rectangle before the draw call
+      instead of inlining the arithmetic into `spriteBatch.Draw`, which makes the loop easy to follow.
+
+Specific comments on what is not readable (areas for improvement):
+    - Magic Numbers in `VariantRow`:
+      The multipliers `31` and `17` have no name or comment. A reader cannot tell whether they were chosen
+      for a reason (they look like a cheap hash) or picked at random. Named constants such as
+      `ColumnHashPrime` / `RowHashPrime` with a short comment would remove the guesswork.
+
+    - Magic Numbers in `ColumnFor`:
+      The sheet columns `0`, `1`, `2` for Stone, Ice and Swamp are only documented by the `default` comment.
+      An enum or named constants (e.g. `StoneColumn`, `IceColumn`, `SwampColumn`) would make the mapping
+      between terrain and sprite sheet column obvious without opening the PNG.
+
+    - Naming convention of the dependency:
+      `terrain.terrainState` is lowercase because of the `terrain` class, not because of this file, but it
+      makes signatures like `Draw(SpriteBatch spriteBatch, terrain.terrainState state)` harder to read.
+      This is worth fixing in `terrain.cs` (rename to `Terrain.TerrainState`) rather than here.
+
+Specific comments on code quality:
+    - Duplicated constant:
+      `CellSize = 64` is declared here, in `ScreenScaler.CellSize` and in `TileSpriteSheet.CellSize`.
+      If the grid size is ever changed, all three must be edited together or the floor will be drawn on a
+      different grid than the walls. `FloorRenderer` should read `ScreenScaler.CellSize` instead of
+      redefining it.
+
+    - Silent fallback in `ColumnFor`:
+      The `default` branch maps any unknown terrain to the Stone column. Today the enum only has Stone, Ice
+      and Swamp, so this is fine, but when a fourth terrain is added the floor will quietly render as stone
+      with no error. Throwing an `ArgumentOutOfRangeException` for unhandled values (the way
+      `RoomSideExtensions.Opposite` already does) would make the missing case fail loudly.
+
+    - Per-frame work that never changes:
+      The floor for a given terrain is identical every frame, but `Draw` recomputes 560 source/destination
+      rectangles (28 x 20 cells) and issues 560 draw calls each frame. This is acceptable at the current
+      scale, but the result could be cached (for example, rendered once to a `RenderTarget2D` when the
+      terrain changes) if performance ever becomes a concern.
+
+    - Low coupling (good):
+      The class depends only on a `Texture2D`, a `Rectangle` and the terrain enum. It does not know about
+      `Room`, `Player` or `RoomManager`, which is why `GameWorld` can call it with a single line. This is a
+      good example of keeping a renderer independent of game state.
+
+Hypothetical Change Analysis:
+    - Hypothetical Change:
+      Each room file gets its own floor pattern (for example, a boss room with a different floor texture
+      or a room where the accent tiles form a visible path to a hidden door), instead of every room of the
+      same terrain looking identical.
+
+    - How current implementation supports/fails it:
+      The current implementation partially fails to support this. The terrain-to-column mapping and the
+      accent placement are both fixed inside `FloorRenderer` (`ColumnFor` and `VariantRow`), so there is no
+      way for a `RoomData` to say "use column 3" or "put accents at these cells". Supporting it would mean
+      adding a floor section to the room file format, parsing it in `RoomFileParser`, storing it on
+      `RoomData`, and changing `Draw` to take that per-room floor description instead of only a terrain
+      state. The good news is that the class is small and self-contained, so the change would be confined
+      to this file plus the room data pipeline, and nothing else in the game would need to change.
