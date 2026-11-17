@@ -1,0 +1,31 @@
+﻿Sprint 4 Code Quality Review
+Author: Benjamin Wisecup
+Date: November 16, 2026
+Sprint: 4
+RoomManager.cs
+Author of .cs file being reviewed: Connor Fulton
+Number of minutes spent on review: 38
+Code quality comments:
+
+	- RoomManager has good cohesion. It handles room transitions, room creation, player
+placement, and room caching. These responsibilities are all related to managing
+dungeon rooms.
+
+	- The class is coupled to RoomBuilder, DungeonMap, Player, and several door and
+pickup classes. Most of this coupling is reasonable, although separating player
+placement from room management could make future changes easier.
+
+	- A potential correctness issue is that FallbackDoor always throws an
+InvalidOperationException. This means entering a room through a dead end door
+without a corresponding RoomExit could crash the game.
+
+Hypothetical game change:
+
+Suppose the game adds rooms with multiple entrances on the same side. Currently,
+FirstOrDefaultOnSide only finds the first matching exit, which could cause the player to appear
+at the wrong entrance. The method would need to identify the correct entrance based on the
+door used to enter.
+
+Overall, RoomManager is well organized and provides useful room caching, but the fallback
+door implementation and entrance selection could cause problems as the dungeon becomes
+more complex.

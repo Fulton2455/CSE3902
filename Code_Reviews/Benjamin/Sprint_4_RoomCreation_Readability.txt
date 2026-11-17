@@ -1,0 +1,30 @@
+﻿Sprint 4 Readability Review
+Author: Benjamin Wisecup
+Date: November 16, 2026
+Sprint: 4
+RoomManager.cs
+Author of .cs file being reviewed: Connor Fulton
+Number of minutes taken to complete the review: 12
+Readability comments:
+
+	- The method names, including Preload, Begin, Travel, and GetOrBuild, clearly
+communicate their purposes.
+
+	- The comments explaining the two-step startup process make it easier to understand why
+the first room is loaded before the player is initialized.
+
+	- The built dictionary is a straightforward way to cache rooms, and the Current property
+makes it easy to identify the active room.
+
+	- FallbackDoor is somewhat confusing because its name suggests it provides an
+alternative door, but it currently always throws an exception.
+
+	- There are several very long lines of code that could be multiple lines. This makes the
+code hard to read and follow.
+
+	- For example, the switch statement in PlaceAtEntrance() puts the position calculations
+and break statements on the same line. Separating these would make each case easier
+to understand.
+
+Overall, RoomManager is reasonably readable. The main improvements would be clarifying the
+fallback door behavior and separating long code into multiple lines.
