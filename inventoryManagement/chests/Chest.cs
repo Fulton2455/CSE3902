@@ -77,6 +77,7 @@ namespace _3902sprint0
                     mousePosition.Y <= Location.Y + 32)
                 {
                     GiveItem();
+                    player.CelebratePickup();
                 }
             }
         }

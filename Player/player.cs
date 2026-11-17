@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Diagnostics;
 using _3902sprint0.Environment;
 
 namespace _3902sprint0
@@ -10,13 +9,19 @@ namespace _3902sprint0
     {
         public const int Width = 128;
         public const int Height = 128;
-
         public const int MaxMana = 100;
+        public const float ManaRegenerationRate = 4f;
+
+        private const int InsetLeft = 32;
+        private const int InsetRight = 32;
+        private const int InsetTop = 16;
+        private const int InsetBottom = 0;
+        private const int SwordRange = 70;
+        private const int SwordWidth = 80;
+        private const float FlickerRate = 12f;
 
         public int RupeeCount { get; set; } = 3;
         public int BombCount { get; set; } = 0;
-
-        public const float ManaRegenerationRate = 4f;
 
         public int mana = MaxMana;
         internal float manaRegenerationTimer = 0f;
@@ -25,7 +30,6 @@ namespace _3902sprint0
         internal EnemyManager enemyManager;
         public Vector2 Velocity;
         public float Speed = 200f;
-
         public float damage = 1f;
 
         public int MaxShieldHealth = 6;
@@ -41,35 +45,35 @@ namespace _3902sprint0
         public bool HasMap => inventory.haveMap;
         internal Room currentRoom;
         public Vector2 AimDirection;
+        public Facing Facing { get; private set; } = Facing.Down;
+
         internal bool invulnerable = false;
         internal double invulnerableTimer = 0;
-
         internal bool invisible = false;
         internal double invisibleTimer = 0;
-
         public bool IsInvisivble => invisible;
 
         internal InventoryHUD inventoryHUD;
-
         internal fireballManager fireballManager;
         internal PlayerSprite PlayerSprite1;
-
-        private const int InsetLeft = 32;
-        private const int InsetRight = 32;
-        private const int InsetTop = 16;
-        private const int InsetBottom = 0;
         internal chestManager chestManager;
         private BombManager bombManager;
+
         private readonly PlayerMovement movement;
         private readonly PlayerCombat combat;
         private readonly PlayerItems items;
         private readonly SwitchTerrain terrainHandler;
 
         public Rectangle Bounds => GetBoundsAt(Location);
-
         public bool IsDead => Health <= 0;
         public bool HasFinishedDying =>
             PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death) && PlayerSprite1.IsAnimationFinished();
+        public bool IsAttacking => PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Attack);
+
+        private bool IsHurt => PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Hurt);
+        private bool IsCelebrating => PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Pickup);
+        private bool IsBusy => IsAttacking || PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.UseItem);
+
         public Player(Vector2 startingLocation, Inventory inventory, InventoryHUD inventoryHUD, fireballManager fireballManager, chestManager chestManager)
         {
             Location = startingLocation;
@@ -88,73 +92,38 @@ namespace _3902sprint0
 
             Terrain = new terrain();
             Terrain.currentState = terrain.terrainState.Stone;
-
         }
+
         public void SetEnemyManager(EnemyManager enemyManager)
         {
             this.enemyManager = enemyManager;
             Terrain.SetEnemyManager(enemyManager);
         }
 
-        internal Rectangle GetBoundsAt(Vector2 location)
-        {
-            return new Rectangle(
-                (int)location.X + InsetLeft,
-                (int)location.Y + InsetTop,
-                Width - InsetLeft - InsetRight,
-                Height - InsetTop - InsetBottom);
-        }
-        public void SetRoom(Room room)
-        {
-            currentRoom = room;
-        }
-        public void heal(int amount)
-        { combat.Heal(amount); }
-        public void ActivateShield()
-        { combat.ActivateShield(); }
-        public void RemoveShield()
-        { combat.RemoveShield(); }
-        public void TakeDamage(int amount)
-        { combat.TakeDamage(amount); }
+        public void SetRoom(Room room) { currentRoom = room; }
+        public void SetBombManager(BombManager bombManager) { this.bombManager = bombManager; }
+
         public void InitializeSprite(Texture2D texture)
         {
             PlayerSprite1.SetLocation(Location);
             PlayerSprite1.Initialize(texture);
         }
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            PlayerSprite1.Draw(spriteBatch);
-        }
+
+       
         public void Update(GameTime gameTime)
         {
-            foreach (Iitem item in inventory.items)
-            {
-                item.Update(gameTime);
-            }
-
-            if (invulnerable)
-            {
-                invulnerableTimer -= gameTime.ElapsedGameTime.TotalSeconds;
-
-                if (invulnerableTimer <= 0)
-                {
-                    invulnerable = false;
-                }
-            }
+            UpdateInventoryItems(gameTime);
+            UpdateInvulnerability(gameTime);
             UpdateInvisibility(gameTime);
             fireballHitCheck();
+
             Keyboard.update();
-
-            if (Keyboard.Bomb())
-            {
-                bombManager?.SpawnActiveBomb();
-            }
-
-            Vector2 movementDirection = Keyboard.direction;
             Mouse.update(Location);
             AimDirection = Mouse.AimDirection;
-            if (!PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death))
-                PlayerSprite1.SetDirection(AimDirection);
+
+            if (Keyboard.Bomb())
+                bombManager?.SpawnActiveBomb();
+
             if (PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death))
             {
                 if (!Keyboard.revive())
@@ -170,140 +139,177 @@ namespace _3902sprint0
             if (Keyboard.forceItem())
                 ForceChestItem();
             RegenerateMana(gameTime);
+
             if (Keyboard.die())
             {
+                KillInstantly();
+                PlayerSprite1.UpdateSprite(gameTime);
+                return;
+            }
+
+            UpdateActions(gameTime, Keyboard.direction);
+        }
+
+      
+        private void UpdateActions(GameTime gameTime, Vector2 direction)
+        {
+            if (IsCelebrating)
+            {
                 Velocity = Vector2.Zero;
-                TakeDamage(12);
-                PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Death);
-                PlayerSprite1.UpdateSprite(gameTime);
-
-                return;
             }
-            if (PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Attack))
+            else
             {
-                Move(gameTime, movementDirection);
-                Location.X = MathHelper.Clamp(Location.X, 0, 1820 - 128);
-                Location.Y = MathHelper.Clamp(Location.Y, 0, 1280 - 128);
-                PlayerSprite1.SetLocation(Location);
-
-                PlayerSprite1.UpdateSprite(gameTime);
-                if (PlayerSprite1.IsAnimationFinished())
+                if (!IsBusy && !IsHurt && Mouse.IsLeftClickPressed())
                 {
-                    if (movementDirection != Vector2.Zero)
-                    {
-                        PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Walk);
-                    }
-                    else
-                    {
-                        PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Idle);
-                    }
+                    Facing = FacingExtensions.FromDirection(AimDirection, Facing);
+                    Attack();
                 }
+                else if (!IsBusy && !IsHurt)
+                {
+                    Facing = FacingExtensions.FromDirection(direction, Facing);
+                }
+
+                // While hurt, no steering
+                Move(gameTime, IsHurt ? Vector2.Zero : direction);
+                ClampToWorld();
+
+                if (!IsAttacking)
+                    newTerrain(gameTime);
+            }
+
+            PlayerSprite1.SetFacing(Facing);
+            PlayerSprite1.SetLocation(Location);
+            PlayerSprite1.UpdateSprite(gameTime);
+            ReturnToLocomotion(direction);
+        }
+
+
+        private void ReturnToLocomotion(Vector2 direction)
+        {
+            bool inTimedPose = IsBusy || IsHurt || IsCelebrating;
+            if (inTimedPose && !PlayerSprite1.IsAnimationFinished())
                 return;
-            }
-            if (Mouse.IsLeftClickPressed())
-            {
-                Attack();
-                PlayerSprite1.UpdateSprite(gameTime);
+
+            PlayerSprite1.SetAnimation(direction != Vector2.Zero
+                ? PlayerSprite.AnimationState.Walk
+                : PlayerSprite.AnimationState.Idle);
+        }
+
+        private void ClampToWorld()
+        {
+            Location.X = MathHelper.Clamp(Location.X, 0, 1820 - Width);
+            Location.Y = MathHelper.Clamp(Location.Y, 0, 1280 - Height);
+        }
+
+        private void UpdateInventoryItems(GameTime gameTime)
+        {
+            foreach (Iitem item in inventory.items)
+                item.Update(gameTime);
+        }
+
+        private void UpdateInvulnerability(GameTime gameTime)
+        {
+            if (!invulnerable)
                 return;
-            }
-            Move(gameTime, movementDirection);
-            if (!PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death))
-            {
-                Location.X = MathHelper.Clamp(Location.X, 0, 1820 - 128);
-                Location.Y = MathHelper.Clamp(Location.Y, 0, 1280 - 128);
 
-                newTerrain(gameTime);
-                PlayerSprite1.SetLocation(Location);
-                if (movementDirection != Vector2.Zero)
-                {
-                    PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Walk);
-                }
-                else
-                {
-                    PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Idle);
-                }
-                PlayerSprite1.UpdateSprite(gameTime);
-            }
+            invulnerableTimer -= gameTime.ElapsedGameTime.TotalSeconds;
+            if (invulnerableTimer <= 0)
+                invulnerable = false;
         }
-        internal void RegenerateMana(GameTime gameTime)
-        { items.RegenerateMana(gameTime); }
-        internal void fireballHitCheck()
-        { combat.FireballHitCheck(); }
-        public float GetTerrainAcceleration()
-        { return movement.GetTerrainAcceleration(); }
-        public float getTerrainspeed()
-        { return Speed; }
 
-        public Vector2 getPosition()
+        private void KillInstantly()
         {
-            Vector2 position = new Vector2(Location.X + Width / 2, Location.Y + Height / 2);
-            return position;
+            Velocity = Vector2.Zero;
+            Health = 0;
+            Die();
         }
 
-        public void becomeInvulnerable()
-        { combat.BecomeInvulnerable(); }
-        public void becomeInvisible()
-        { combat.BecomeInvisible(); }
-        internal void UpdateInvisibility(GameTime gameTime)
-        { combat.UpdateInvisibility(gameTime); }
-        internal void Move(GameTime gameTime, Vector2 movementDirection)
-        { movement.Move(gameTime, movementDirection); }
-        internal void MoveAxis(Vector2 delta)
-        { movement.MoveAxis(delta); }
-        public bool IsQuit()
+   
+
+        public void Draw(SpriteBatch spriteBatch)
         {
-            return Keyboard.isQuit();
+            bool flickerOff = invulnerable && ((int)(invulnerableTimer * FlickerRate) % 2 == 0);
+            PlayerSprite1.Tint = flickerOff ? Color.White * 0.35f : Color.White;
+            PlayerSprite1.Draw(spriteBatch);
         }
 
-        public void SetBombManager(BombManager bombManager)
+
+        // Call when the player collects an item worth celebrating
+        public void CelebratePickup()
         {
-            this.bombManager = bombManager;
+            if (IsDead)
+                return;
+
+            Velocity = Vector2.Zero;
+            PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Pickup);
         }
 
-        internal void Attack()
-        { combat.Attack(); }
-        internal void useItem(GameTime gameTime)
-        { items.UseItem(gameTime); }
-
-        internal void SpawnActiveBomb()
+        internal void PlayUseItemPose()
         {
-            bombManager?.SpawnActiveBomb();
+            if (IsBusy || IsHurt || IsCelebrating || IsDead)
+                return;
+
+            Facing = FacingExtensions.FromDirection(AimDirection, Facing);
+            PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.UseItem);
         }
-        internal void Die()
-        { combat.Die(); }
-        internal void Revive()
-        { combat.Revive(); }
-        public void ForceChestItem()
-        { items.ForceChestItem(); }
-        internal void newTerrain(GameTime gameTime)
-        { terrainHandler.UpdateTerrain(gameTime); }
+
+        // ---------- sword ----------
 
         public Rectangle SwordBounds
         {
             get
             {
-                Rectangle bounds = Bounds;
-                int swordRange = 70;
-                int swordWidth = 80;
-
-                if (Math.Abs(AimDirection.X) > Math.Abs(AimDirection.Y))
+                Rectangle b = Bounds;
+                switch (Facing)
                 {
-                    if (AimDirection.X > 0)
-                        return new Rectangle(bounds.Right, bounds.Center.Y - swordWidth / 2, swordRange, swordWidth);
-                    else
-                        return new Rectangle(bounds.Left - swordRange, bounds.Center.Y - swordWidth / 2, swordRange, swordWidth);
-                }
-                else
-                {
-                    if (AimDirection.Y > 0)
-                        return new Rectangle(bounds.Center.X - swordWidth / 2, bounds.Bottom, swordWidth, swordRange);
-                    else
-                        return new Rectangle(bounds.Center.X - swordWidth / 2, bounds.Top - swordRange, swordWidth, swordRange);
+                    case Facing.Right: return new Rectangle(b.Right, b.Center.Y - SwordWidth / 2, SwordRange, SwordWidth);
+                    case Facing.Left:  return new Rectangle(b.Left - SwordRange, b.Center.Y - SwordWidth / 2, SwordRange, SwordWidth);
+                    case Facing.Down:  return new Rectangle(b.Center.X - SwordWidth / 2, b.Bottom, SwordWidth, SwordRange);
+                    default:           return new Rectangle(b.Center.X - SwordWidth / 2, b.Top - SwordRange, SwordWidth, SwordRange);
                 }
             }
         }
 
-        public bool IsAttacking => PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Attack);
+        // ---------- geometry ----------
 
+        internal Rectangle GetBoundsAt(Vector2 location)
+        {
+            return new Rectangle(
+                (int)location.X + InsetLeft,
+                (int)location.Y + InsetTop,
+                Width - InsetLeft - InsetRight,
+                Height - InsetTop - InsetBottom);
+        }
+
+        public Vector2 getPosition()
+        {
+            return new Vector2(Location.X + Width / 2, Location.Y + Height / 2);
+        }
+
+        public void heal(int amount) { combat.Heal(amount); }
+        public void ActivateShield() { combat.ActivateShield(); }
+        public void RemoveShield() { combat.RemoveShield(); }
+        public void TakeDamage(int amount) { combat.TakeDamage(amount, null); }
+        public void TakeDamage(int amount, Vector2 sourcePosition) { combat.TakeDamage(amount, sourcePosition); }
+        public void becomeInvulnerable() { combat.BecomeInvulnerable(); }
+        public void becomeInvisible() { combat.BecomeInvisible(); }
+        internal void UpdateInvisibility(GameTime gameTime) { combat.UpdateInvisibility(gameTime); }
+        internal void fireballHitCheck() { combat.FireballHitCheck(); }
+        internal void Attack() { combat.Attack(); }
+        internal void Die() { combat.Die(); }
+        internal void Revive() { combat.Revive(); }
+
+        internal void RegenerateMana(GameTime gameTime) { items.RegenerateMana(gameTime); }
+        internal void useItem(GameTime gameTime) { items.UseItem(gameTime); }
+        public void ForceChestItem() { items.ForceChestItem(); }
+        internal void SpawnActiveBomb() { bombManager?.SpawnActiveBomb(); }
+
+        public float GetTerrainAcceleration() { return movement.GetTerrainAcceleration(); }
+        public float getTerrainspeed() { return Speed; }
+        internal void Move(GameTime gameTime, Vector2 movementDirection) { movement.Move(gameTime, movementDirection); }
+        internal void MoveAxis(Vector2 delta) { movement.MoveAxis(delta); }
+        internal void newTerrain(GameTime gameTime) { terrainHandler.UpdateTerrain(gameTime); }
+
+        public bool IsQuit() { return Keyboard.isQuit(); }
     }
 }

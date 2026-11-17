@@ -21,13 +21,14 @@ namespace _3902sprint0.Environment.Pickups
             bounds = new Rectangle((int)center.X - DrawSize / 2, (int)center.Y - DrawSize / 2, DrawSize, DrawSize);
         }
 
-        public void Update(Rectangle collectorBounds, IKeyHolder keyHolder)
+        public void Update(Rectangle collectorBounds, IKeyHolder keyHolder, Player player)
         {
             if (Collected || !bounds.Intersects(collectorBounds))
                 return;
 
             Collected = true;
             keyHolder.AddKey(lockType);
+            player.CelebratePickup();
             if (lockType == LockType.Diamond)
                 EffectMessage.Show("Diamond Key!", Color.Gold);
             else
