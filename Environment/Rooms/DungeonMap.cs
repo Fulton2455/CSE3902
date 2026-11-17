@@ -8,6 +8,7 @@ namespace _3902sprint0.Environment.Rooms
     /// <summary>All room files of a dungeon, parsed and checked against each other.</summary>
     public class DungeonMap
     {
+        public IEnumerable<RoomData> Rooms => rooms.Values;
         private readonly Dictionary<string, RoomData> rooms;
 
         private DungeonMap(Dictionary<string, RoomData> rooms)
