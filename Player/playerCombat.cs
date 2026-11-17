@@ -8,6 +8,8 @@ namespace _3902sprint0
     public class PlayerCombat
     {
         private readonly Player p;
+        private const double HurtInvulnerableSeconds = 1.2;
+        private const float KnockbackSpeed = 260f;
 
         public PlayerCombat(Player player)
         {
@@ -34,28 +36,21 @@ namespace _3902sprint0
             p.ShieldHealth = 0;
         }
 
-        public void TakeDamage(int amount)
+        
+        public void TakeDamage(int amount, Vector2? sourcePosition)
         {
-            if (p.PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death))
-                return;
+            if (p.PlayerSprite1.IsAnimation(PlayerSprite.AnimationState.Death)) return;
 
-            if (p.invulnerable || amount <= 0)
-                return;
+            if (p.invulnerable || amount <= 0) return;
 
             if (p.ShieldHealth > 0)
             {
                 p.ShieldHealth -= amount;
 
-                if (p.ShieldHealth < 0)
-                {
-                    amount = -p.ShieldHealth;
-                    p.ShieldHealth = 0;
-                }
-                else
-                {
+                if (p.ShieldHealth >= 0) return;
 
-                    return;
-                }
+                amount = -p.ShieldHealth;
+                p.ShieldHealth = 0;
             }
 
             p.Health -= amount;
@@ -64,13 +59,25 @@ namespace _3902sprint0
             {
                 p.Health = 0;
                 p.Die();
+                return;
             }
-            else
-            {
-                SoundManager.PlayPlayerHurt();
-            }
+
+            StartHurt(sourcePosition);
         }
 
+
+        private void StartHurt(Vector2? sourcePosition)
+        {
+            SoundManager.PlayPlayerHurt();
+            p.PlayerSprite1.SetAnimation(PlayerSprite.AnimationState.Hurt);
+            p.invulnerable = true;
+            p.invulnerableTimer = HurtInvulnerableSeconds;
+
+            if (!sourcePosition.HasValue) return;
+
+            Vector2 away = p.getPosition() - sourcePosition.Value;
+            if (away != Vector2.Zero) p.Velocity = Vector2.Normalize(away) * KnockbackSpeed;
+        }
         public void BecomeInvulnerable()
         {
             p.invulnerable = true;

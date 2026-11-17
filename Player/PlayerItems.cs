@@ -52,6 +52,7 @@ namespace _3902sprint0
                 if (item.IsOffCooldown)
                 {
                     item.Use(p, gameTime);
+                    p.PlayUseItemPose();
                     p.inventoryHUD.FlashSlot(itemNumber);
                 }
             }

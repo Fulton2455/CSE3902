@@ -57,7 +57,7 @@ namespace _3902sprint0.Environment.Rooms
         {
             Rectangle hitbox = player.Bounds;
             foreach (KeyPickup key in Current.Keys)
-                key.Update(hitbox, keyHolder);
+                key.Update(hitbox, keyHolder, player);
 
             foreach (RoomExit exit in Current.Exits)
             {

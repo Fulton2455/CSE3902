@@ -58,6 +58,7 @@ namespace _3902sprint0
         {
             keys.TryGetValue(lockType, out int count);
             keys[lockType] = count + 1;
+            
         }
 
         public bool HasKey(LockType lockType)

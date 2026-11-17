@@ -248,7 +248,7 @@ out Vector2 spawnPosition)
         		if (enemy.bounds.Intersects(player.Bounds) && enemy.CanDamagePlayer)
         		{
            		 enemy.StartAttack();
-            		player.TakeDamage(enemy.Damage);
+            		player.TakeDamage(enemy.Damage, enemy.Position);
             		enemy.StartDamageCoolDown();
         		}
 
