@@ -54,6 +54,10 @@ namespace _3902sprint0
         private readonly CompassHUD compassHUD;
         private RoomSide? compassDir;
 
+        // Minimap
+        private readonly RoomVisitTracker visitTracker;
+        private readonly MapHUD mapHUD;
+
         public Player Player { get; }
 
         public bool IsDeathAnimationFinished => Player.HasFinishedDying;
@@ -125,6 +129,16 @@ namespace _3902sprint0
 
             roomManager.RoomCreated += OnRoomCreated;
             roomManager.RoomEntered += OnRoomEntered;
+
+            // Minimap. Must subscribe before roomManager.Begin, which raises the first RoomEntered.
+            visitTracker = new RoomVisitTracker(roomManager);
+            mapHUD = new MapHUD(
+                dungeon,
+                new DungeonLayout(dungeon, StartRoomId),
+                visitTracker,
+                assets.WhitePixel,
+                new Point(ScreenScaler.VirtualWidth - 20, 20),
+                dungeon.FindDiamondKeyRoom());
 
             Room startRoom = roomManager.Preload(StartRoomId);
 
@@ -291,6 +305,8 @@ namespace _3902sprint0
 
             if (Player.HasCompass)
                 compassHUD.Draw(spriteBatch, compassDir);
+
+            mapHUD.Draw(spriteBatch, gameTime, Player.HasMap, Player.HasCompass);
 
             debugOverlay.Draw(
                 spriteBatch,

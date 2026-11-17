@@ -75,6 +75,31 @@ The existing item architecture uses the `Iitem` interface to provide shared beha
 
 The system also includes Inventory, itemDatabase, Chest, chestManager, and PlayerItems to handle storing, generating, using, and updating items.
 
+## Dungeon Map and Minimap
+
+The map item was completed during Sprint 4 and connected to a minimap drawn in the top-right corner of the HUD.
+
+The minimap is built from the dungeon's existing room files instead of a separate map file. 
+
+The new `DungeonLayout` class walks the north/south/east/west links in `DungeonMap` starting from the start room and assigns every reachable room a grid cell. 
+
+Because the layout comes from the links the rooms already declare, adding or moving a room only requires editing its room file, and the minimap updates automatically.
+
+The new `RoomVisitTracker` class subscribes to `RoomManager.RoomEntered`, the same event `RoomPopulator` uses, and records which rooms the player has entered and which room they are in now.
+
+The new `MapHUD` class draws the minimap each frame:
+
+- Rooms the player has visited are always drawn, along with the doors leading out of them.
+- Once the player owns the map item, every room in the dungeon is drawn, with unvisited rooms in a darker color.
+- Once the player owns the compass, the room containing the diamond key is marked with a red dot.
+- The player's current room blinks green so it is easy to find.
+
+The map item itself follows the same pattern as the compass. `Inventory` gained a `haveMap` flag and `Player` exposes it as `HasMap`. 
+
+The map is sold by the Old Man NPC in the starting room as the fourth shop offer, so no new textures or content pipeline entries were required.
+
+This work also added the `Rooms` property to `DungeonMap` so other systems can read the full room list without parsing room ids.
+
 
 ## Sprint 4 Progress
 
@@ -87,6 +112,8 @@ Visible completed tasks include:
 - Game Screens (Paused, Start, Death, etc.)
 - NPCs and Neutral Projectiles
 - Items (Compass, Map, Key, Bomb, etc. from the sheet)
+- Dungeon minimap driven by the room link data (map and compass items affect what it shows)
+
 
 This shows that Sprint 4 covered several different parts of the project rather than focusing on only one system. The sprint included level design, visual improvements, user interface work, gameplay objects, and item functionality.
 
