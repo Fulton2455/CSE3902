@@ -12,6 +12,7 @@ namespace _3902sprint0
         public List<Iitem> items = new List<Iitem>();
 
         public bool haveCompass = false;
+        public bool haveMap = false;
 
         public List<Bomb> bombs = new List<Bomb>();
         public Iitem CurrentSword { get; private set; }
@@ -32,7 +33,11 @@ namespace _3902sprint0
         public void addCompass()
         {
             haveCompass = true;
-        }  
+        }
+        public void addMap()
+        {
+            haveMap = true;
+        }
         public void ResetItems()
         {
             foreach (Iitem item in items)

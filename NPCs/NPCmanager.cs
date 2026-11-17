@@ -47,6 +47,7 @@ namespace _3902sprint0.NPCs
         private bool previousBuy1;
         private bool previousBuy2;
         private bool previousBuy3;
+        private bool previousBuy4;
         private bool shopOpen;
         private string statusMessage = "";
         private float statusTimer;
@@ -73,7 +74,9 @@ namespace _3902sprint0.NPCs
                 new ShopOffer("Bomb", 1,
                     (Action)(() => player.BombCount++)),
                 new ShopOffer("Compass", 3,
-                    (Action)(() => inventory.haveCompass = true))
+                    (Action)(() => inventory.haveCompass = true)),
+                new ShopOffer("Map (reveals the whole dungeon on the minimap)", 2,
+                    (Action)(() => inventory.addMap()))
             };
         }
 
@@ -86,6 +89,7 @@ namespace _3902sprint0.NPCs
             bool buy1 = keys.IsKeyDown(Keys.D1) || keys.IsKeyDown(Keys.NumPad1);
             bool buy2 = keys.IsKeyDown(Keys.D2) || keys.IsKeyDown(Keys.NumPad2);
             bool buy3 = keys.IsKeyDown(Keys.D3) || keys.IsKeyDown(Keys.NumPad3);
+            bool buy4 = keys.IsKeyDown(Keys.D4) || keys.IsKeyDown(Keys.NumPad4);
 
             if (nearby && interact && !previousInteract)
                 shopOpen = !shopOpen;
@@ -97,6 +101,7 @@ namespace _3902sprint0.NPCs
                 if (buy1 && !previousBuy1) Purchase(0);
                 if (buy2 && !previousBuy2) Purchase(1);
                 if (buy3 && !previousBuy3) Purchase(2);
+                if (buy4 && !previousBuy4) Purchase(3);
             }
 
             if (statusTimer > 0)
@@ -106,6 +111,7 @@ namespace _3902sprint0.NPCs
             previousBuy1 = buy1;
             previousBuy2 = buy2;
             previousBuy3 = buy3;
+            previousBuy4 = buy4;
         }
 
         private void Purchase(int offerIndex)
@@ -169,7 +175,7 @@ namespace _3902sprint0.NPCs
                         new Vector2(box.X + 35, box.Y + 75 + i * 55), Color.White);
                 }
 
-                spriteBatch.DrawString(font, "Press 1 / 2 / 3 to purchase. Press E to leave.",
+                spriteBatch.DrawString(font, "Press 1 / 2 / 3 / 4 to purchase. Press E to leave.",
                     new Vector2(box.X + 35, box.Bottom - 55), Color.LightGray);
                 if (statusTimer > 0)
                     spriteBatch.DrawString(font, statusMessage,

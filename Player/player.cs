@@ -38,6 +38,7 @@ namespace _3902sprint0
         internal Inventory inventory;
         internal Mousecontroller Mouse;
         public bool HasCompass => inventory.haveCompass;
+        public bool HasMap => inventory.haveMap;
         internal Room currentRoom;
         public Vector2 AimDirection;
         internal bool invulnerable = false;
